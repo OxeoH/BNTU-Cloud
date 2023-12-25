@@ -1,4 +1,4 @@
-import { File } from "buffer";
+import { File } from "./src/File/file.entity";
 import "reflect-metadata";
 import { DataSource } from "typeorm";
 import { User } from "./src/User/user.entity";

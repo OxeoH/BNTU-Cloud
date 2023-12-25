@@ -5,11 +5,14 @@ import express from "express";
 
 import cors from "cors";
 import AppDataSource from "./data-source";
+import userRouter from "./src/User/user.router";
 
 const app = express();
 app.use(cors());
 
 app.use(express.json());
+
+app.use("/user", userRouter);
 
 const port = process.env.PORT || 5000;
 

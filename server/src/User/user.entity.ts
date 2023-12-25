@@ -7,12 +7,7 @@ import {
   ManyToMany,
 } from "typeorm";
 import { File } from "../File/file.entity";
-
-export enum UserRole {
-  ADMIN = "admin",
-  TEACHER = "teacher",
-  STUDENT = "student",
-}
+import { UserRole } from "./user.types";
 
 @Entity()
 export class User {
@@ -30,6 +25,9 @@ export class User {
 
   @Column()
   login: string;
+
+  @Column()
+  email: string;
 
   @Column()
   password: string;
