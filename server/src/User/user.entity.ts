@@ -48,10 +48,10 @@ export class User {
   @Column()
   confirmed: boolean;
 
-  @Column()
+  @Column({ type: "bigint", default: 1024 ** 3 * 4 })
   diskSpace: number;
 
-  @Column()
+  @Column({ type: "bigint", default: 0 })
   usedSpace: number;
 
   @OneToMany(() => File, (file: File) => file.user, {

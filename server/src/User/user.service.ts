@@ -56,8 +56,6 @@ class UserService {
     newUser.role = role;
     newUser.confirmed = false;
     newUser.avatar = "";
-    newUser.diskSpace = 0;
-    newUser.usedSpace = 0;
 
     const createdUser = await this.userRepository.save(newUser);
 
