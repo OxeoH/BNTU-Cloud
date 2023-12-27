@@ -1,15 +1,11 @@
-import * as React from "react";
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
+import Link from "@mui/material/Link";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { LOGIN_ROUTE } from "../../routes/utils/consts";
 import Copyright from "../../components/Copyright";
 import {
@@ -23,17 +19,43 @@ import {
 import { groupsList } from "../../shared/groupsList";
 import { useState } from "react";
 import { Logo } from "../../components/Logo";
+import { registration } from "../../api/User";
+import { UserRole } from "../../api/User/types";
+import { useNavigate } from "react-router-dom";
 
 export default function RegisterPage() {
   const [selectedGroup, setSelectedGroup] = useState("");
+  const [selectedRole, setSelectedRole] = useState(UserRole.STUDENT);
+  const navigate = useNavigate();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleRoleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedRole(e.target.checked ? UserRole.TEACHER : UserRole.STUDENT);
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+    try {
+      const data = new FormData(event.currentTarget);
+      const newUser = {
+        surname: `${data.get("name")}`,
+        name: `${data.get("surname")}`,
+        patronymic: `${data.get("patronymic")}`,
+        login: `${data.get("login")}`,
+        group:
+          selectedRole === UserRole.TEACHER
+            ? "teacher"
+            : `${data.get("group")}`,
+        email: `${data.get("email")}`,
+        password: `${data.get("password")}`,
+        role: selectedRole,
+      };
+
+      const response = await registration(newUser);
+      navigate(LOGIN_ROUTE);
+    } catch (e: any) {
+      //TODO: Error type
+      alert(e.message);
+    }
   };
 
   return (
@@ -70,41 +92,41 @@ export default function RegisterPage() {
                 <TextField
                   required
                   fullWidth
-                  id="lastName"
+                  id="surname"
                   label="Фамилия"
-                  name="lastName"
+                  name="surname"
                   autoComplete="family-name"
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  autoComplete="given-name"
-                  name="firstName"
-                  required
-                  fullWidth
-                  id="firstName"
-                  label="Имя"
                   autoFocus
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
+                  autoComplete="given-name"
                   required
                   fullWidth
-                  id="lastName"
+                  id="name"
+                  label="Имя"
+                  name="name"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  fullWidth
+                  id="patronymic"
                   label="Отчество"
-                  name="lastName"
+                  name="patronymic"
                   autoComplete="family-name"
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <FormControl fullWidth>
-                  <InputLabel id="demo-simple-select-label">
-                    Группа *
-                  </InputLabel>
+                  <InputLabel id="group">Группа *</InputLabel>
                   <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
+                    labelId="group"
+                    id="group"
+                    name="group"
+                    disabled={selectedRole === UserRole.TEACHER}
                     value={selectedGroup}
                     required
                     label="Группа *"
@@ -126,10 +148,10 @@ export default function RegisterPage() {
                 <TextField
                   required
                   fullWidth
-                  id="lastName"
+                  id="login"
                   label="Логин"
-                  name="lastName"
-                  autoComplete="family-name"
+                  name="login"
+                  autoComplete="login"
                 />
               </Grid>
               <Grid item xs={12}>
@@ -155,7 +177,12 @@ export default function RegisterPage() {
               </Grid>
             </Grid>
             <Grid container justifyContent={"center"} mb={12}>
-              <FormControlLabel control={<Switch />} label="Преподаватель" />
+              <FormControlLabel
+                control={<Switch onChange={handleRoleChange} />}
+                label="Преподаватель"
+                id="role"
+                name="role"
+              />
             </Grid>
             {/* <Grid item xs={12}>
                 <FormControlLabel
@@ -176,7 +203,11 @@ export default function RegisterPage() {
           </Button>
           <Grid container justifyContent="flex-end">
             <Grid item>
-              <Link href={LOGIN_ROUTE} variant="body2">
+              <Link
+                component="button"
+                variant="body2"
+                onClick={() => navigate(LOGIN_ROUTE)}
+              >
                 Уже есть аккаунт? Войти
               </Link>
             </Grid>

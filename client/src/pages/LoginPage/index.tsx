@@ -8,18 +8,32 @@ import Box from "@mui/material/Box";
 
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { REGISTER_ROUTE } from "../../routes/utils/consts";
+import { MAIN_ROUTE, REGISTER_ROUTE } from "../../routes/utils/consts";
 import Copyright from "../../components/Copyright";
 import { Logo } from "../../components/Logo";
+import { useNavigate } from "react-router-dom";
+import { authorization } from "../../api/User";
 
 export default function LoginPage() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+    try {
+      const data = new FormData(event.currentTarget);
+      const authData = {
+        login: `${data.get("login")}`,
+        password: `${data.get("password")}`,
+      };
+
+      const response = await authorization(authData);
+      console.log(response);
+
+      navigate(MAIN_ROUTE);
+    } catch (e: any) {
+      //TODO: Error type
+      alert(e.message);
+    }
   };
 
   return (
@@ -93,7 +107,11 @@ export default function LoginPage() {
           </Button>
           <Grid container justifyContent="flex-end">
             <Grid item>
-              <Link href={REGISTER_ROUTE} variant="body2">
+              <Link
+                component="button"
+                variant="body2"
+                onClick={() => navigate(REGISTER_ROUTE)}
+              >
                 Нет аккаунта? Регистрация
               </Link>
             </Grid>
