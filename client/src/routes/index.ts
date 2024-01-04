@@ -2,7 +2,14 @@ import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import WelcomePage from "../pages/WelcomePage";
 
-import { LOGIN_ROUTE, MAIN_ROUTE, REGISTER_ROUTE } from "./utils/consts";
+import {
+  HELP_ROUTE,
+  LOGIN_ROUTE,
+  MAIN_ROUTE,
+  REGISTER_ROUTE,
+  SETTINGS_ROUTE,
+  STORAGE_ROUTE,
+} from "./utils/consts";
 
 // export const authRoutes: RouteType[] = [
 //   {
@@ -30,6 +37,18 @@ export const defaultRoutes: RouteType[] = [
   },
   {
     path: MAIN_ROUTE,
+    Component: WelcomePage,
+  },
+  {
+    path: HELP_ROUTE,
+    Component: WelcomePage,
+  },
+  {
+    path: STORAGE_ROUTE,
+    Component: WelcomePage,
+  },
+  {
+    path: SETTINGS_ROUTE,
     Component: WelcomePage,
   },
   // {
