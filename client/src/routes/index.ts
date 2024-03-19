@@ -1,11 +1,16 @@
+import HelpPage from "../pages/HelpPage";
 import LoginPage from "../pages/LoginPage";
+import NotFoundPage from "../pages/NotFoundPage";
 import RegisterPage from "../pages/RegisterPage";
+import SettingsPage from "../pages/SettingsPage";
+import StoragePage from "../pages/StoragePage";
 import WelcomePage from "../pages/WelcomePage";
 
 import {
   HELP_ROUTE,
   LOGIN_ROUTE,
   MAIN_ROUTE,
+  NOTFOUND_ROUTE,
   REGISTER_ROUTE,
   SETTINGS_ROUTE,
   STORAGE_ROUTE,
@@ -41,20 +46,20 @@ export const defaultRoutes: RouteType[] = [
   },
   {
     path: HELP_ROUTE,
-    Component: WelcomePage,
+    Component: HelpPage,
   },
   {
     path: STORAGE_ROUTE,
-    Component: WelcomePage,
+    Component: StoragePage,
   },
   {
     path: SETTINGS_ROUTE,
-    Component: WelcomePage,
+    Component: SettingsPage,
   },
-  // {
-  //   path: NOTFOUND_ROUTE,
-  //   Component: NotFoundBlock,
-  // },
+  {
+    path: NOTFOUND_ROUTE,
+    Component: NotFoundPage,
+  },
 ];
 
 export type RouteType = {
