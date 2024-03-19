@@ -13,9 +13,12 @@ import Copyright from "../../components/Copyright";
 import { Logo } from "../../components/Logo";
 import { useNavigate } from "react-router-dom";
 import { authorization } from "../../api/User";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../store/slices/userSlice";
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -27,8 +30,8 @@ export default function LoginPage() {
       };
 
       const response = await authorization(authData);
-      console.log(response);
 
+      dispatch(setUser(response.user));
       navigate(MAIN_ROUTE);
     } catch (e: any) {
       //TODO: Error type

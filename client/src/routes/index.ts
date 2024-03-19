@@ -16,20 +16,36 @@ import {
   STORAGE_ROUTE,
 } from "./utils/consts";
 
-// export const authRoutes: RouteType[] = [
-//   {
-//     path: GROUPS_ROUTE,
-//     Component: GroupTable,
-//   },
-//   {
-//     path: GROUPS_ROUTE + "/:id",
-//     Component: TaskTable,
-//   },
-//   {
-//     path: ADMIN_PANEL,
-//     Component: AdminPanel,
-//   },
-// ];
+export const authRoutes: RouteType[] = [
+  // {
+  //   path: GROUPS_ROUTE,
+  //   Component: GroupTable,
+  // },
+  // {
+  //   path: GROUPS_ROUTE + "/:id",
+  //   Component: TaskTable,
+  // },
+  // {
+  //   path: ADMIN_PANEL,
+  //   Component: AdminPanel,
+  // },
+  {
+    path: MAIN_ROUTE,
+    Component: WelcomePage,
+  },
+  {
+    path: HELP_ROUTE,
+    Component: HelpPage,
+  },
+  {
+    path: STORAGE_ROUTE,
+    Component: StoragePage,
+  },
+  {
+    path: SETTINGS_ROUTE,
+    Component: SettingsPage,
+  },
+];
 
 export const defaultRoutes: RouteType[] = [
   {

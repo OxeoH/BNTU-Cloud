@@ -9,30 +9,14 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import React, { useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../shared/hooks";
+import { logout } from "../../store/slices/userSlice";
 
 export default function Profile() {
-  const [isAuth, setIsAuth] = useState(true);
+  const { isAuth, currentUser } = useAppSelector((state) => state.user);
   const navigate = useNavigate();
-  //   function stringToColor(string: string) {
-  //     let hash = 0;
-  //     let i;
-
-  //     /* eslint-disable no-bitwise */
-  //     for (i = 0; i < string.length; i += 1) {
-  //       hash = string.charCodeAt(i) + ((hash << 5) - hash);
-  //     }
-
-  //     let color = "#";
-
-  //     for (i = 0; i < 3; i += 1) {
-  //       const value = (hash >> (i * 8)) & 0xff;
-  //       color += `00${value.toString(16)}`.slice(-2);
-  //     }
-  //     /* eslint-enable no-bitwise */
-
-  //     return color;
-  //   }
+  const dispatch = useAppDispatch();
   function stringAvatar(name: string) {
     return {
       //   sx: {
@@ -46,6 +30,10 @@ export default function Profile() {
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
+  };
+  const handleExit = () => {
+    handleClose();
+    dispatch(logout());
   };
   const handleClose = () => {
     setAnchorEl(null);
@@ -65,7 +53,7 @@ export default function Profile() {
             onClick={handleClick}
           >
             <Avatar
-              {...stringAvatar("Eent Todds")}
+              {...stringAvatar(currentUser.surname + " " + currentUser.name)}
               sx={{
                 bgcolor: "white",
                 color: (theme) => theme.palette.primary.main,
@@ -101,10 +89,10 @@ export default function Profile() {
               pl={15}
               py={10}
             >
-              Тимошевич Егор
+              {currentUser.surname + " " + currentUser.name}
             </Typography>
             <Divider />
-            <MenuItem onClick={handleClose}>Выйти</MenuItem>
+            <MenuItem onClick={handleExit}>Выйти</MenuItem>
           </Menu>
         </>
       ) : (

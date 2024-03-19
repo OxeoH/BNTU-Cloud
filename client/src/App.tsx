@@ -1,8 +1,10 @@
 import Navbar from "./components/Navbar";
-import { defaultRoutes } from "./routes";
+import { authRoutes, defaultRoutes } from "./routes";
 import { Routes, Route } from "react-router-dom";
+import { useAppSelector } from "./shared/hooks";
 
 function App() {
+  const isAuth = useAppSelector((state) => state.user.isAuth);
   return (
     <div className="main">
       <Navbar />
@@ -10,6 +12,10 @@ function App() {
         {defaultRoutes.map(({ path, Component }) => (
           <Route key={`${Component}`} path={path} element={<Component />} />
         ))}
+        {isAuth ??
+          authRoutes.map(({ path, Component }) => (
+            <Route key={`${Component}`} path={path} element={<Component />} />
+          ))}
       </Routes>
     </div>
   );
