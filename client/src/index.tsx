@@ -7,6 +7,7 @@ import { store } from "./store";
 import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "@mui/material";
 import theme from "./shared/theme/theme";
+import { AuthWrap } from "./components/AuthWrap";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -17,7 +18,9 @@ root.render(
     <ThemeProvider theme={theme}>
       <BrowserRouter>
         <React.StrictMode>
-          <App />
+          <AuthWrap>
+            <App />
+          </AuthWrap>
         </React.StrictMode>
       </BrowserRouter>
     </ThemeProvider>

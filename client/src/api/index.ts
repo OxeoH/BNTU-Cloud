@@ -7,16 +7,15 @@ const $host = axios.create({
 const $authHost = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
 });
-
+//TODO: type
 const authInterceptor = (config: any) => {
-  //Type?
-  if (localStorage.getItem("token") !== "") {
-    config.headers.authorization = `Bearer ${localStorage.getItem("token")}`;
-    return config;
-  }
-  return { headers: { authorization: "" } };
+  console.log("authInter: ", localStorage.getItem("token"));
+  config.headers.authorization = localStorage.getItem("token")
+    ? `Bearer ${localStorage.getItem("token")}`
+    : "";
+
+  return config;
 };
 
 $authHost.interceptors.request.use(authInterceptor);
-
 export { $host, $authHost };

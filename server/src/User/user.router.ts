@@ -27,17 +27,16 @@ userRouter.post(
 
 userRouter.post(
   "/login",
-  // checkSchema({
-  //   email: { isEmail: true },
-  //   pasword: { isLength: { options: { min: 8 } } },
-  //   login: { isLength: { options: { min: 4 } } },
-  //   name: { notEmpty: true },
-  //   surname: { notEmpty: true },
-  //   patronymic: { notEmpty: true },
-  //   role: { notEmpty: true },
-  // }),
+  checkSchema({
+    pasword: { isLength: { options: { min: 8 } } },
+    login: { isLength: { options: { min: 4 } } },
+  }),
   async (req: Request, res: Response) => {
     await userController.authUser(req, res);
   }
 );
+
+userRouter.get("/verify-auth", async (req: Request, res: Response) => {
+  await userController.checkIsAuth(req, res);
+});
 export default userRouter;

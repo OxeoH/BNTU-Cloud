@@ -49,32 +49,23 @@ export const authRoutes: RouteType[] = [
 
 export const defaultRoutes: RouteType[] = [
   {
+    path: MAIN_ROUTE,
+    Component: WelcomePage,
+  },
+  {
+    path: NOTFOUND_ROUTE,
+    Component: NotFoundPage,
+  },
+];
+
+export const noAuthRoutes: RouteType[] = [
+  {
     path: LOGIN_ROUTE,
     Component: LoginPage,
   },
   {
     path: REGISTER_ROUTE,
     Component: RegisterPage,
-  },
-  {
-    path: MAIN_ROUTE,
-    Component: WelcomePage,
-  },
-  {
-    path: HELP_ROUTE,
-    Component: HelpPage,
-  },
-  {
-    path: STORAGE_ROUTE,
-    Component: StoragePage,
-  },
-  {
-    path: SETTINGS_ROUTE,
-    Component: SettingsPage,
-  },
-  {
-    path: NOTFOUND_ROUTE,
-    Component: NotFoundPage,
   },
 ];
 

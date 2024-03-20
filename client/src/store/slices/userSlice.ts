@@ -36,6 +36,7 @@ export const counterSlice = createSlice({
       state.isAuth = true;
     },
     logout: (state) => {
+      //localStorage.setItem("token", "");
       state.currentUser = emptyUser;
       state.isAuth = false;
     },
