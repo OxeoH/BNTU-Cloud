@@ -39,10 +39,7 @@ class UserController {
 
   public async checkIsAuth(req: Request, res: Response) {
     try {
-      console.log("Token");
-      console.log(req.headers.authorization?.split(" ")[1]);
       const token = req.headers.authorization?.split(" ")[1];
-      console.log(token);
 
       if (!token)
         return res.status(401).json({ message: "Error: Wrong token" });
@@ -57,7 +54,9 @@ class UserController {
       if (!user)
         return res.status(400).json({ message: "Error: Cannot find user" });
 
-      return res.status(200).json(token);
+      return res
+        .status(200)
+        .json({ token, user: (({ password, ...o }) => o)(user) });
     } catch (e) {
       res.status(500).json({ message: `Error: ${e}` });
     }

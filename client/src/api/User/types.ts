@@ -21,6 +21,11 @@ export interface RegisterProps {
   role: UserRole;
 }
 
+export interface VerifyProps {
+  token: string;
+  user: User;
+}
+
 export enum UserRole {
   ADMIN = "admin",
   TEACHER = "teacher",

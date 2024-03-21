@@ -6,6 +6,7 @@ import {
   RegisterProps,
   RegisterResponse,
   User,
+  VerifyProps,
 } from "./types";
 
 export const registration = async (props: RegisterProps) => {
@@ -32,15 +33,13 @@ export const authorization = async (props: AuthProps) => {
 
 export const verifyAuth = async () => {
   try {
-    const { data } = await $host.get<string>("api/user/verify-auth", {
+    const { data } = await $host.get<VerifyProps>("api/user/verify-auth", {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
 
     localStorage.setItem("token", `${data}`);
-    const user = jwtDecode<User>(data);
-    console.log(user);
 
-    return user;
+    return data.user;
   } catch (e: any) {
     localStorage.setItem("token", "");
   }
