@@ -24,6 +24,15 @@ export class File {
   @Column()
   size: number;
 
+  @Column()
+  path: string;
+
   @ManyToOne(() => User, (user) => user.id)
   user: User;
+
+  @ManyToOne(() => File, (File) => File.id)
+  parent: File;
+
+  @OneToMany(() => File, (file) => file.id)
+  childs: File[];
 }
