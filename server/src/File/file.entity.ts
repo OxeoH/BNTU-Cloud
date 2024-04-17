@@ -6,6 +6,7 @@ import {
   OneToMany,
 } from "typeorm";
 import { User } from "../User/user.entity";
+import { FileType } from "./file.types";
 
 @Entity()
 export class File {
@@ -15,16 +16,16 @@ export class File {
   @Column()
   name: string;
 
-  @Column()
-  type: string;
+  @Column({ default: FileType.DIR })
+  type: FileType;
 
-  @Column()
+  @Column({ default: "" })
   access_link: string;
 
-  @Column()
+  @Column({ default: 0 })
   size: number;
 
-  @Column()
+  @Column({ default: "" })
   path: string;
 
   @ManyToOne(() => User, (user) => user.id)

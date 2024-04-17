@@ -5,7 +5,6 @@ import {
   AuthResponse,
   RegisterProps,
   RegisterResponse,
-  User,
   VerifyProps,
 } from "./types";
 

@@ -5,6 +5,10 @@ import { AuthProps, RegisterProps, UserRole } from "./user.types";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import config from "./jwtConfig";
+import fileManager from "../File/file.manager";
+import { File } from "../File/file.entity";
+import fileService from "../File/file.service";
+import { FileType } from "../File/file.types";
 
 const generateAccessToken = (id: string, login: string) => {
   const payload = {
@@ -58,6 +62,17 @@ class UserService {
     newUser.avatar = "";
 
     const createdUser = await this.userRepository.save(newUser);
+
+    const userDir = new File();
+    userDir.user = createdUser;
+    userDir.name = createdUser.id;
+    userDir.path = "";
+    userDir.type = FileType.DIR;
+    userDir.childs = [];
+    userDir.access_link = "";
+
+    await fileManager.createDir(userDir);
+    await fileService.saveFile(userDir);
 
     const token = generateAccessToken(createdUser.id, createdUser.login);
 

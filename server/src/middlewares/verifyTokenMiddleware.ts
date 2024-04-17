@@ -1,8 +1,8 @@
 import jwt from "jsonwebtoken";
 import { jwtDecode } from "jwt-decode";
 
-import config from "../jwtConfig";
-import { userProps } from "../user.types";
+import config from "../User/jwtConfig";
+import { userProps } from "../User/user.types";
 
 export const verifyTokenMiddleware = (token: string) => {
   try {
