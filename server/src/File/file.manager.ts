@@ -3,9 +3,7 @@ import { File } from "./file.entity";
 
 class FileManager {
   public async createDir(file: File) {
-    console.log("filePath");
     const filePath = process.env.FILES_PATH + `\\${file.user.id}\\${file.path}`;
-    console.log(filePath);
 
     return new Promise((resolve, reject) => {
       try {

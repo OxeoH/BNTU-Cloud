@@ -28,7 +28,16 @@ class FileService {
       where: { id: fileId },
     });
 
-    return candidate ?? null;
+    if (candidate) {
+      const childsList: File[] = await this.fileRepository.find({
+        where: { parent: candidate },
+      });
+      candidate.childs = childsList.length ? childsList : [];
+
+      return candidate;
+    }
+
+    return null;
   }
 
   public async createNewFile(file: CreateProps): Promise<File | null> {
@@ -46,9 +55,11 @@ class FileService {
   }
 
   public async saveFile(file: File): Promise<File | null> {
-    const newFile = this.fileRepository.create(file);
+    // const newFile = this.fileRepository.create(file);
+    // console.log("NewFile from savefile: ", newFile);
 
-    const createdFile = await this.fileRepository.save(newFile);
+    const createdFile = await this.fileRepository.save(file);
+    console.log("CreatedFile from savefile: ", createdFile);
     return createdFile;
   }
 

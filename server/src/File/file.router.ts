@@ -21,6 +21,8 @@ fileRouter.post(
     // if (!errors.isEmpty()) {
     //   return res.status(400).json({ message: "Incorrect request", errors });
     // }
+    console.log(req.body);
+
     await fileController.createNewDir(req, res);
   }
 );

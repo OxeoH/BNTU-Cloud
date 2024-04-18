@@ -72,6 +72,7 @@ class UserService {
     userDir.access_link = "";
 
     await fileManager.createDir(userDir);
+
     await fileService.saveFile(userDir);
 
     const token = generateAccessToken(createdUser.id, createdUser.login);

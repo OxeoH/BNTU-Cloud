@@ -26,27 +26,24 @@ class FileController {
       if (!candidate)
         return res.status(403).json({ message: "Error: User not found" });
 
-      let path = "";
-
       const parent = await fileService.getFileById(parentId);
 
       let file = new File();
 
-      if (!parent) {
-        file.name = name;
-        file.path = name;
-        file.user = candidate;
-        file.type = type;
+      file.name = name;
+      file.user = candidate;
+      file.type = type;
+      file.childs = [];
 
-        await fileManager.createDir(file);
-      } else {
-        file.name = name;
+      if (parent) {
         file.path = `${parent.path}\\${file.name}`;
-        file.user = candidate;
-        file.type = type;
-        await fileManager.createDir(file);
+        file.parent = parent;
+        console.log(parent);
+
         parent.childs.push(file);
       }
+
+      await fileManager.createDir(file);
 
       const newFile = fileService.saveFile(file);
 

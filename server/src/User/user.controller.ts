@@ -72,23 +72,22 @@ class UserController {
       // });
 
       const candidate = await userService.checkIsNewUser(registerParams.login);
-      console.log("4ina1");
+
       if (!candidate) {
         return res.status(400).json({
           message: `User with login ${registerParams.login} is already exists`,
         });
       }
-      console.log("4ina2");
+
       const hashPassword = bcrypt.hashSync(
         registerParams.password,
         this.hashSalt
       );
-      console.log("4ina3");
+
       const token = await userService.createNewUser({
         ...registerParams,
         password: hashPassword,
       });
-      console.log("4ina4");
 
       if (token) {
         return res.status(200).json({

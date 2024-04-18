@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   OneToMany,
+  JoinTable,
 } from "typeorm";
 import { User } from "../User/user.entity";
 import { FileType } from "./file.types";
@@ -34,6 +35,6 @@ export class File {
   @ManyToOne(() => File, (File) => File.id)
   parent: File;
 
-  @OneToMany(() => File, (file) => file.id)
+  @OneToMany(() => File, (File) => File.id)
   childs: File[];
 }
