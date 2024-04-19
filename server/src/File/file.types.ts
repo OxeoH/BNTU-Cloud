@@ -9,13 +9,18 @@ export type CreateProps = {
   user: User;
 };
 
-export type FileProps = {
+export interface FileProps {
   name: string;
   type: FileType;
   parentId: string;
-};
+}
 
 export enum FileType {
   DIR = "dir",
   TXT = "txt",
+}
+
+export interface FetchProps {
+  user: User;
+  parent: File;
 }

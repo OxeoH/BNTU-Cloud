@@ -2,7 +2,7 @@ import { Repository } from "typeorm";
 import AppDataSource from "../../data-source";
 import fs from "fs";
 import { File } from "./file.entity";
-import { CreateProps } from "./file.types";
+import { CreateProps, FetchProps } from "./file.types";
 import { User } from "../User/user.entity";
 import userService from "../User/user.service";
 
@@ -55,43 +55,24 @@ class FileService {
   }
 
   public async saveFile(file: File): Promise<File | null> {
-    // const newFile = this.fileRepository.create(file);
-    // console.log("NewFile from savefile: ", newFile);
-
     const createdFile = await this.fileRepository.save(file);
     console.log("CreatedFile from savefile: ", createdFile);
     return createdFile;
   }
 
-  // public async authorizeUser() {
-  //   try {
-  //   const user = await this.userRepository.findOne({
-  //     where: { login: authParams.login },
-  //   });
-  //   if (!user) {
-  //     return null;
-  //   }
-  //   const validPassword = bcrypt.compareSync(
-  //     authParams.password,
-  //     user.password
-  //   );
-  //   if (!validPassword) {
-  //     return null;
-  //   }
-  //   const token = generateAccessToken(user.id, user.login);
-  //   return {
-  //     token,
-  //     user: Object.keys(user)
-  //       .filter((key) => key !== "password")
-  //       .reduce((res, key) => {
-  //         res[key] = user[key];
-  //         return res;
-  //       }, {}),
-  //   };
-  //   } catch (e) {
-  //     return null;
-  //   }
-  // }
+  public async fetchFiles({
+    user,
+    parent,
+  }: FetchProps): Promise<File[] | null> {
+    const response = await this.fileRepository.find({
+      where: { root: false },
+      relations: ["parent"],
+    });
+
+    const files = response.filter((file: File) => file.parent.id === parent.id);
+
+    return files ?? null;
+  }
 }
 
 export default new FileService();

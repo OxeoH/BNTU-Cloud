@@ -7,6 +7,7 @@ import { verifyTokenMiddleware } from "../middlewares/verifyTokenMiddleware";
 import userService from "../User/user.service";
 import { FileProps } from "./file.types";
 import fileManager from "./file.manager";
+import { User } from "../User/user.entity";
 
 class FileController {
   constructor() {}
@@ -55,20 +56,40 @@ class FileController {
       console.log(e);
       res.status(400).json({ message: `Error: ${e}` });
     }
-    //   const { login, password }: AuthProps = req.body;
-    //   if (!password || !login) {
-    //     res
-    //       .status(400)
-    //       .json({ message: "Error: Login and password are requared" });
-    //   }
-    //   const userData = await userService.authorizeUser({
-    //     login,
-    //     password,
-    //   });
-    //   if (!userData || !userData.token.length) {
-    //     return res.status(404).json({ message: "User not found" });
-    //   }
-    //   res.status(200).json(userData);
+  }
+  public async fetchFiles(req: Request, res: Response) {
+    try {
+      const token = req.headers.authorization?.split(" ")[1];
+      const { parentId }: { parentId: string } = req.body;
+
+      const userData = verifyTokenMiddleware(token ?? "");
+
+      if (!userData)
+        return res.status(403).json({ message: "Error: Token was expired" });
+
+      const user = await userService.getUserById(userData.id);
+
+      if (!user)
+        return res.status(403).json({ message: "Error: User not found" });
+
+      const parent = await fileService.getFileById(parentId);
+
+      if (!parent)
+        return res.status(404).json({ message: "Error: Directory not found" });
+
+      const files = await fileService.fetchFiles({
+        user,
+        parent,
+      });
+
+      if (!files)
+        return res.status(404).json({ message: "Error: Files not found" });
+
+      return res.status(200).json(files);
+    } catch (e) {
+      console.log(e);
+      res.status(400).json({ message: `Error: ${e}` });
+    }
   }
 }
 

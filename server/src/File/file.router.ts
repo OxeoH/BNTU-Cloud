@@ -4,27 +4,11 @@ import fileController from "./file.controller";
 
 const fileRouter = Router();
 
-fileRouter.post(
-  "/",
-  // checkSchema({
-  //   email: { isEmail: true },
-  //   password: { isLength: { options: { min: 8 } } },
-  //   login: { isLength: { options: { min: 4 } } },
-  //   name: { notEmpty: true },
-  //   surname: { notEmpty: true },
-  //   patronymic: { notEmpty: true },
-  //   role: { notEmpty: true },
-  // }),
-  async (req: Request, res: Response) => {
-    // const errors = validationResult(req);
-
-    // if (!errors.isEmpty()) {
-    //   return res.status(400).json({ message: "Incorrect request", errors });
-    // }
-    console.log(req.body);
-
-    await fileController.createNewDir(req, res);
-  }
-);
+fileRouter.post("", async (req: Request, res: Response) => {
+  await fileController.createNewDir(req, res);
+});
+fileRouter.get("", async (req: Request, res: Response) => {
+  await fileController.fetchFiles(req, res);
+});
 
 export default fileRouter;

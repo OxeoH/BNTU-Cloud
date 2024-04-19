@@ -29,6 +29,9 @@ export class File {
   @Column({ default: "" })
   path: string;
 
+  @Column({ default: false })
+  root: boolean;
+
   @ManyToOne(() => User, (user) => user.id)
   user: User;
 

@@ -70,6 +70,7 @@ class UserService {
     userDir.type = FileType.DIR;
     userDir.childs = [];
     userDir.access_link = "";
+    userDir.root = true;
 
     await fileManager.createDir(userDir);
 
