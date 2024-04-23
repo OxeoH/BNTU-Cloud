@@ -10,7 +10,7 @@ const theme = createTheme({
     },
     secondary: {
       main: "#F5F6F9", // Button gray
-      contrastText: "##008a5e",
+      contrastText: "#008a5e",
     },
     error: {
       main: "#C2473B",

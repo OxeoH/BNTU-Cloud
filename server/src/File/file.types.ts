@@ -17,7 +17,11 @@ export interface FileProps {
 
 export enum FileType {
   DIR = "dir",
+  MP3 = "mp3",
   TXT = "txt",
+  ZIP = "zip",
+  IMG = "img",
+  MP4 = "mp4",
 }
 
 export interface FetchProps {
