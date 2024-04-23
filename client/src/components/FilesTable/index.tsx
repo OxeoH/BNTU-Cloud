@@ -1,93 +1,19 @@
 import * as React from "react";
-import { alpha } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import TableSortLabel from "@mui/material/TableSortLabel";
-import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
-import Checkbox from "@mui/material/Checkbox";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
-import DeleteIcon from "@mui/icons-material/Delete";
-import FilterListIcon from "@mui/icons-material/FilterList";
-import { visuallyHidden } from "@mui/utils";
 import { File, FileType } from "../../api/File/types";
-import { FolderOpen, Inventory } from "@mui/icons-material";
 import { Stack } from "@mui/material";
 import { getFileIcon } from "../../shared/getFileIcon";
-
-const rows: File[] = [
-  {
-    id: "1",
-    name: "File1",
-    type: FileType.DIR,
-    access_link: "link1",
-    size: 100,
-    path: "",
-    root: false,
-  },
-  {
-    id: "2",
-    name: "File2",
-    type: FileType.TXT,
-    access_link: "link2",
-    size: 200,
-    path: "",
-    root: false,
-  },
-  {
-    id: "3",
-    name: "File3",
-    type: FileType.IMG,
-    access_link: "link3",
-    size: 300,
-    path: "",
-    root: false,
-  },
-  {
-    id: "4",
-    name: "File4",
-    type: FileType.MP3,
-    access_link: "link4",
-    size: 400,
-    path: "",
-    root: false,
-  },
-  {
-    id: "5",
-    name: "File5",
-    type: FileType.MP4,
-    access_link: "link5",
-    size: 500,
-    path: "",
-    root: false,
-  },
-  {
-    id: "6",
-    name: "File6",
-    type: FileType.ZIP,
-    access_link: "link6",
-    size: 600,
-    path: "",
-    root: false,
-  },
-  {
-    id: "7",
-    name: "File7",
-    type: FileType.ANY,
-    access_link: "link7",
-    size: 700,
-    path: "",
-    root: false,
-  },
-];
+import EnhancedTableHead, { Order } from "./EnhancedTableHead";
+import EnhancedTableToolbar from "./EnhancedTableToolbar";
+import { rows } from "./mockRows";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -98,8 +24,6 @@ function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   }
   return 0;
 }
-
-type Order = "asc" | "desc";
 
 function getComparator<Key extends keyof any>(
   order: Order,
@@ -132,175 +56,6 @@ function stableSort<T>(
   return stabilizedThis.map((el) => el[0]);
 }
 
-interface HeadCell {
-  disablePadding: boolean;
-  id: keyof File;
-  label: string;
-  numeric: boolean;
-}
-
-const headCells: readonly HeadCell[] = [
-  {
-    id: "name",
-    numeric: false,
-    disablePadding: true,
-    label: "Название файла",
-  },
-  {
-    id: "type",
-    numeric: true,
-    disablePadding: false,
-    label: "Тип",
-  },
-  {
-    id: "size",
-    numeric: true,
-    disablePadding: false,
-    label: "Размер",
-  },
-];
-
-interface EnhancedTableProps {
-  numSelected: number;
-  onRequestSort: (
-    event: React.MouseEvent<unknown>,
-    property: keyof File
-  ) => void;
-  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  order: Order;
-  orderBy: string;
-  rowCount: number;
-}
-
-function EnhancedTableHead(props: EnhancedTableProps) {
-  const {
-    onSelectAllClick,
-    order,
-    orderBy,
-    numSelected,
-    rowCount,
-    onRequestSort,
-  } = props;
-  const createSortHandler =
-    (property: keyof File) => (event: React.MouseEvent<unknown>) => {
-      onRequestSort(event, property);
-    };
-
-  return (
-    <TableHead>
-      <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              "aria-label": "select all desserts",
-            }}
-          />
-        </TableCell>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.numeric ? "right" : "left"}
-            padding={headCell.disablePadding ? "none" : "normal"}
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : "asc"}
-              onClick={createSortHandler(headCell.id)}
-            >
-              <Typography
-                variant="h5"
-                component="h5"
-                color={(theme) => theme.palette.text.primary}
-              >
-                {headCell.label}
-              </Typography>
-              {orderBy === headCell.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === "desc" ? "sorted descending" : "sorted ascending"}
-                </Box>
-              ) : null}
-            </TableSortLabel>
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  );
-}
-
-interface EnhancedTableToolbarProps {
-  numSelected: number;
-}
-
-function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-  const { numSelected } = props;
-
-  return (
-    <Toolbar
-      sx={{
-        pl: { sm: 2 },
-        pr: { xs: 1, sm: 1 },
-        ...(numSelected > 0
-          ? {
-              bgcolor: (theme) =>
-                alpha(
-                  theme.palette.primary.main,
-                  theme.palette.action.activatedOpacity
-                ),
-            }
-          : { bgcolor: (theme) => theme.palette.primary.contrastText }),
-      }}
-    >
-      {numSelected > 0 ? (
-        <Stack
-          sx={{ flex: "1 1 100%", px: 14 }}
-          direction="row"
-          alignItems="center"
-        >
-          <Inventory sx={{ mr: 15 }} />
-          <Typography color="inherit" variant="h5" component="h5">
-            Selected: {numSelected}
-          </Typography>
-        </Stack>
-      ) : (
-        <Stack
-          sx={{ flex: "1 1 100%", px: 14 }}
-          direction="row"
-          alignItems="center"
-        >
-          <FolderOpen sx={{ mr: 15 }} color="primary" />
-          <Typography
-            variant="h5"
-            id="tableTitle"
-            component="h5"
-            color={(theme) => theme.palette.primary.main}
-          >
-            Текущая папка
-          </Typography>
-        </Stack>
-      )}
-      <Box sx={{ px: 14 }}>
-        {numSelected > 0 ? (
-          <Tooltip title="Delete">
-            <IconButton>
-              <DeleteIcon />
-            </IconButton>
-          </Tooltip>
-        ) : (
-          <Tooltip title="Filter list">
-            <IconButton>
-              <FilterListIcon color="primary" />
-            </IconButton>
-          </Tooltip>
-        )}
-      </Box>
-    </Toolbar>
-  );
-}
 export default function EnhancedTable() {
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof File>("size");
@@ -438,7 +193,7 @@ export default function EnhancedTable() {
                     </TableCell>
                     <TableCell align="right">
                       <Typography variant="subtitle1" component="h4">
-                        {row.type}
+                        {`.${row.type}`}
                       </Typography>
                     </TableCell>
                     <TableCell align="right">
@@ -462,7 +217,7 @@ export default function EnhancedTable() {
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[10, 25, 50, 100]}
+          rowsPerPageOptions={[10, 25, 50]}
           component="div"
           count={rows.length}
           rowsPerPage={rowsPerPage}

@@ -7,15 +7,28 @@ import { KeyboardBackspace } from "@mui/icons-material";
 export default function StoragePage() {
   return (
     <Stack direction="column" width="100%">
-      <Typography
-        variant="h2"
-        component="h1"
-        textAlign="center"
+      <Stack
+        direction="column"
+        width="60%"
+        p={12}
+        borderRadius={20}
+        boxShadow={3}
+        justifyContent="center"
+        alignSelf="center"
         my={20}
-        color={(theme) => theme.palette.text.primary}
       >
-        Мой Диск
-      </Typography>
+        <Stack width="96%" alignSelf="center">
+          <ProgressBar size={1000} value={100} />
+        </Stack>
+        <Typography
+          variant="subtitle1"
+          component="h4"
+          textAlign="center"
+          mt={6}
+        >
+          Использовано 2ГБ из 10ГБ
+        </Typography>
+      </Stack>
       {/* DIR */}
       <Stack
         direction="row"
@@ -54,23 +67,6 @@ export default function StoragePage() {
       </Stack>
       <Stack width="100%" alignItems="center" mb={20}>
         <FilesTable />
-      </Stack>
-      <Stack
-        direction="column"
-        width="60%"
-        p={12}
-        borderRadius={20}
-        boxShadow={3}
-        justifyContent="center"
-        alignSelf="center"
-        mb={20}
-      >
-        <Stack width="96%" alignSelf="center">
-          <ProgressBar size={1000} value={100} />
-        </Stack>
-        <Typography variant="h4" component="h4" textAlign="center" mt={6}>
-          Использовано 2ГБ из 10ГБ
-        </Typography>
       </Stack>
     </Stack>
   );
