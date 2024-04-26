@@ -13,7 +13,10 @@ import { Stack } from "@mui/material";
 import { getFileIcon } from "../../shared/getFileIcon";
 import EnhancedTableHead, { Order } from "./EnhancedTableHead";
 import EnhancedTableToolbar from "./EnhancedTableToolbar";
-import { rows } from "./mockRows";
+//import { rows } from "./mockRows";
+import { useAppDispatch, useAppSelector } from "../../shared/hooks";
+import { setCurrentDir, setFiles } from "../../store/slices/fileSlice";
+import { getFiles } from "../../api/File";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -62,6 +65,21 @@ export default function EnhancedTable() {
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+  const dispatch = useAppDispatch();
+  const currentDir = useAppSelector((state) => state.file.currentDir);
+  const currentUser = useAppSelector((state) => state.user.currentUser);
+  const rows = useAppSelector((state) => state.file.files);
+
+  React.useEffect(() => {
+    async function getCurrentFiles() {
+      dispatch(
+        setCurrentDir(currentDir.length ? currentDir : currentUser.files[0].id)
+      );
+      dispatch(setFiles(await getFiles(currentDir)));
+    }
+    getCurrentFiles();
+  }, []);
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -123,13 +141,18 @@ export default function EnhancedTable() {
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage
       ),
-    [order, orderBy, page, rowsPerPage]
+    [order, orderBy, page, rows, rowsPerPage]
   );
 
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", overflow: "hidden", mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar
+          numSelected={selected.length}
+          currentDir={
+            rows.find((row) => row.id === currentDir) ?? currentUser.files[0]
+          }
+        />
         <TableContainer sx={{ maxHeight: "50vh" }}>
           <Table
             sx={{ minWidth: 750, p: 2 }}

@@ -1,18 +1,27 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import { File } from "../../api/File/types";
 
-export interface CounterState {
-  value: number;
+export interface FilesState {
+  files: File[];
+  currentDir: string;
 }
 
-const initialState: CounterState = {
-  value: 0,
+const initialState: FilesState = {
+  files: [],
+  currentDir: "",
 };
 
-export const counterSlice = createSlice({
+export const fileSlice = createSlice({
   name: "file",
   initialState,
   reducers: {
+    setFiles: (state, action: PayloadAction<File[]>) => {
+      state.files = action.payload;
+    },
+    setCurrentDir: (state, action: PayloadAction<string>) => {
+      state.currentDir = action.payload;
+    },
     // increment: (state) => {
     //   state.value += 1;
     // },
@@ -25,6 +34,6 @@ export const counterSlice = createSlice({
   },
 });
 
-//export const { increment, decrement, incrementByAmount } = counterSlice.actions;
+export const { setFiles, setCurrentDir } = fileSlice.actions;
 
-export default counterSlice.reducer;
+export default fileSlice.reducer;

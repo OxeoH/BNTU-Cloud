@@ -7,7 +7,6 @@ import { userProps } from "../User/user.types";
 export const verifyTokenMiddleware = (token: string) => {
   try {
     if (!token) return null;
-
     const verifiedTokenData = jwt.verify(token, config.secret);
 
     if (typeof verifiedTokenData === "string") return null;

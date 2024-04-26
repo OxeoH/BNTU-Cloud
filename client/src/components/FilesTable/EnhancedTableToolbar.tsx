@@ -8,13 +8,15 @@ import {
   Typography,
   alpha,
 } from "@mui/material";
+import { File } from "../../api/File/types";
 
 interface EnhancedTableToolbarProps {
   numSelected: number;
+  currentDir: File;
 }
 
 export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-  const { numSelected } = props;
+  const { numSelected, currentDir } = props;
 
   return (
     <Toolbar
@@ -56,7 +58,7 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             component="h5"
             color={(theme) => theme.palette.primary.main}
           >
-            Текущая папка
+            {currentDir.root ? "Мой диск" : currentDir.name}
           </Typography>
         </Stack>
       )}

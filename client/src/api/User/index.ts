@@ -35,7 +35,7 @@ export const verifyAuth = async () => {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
 
-    localStorage.setItem("token", `${data}`);
+    localStorage.setItem("token", `${data.token}`);
 
     return data.user;
   } catch (e: any) {

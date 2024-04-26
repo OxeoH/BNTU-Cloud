@@ -22,3 +22,9 @@ export enum FileType {
   MP4 = "mp4",
   ANY = "any",
 }
+
+export interface CreateFileProps {
+  name: string;
+  type: FileType;
+  parentId: string;
+}
