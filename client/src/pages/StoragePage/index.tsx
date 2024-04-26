@@ -3,8 +3,12 @@ import { ProgressBar } from "../../widgets/ProgressBar";
 import FilesTable from "../../components/FilesTable";
 import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
 import { KeyboardBackspace } from "@mui/icons-material";
+import { useAppSelector } from "../../shared/hooks";
 
 export default function StoragePage() {
+  const currentUser = useAppSelector((state) => state.user.currentUser);
+  const currentDir = useAppSelector((state) => state.file.currentDir);
+  const isRoot = currentUser.files[0].id === currentDir;
   return (
     <Stack direction="column" width="100%">
       <Stack
@@ -18,7 +22,10 @@ export default function StoragePage() {
         my={20}
       >
         <Stack width="96%" alignSelf="center">
-          <ProgressBar size={1000} value={100} />
+          <ProgressBar
+            size={currentUser.diskSpace / 1024 ** 3}
+            value={currentUser.usedSpace / 1024 ** 3}
+          />
         </Stack>
         <Typography
           variant="subtitle1"
@@ -26,20 +33,25 @@ export default function StoragePage() {
           textAlign="center"
           mt={6}
         >
-          Использовано 2ГБ из 10ГБ
+          Использовано {currentUser.usedSpace / 1024 ** 3}ГБ из{" "}
+          {currentUser.diskSpace / 1024 ** 3}ГБ
         </Typography>
       </Stack>
       {/* DIR */}
       <Stack
         direction="row"
-        justifyContent="space-between"
+        justifyContent={`${isRoot ? "right" : "space-between"}`}
         alignItems="center"
         mb={20}
       >
         <Button
           variant="contained"
           startIcon={<KeyboardBackspace />}
-          sx={{ borderRadius: 20, px: 20 }}
+          sx={{
+            borderRadius: 20,
+            px: 20,
+            display: `${isRoot ? "none" : ""}`,
+          }}
           color="secondary"
         >
           <Typography variant="h4" textAlign="center">

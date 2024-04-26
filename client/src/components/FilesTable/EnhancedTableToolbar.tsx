@@ -42,7 +42,12 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         >
           <Inventory sx={{ mr: 15 }} />
           <Typography color="inherit" variant="h5" component="h5">
-            Selected: {numSelected}
+            Выбрано: {numSelected}
+            {/* {Array.from("234").includes(
+              Array.from(numSelected.toString()).reverse()[0]
+            )
+              ? "объекта"
+              : "объектов"} */}
           </Typography>
         </Stack>
       ) : (
