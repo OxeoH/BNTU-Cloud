@@ -1,16 +1,28 @@
 import { Button, Stack, Typography } from "@mui/material";
 import { ProgressBar } from "../../widgets/ProgressBar";
 import FilesTable from "../../components/FilesTable";
-import CreateNewFolderIcon from "@mui/icons-material/CreateNewFolder";
-import { KeyboardBackspace } from "@mui/icons-material";
+import { KeyboardBackspace, CreateNewFolder } from "@mui/icons-material";
 import { useAppSelector } from "../../shared/hooks";
+import { convertFromBytes } from "../../shared/convertFromBytes";
+import { useRef, useState } from "react";
+import CreateFilePopover from "../../components/CreateFilePopover";
 
 export default function StoragePage() {
+  const [openCreatePopover, setOpenCreatePopover] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const anchorRef = useRef<HTMLDivElement>(null);
+
   const currentUser = useAppSelector((state) => state.user.currentUser);
   const currentDir = useAppSelector((state) => state.file.currentDir);
   const isRoot = currentUser.files[0].id === currentDir;
+
   return (
-    <Stack direction="column" width="100%">
+    <Stack direction="column" width="100%" ref={anchorRef}>
+      <CreateFilePopover
+        open={openCreatePopover}
+        setOpen={setOpenCreatePopover}
+        anchorEl={anchorEl || (anchorRef.current as HTMLDivElement)}
+      />
       <Stack
         direction="column"
         width="60%"
@@ -23,8 +35,8 @@ export default function StoragePage() {
       >
         <Stack width="96%" alignSelf="center">
           <ProgressBar
-            size={currentUser.diskSpace / 1024 ** 3}
-            value={currentUser.usedSpace / 1024 ** 3}
+            size={convertFromBytes(currentUser.diskSpace)}
+            value={convertFromBytes(currentUser.usedSpace)}
           />
         </Stack>
         <Typography
@@ -33,8 +45,8 @@ export default function StoragePage() {
           textAlign="center"
           mt={6}
         >
-          Использовано {currentUser.usedSpace / 1024 ** 3}ГБ из{" "}
-          {currentUser.diskSpace / 1024 ** 3}ГБ
+          Использовано {convertFromBytes(currentUser.usedSpace)}ГБ из{" "}
+          {convertFromBytes(currentUser.diskSpace)}ГБ
         </Typography>
       </Stack>
       {/* DIR */}
@@ -67,9 +79,10 @@ export default function StoragePage() {
         >
           <Button
             variant="contained"
-            startIcon={<CreateNewFolderIcon />}
+            startIcon={<CreateNewFolder />}
             sx={{ borderRadius: 20, px: 20 }}
             color="secondary"
+            onClick={() => setOpenCreatePopover(!openCreatePopover)}
           >
             <Typography variant="h4" textAlign="center">
               Создать файл / папку
