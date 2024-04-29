@@ -14,15 +14,6 @@ class FileService {
     this.fileRepository = AppDataSource.getRepository<File>(File);
   }
 
-  //   public async checkIsNewUser(login: string) {
-  //     const candidate = await this.fileRepository.find({ where: { login } });
-
-  //     if (candidate.length === 0) {
-  //       return true;
-  //     }
-  //     return false;
-  //   }
-
   public async getFileById(fileId: string) {
     const candidate = await this.fileRepository.findOne({
       where: { id: fileId },
@@ -41,23 +32,25 @@ class FileService {
   }
 
   public async createNewFile(file: CreateProps): Promise<File | null> {
-    const { name, type, parent, user } = file;
+    const { name, type, parent, user, path } = file;
 
     const newFile = this.fileRepository.create();
     newFile.name = name;
     newFile.type = type;
     newFile.user = user;
+    newFile.path = path;
     newFile.parent = parent;
     newFile.childs = [];
 
     const createdFile = await this.fileRepository.save(newFile);
-    return createdFile;
-  }
+    const data = {
+      ...createdFile,
+      user: { ...user, files: [] },
+      parent: { ...parent, childs: [], user: { ...user, files: [] } },
+    };
+    console.log("Created file from service: ", data);
 
-  public async saveFile(file: File): Promise<File | null> {
-    const createdFile = await this.fileRepository.save(file);
-    console.log("CreatedFile from savefile: ", createdFile);
-    return createdFile;
+    return data;
   }
 
   public async fetchFiles({
@@ -69,7 +62,16 @@ class FileService {
       relations: ["parent"],
     });
 
-    const files = response.filter((file: File) => file.parent.id === parent.id);
+    const files = response
+      .map(
+        (file) =>
+          (file = {
+            ...file,
+            user: { ...user, files: [] },
+            parent: { ...parent, childs: [] },
+          })
+      )
+      .filter((file: File) => file.parent.id === parent.id);
 
     return files ?? null;
   }

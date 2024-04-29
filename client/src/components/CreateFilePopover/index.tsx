@@ -14,6 +14,10 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { FileType } from "../../api/File/types";
+import { useAppSelector } from "../../shared/hooks";
+import { createFile } from "../../api/File";
+import { useDispatch } from "react-redux";
+import { addFiles } from "../../store/slices/fileSlice";
 
 export interface PopoverProps {
   open: boolean;
@@ -22,11 +26,31 @@ export interface PopoverProps {
 }
 
 const CreateFilePopover = (props: PopoverProps) => {
-  const [selectedType, setSelectedType] = useState<FileType>();
+  const [selectedType, setSelectedType] = useState<number>(0);
   const { open, setOpen, anchorEl } = props;
   const options = Object.entries(FileType);
+  const currentDir = useAppSelector((state) => state.file.currentDir);
+  const dispatch = useDispatch();
 
-  const handleSubmit = async () => {};
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const data = new FormData(e.currentTarget);
+      const createData = {
+        name: `${data.get("name")}`,
+        type: Object.entries(FileType)[selectedType][1],
+        parentId: currentDir,
+      };
+
+      const newFile = await createFile(createData);
+
+      dispatch(addFiles([newFile]));
+      setOpen(false);
+    } catch (e: any) {
+      //TODO: Error type
+      alert(e.message);
+    }
+  };
   return (
     <Popover
       open={open}
@@ -92,12 +116,16 @@ const CreateFilePopover = (props: PopoverProps) => {
                     id="demo-simple-select-helper"
                     value={selectedType}
                     label="Тип файла"
-                    onChange={(e) =>
-                      setSelectedType(e.target.value as FileType)
-                    }
+                    onChange={(e) => setSelectedType(+e.target.value)}
                   >
-                    {options.map((entry) => (
-                      <MenuItem value={entry[0]}>{entry[1]}</MenuItem>
+                    {options.map((entry, index) => (
+                      <MenuItem
+                        key={entry[0]}
+                        value={index}
+                        selected={index === selectedType}
+                      >
+                        {entry[1]}
+                      </MenuItem>
                     ))}
                   </Select>
                 </FormControl>

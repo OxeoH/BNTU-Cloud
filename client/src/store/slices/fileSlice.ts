@@ -22,6 +22,14 @@ export const fileSlice = createSlice({
     setCurrentDir: (state, action: PayloadAction<string>) => {
       state.currentDir = action.payload;
     },
+    addFiles: (state, action: PayloadAction<File[]>) => {
+      state.files = [...state.files, ...action.payload];
+    },
+    removeFiles: (state, action: PayloadAction<File[]>) => {
+      state.files = state.files.filter(
+        (file) => !action.payload.includes(file)
+      );
+    },
     // increment: (state) => {
     //   state.value += 1;
     // },
@@ -34,6 +42,7 @@ export const fileSlice = createSlice({
   },
 });
 
-export const { setFiles, setCurrentDir } = fileSlice.actions;
+export const { setFiles, setCurrentDir, addFiles, removeFiles } =
+  fileSlice.actions;
 
 export default fileSlice.reducer;

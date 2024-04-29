@@ -39,14 +39,13 @@ class FileController {
       if (parent) {
         file.path = `${parent.path}\\${file.name}`;
         file.parent = parent;
-        console.log(parent);
 
         parent.childs.push(file);
       }
 
       await fileManager.createDir(file);
 
-      const newFile = fileService.saveFile(file);
+      const newFile = await fileService.createNewFile(file);
 
       if (!newFile)
         return res.status(400).json({ message: "Error: File wasn't created" });

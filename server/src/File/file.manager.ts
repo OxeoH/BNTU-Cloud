@@ -9,9 +9,9 @@ class FileManager {
       try {
         if (!fs.existsSync(filePath)) {
           fs.mkdirSync(filePath);
-          resolve({ message: "Directory created successfully" });
+          resolve({ message: "Error: Directory created successfully" });
         } else {
-          reject({ message: "Directory already exists" });
+          reject({ message: "Error: Directory already exists" });
         }
       } catch (e) {
         return reject({ error: "Unknown FileManager error" });

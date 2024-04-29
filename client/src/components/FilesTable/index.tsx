@@ -176,11 +176,11 @@ export default function EnhancedTable() {
                 return (
                   <TableRow
                     hover
+                    key={index}
                     role="checkbox"
                     aria-checked={isItemSelected}
                     onClick={(event) => handleClick(event, row.id)}
                     tabIndex={-1}
-                    key={row.id}
                     selected={isItemSelected}
                     sx={{ cursor: "pointer" }}
                   >
