@@ -2,13 +2,10 @@ import { $host } from "../index";
 import { CreateFileProps, File } from "./types";
 
 export const getFiles = async (parentId: string) => {
-  const { data } = await $host.get<File[]>(
-    `api/files${parentId ? `?parent=${parentId}` : ""}`,
-    {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      params: { parentId },
-    }
-  );
+  const { data } = await $host.get<File[]>(`api/files`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    params: { parentId },
+  });
 
   return data;
 };

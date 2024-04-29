@@ -2,19 +2,21 @@ import { Button, Stack, Typography } from "@mui/material";
 import { ProgressBar } from "../../widgets/ProgressBar";
 import FilesTable from "../../components/FilesTable";
 import { KeyboardBackspace, CreateNewFolder } from "@mui/icons-material";
-import { useAppSelector } from "../../shared/hooks";
+import { useAppDispatch, useAppSelector } from "../../shared/hooks";
 import { convertFromBytes } from "../../shared/convertFromBytes";
 import { useRef, useState } from "react";
 import CreateFilePopover from "../../components/CreateFilePopover";
+import { setCurrentDir } from "../../store/slices/fileSlice";
 
 export default function StoragePage() {
   const [openCreatePopover, setOpenCreatePopover] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const anchorRef = useRef<HTMLDivElement>(null);
+  const dispatch = useAppDispatch();
 
   const currentUser = useAppSelector((state) => state.user.currentUser);
   const currentDir = useAppSelector((state) => state.file.currentDir);
-  const isRoot = currentUser.files[0].id === currentDir;
+  const isRoot = currentUser.files[0].id === currentDir?.id;
 
   return (
     <Stack direction="column" width="100%" ref={anchorRef}>
@@ -49,7 +51,6 @@ export default function StoragePage() {
           {convertFromBytes(currentUser.diskSpace)}ГБ
         </Typography>
       </Stack>
-      {/* DIR */}
       <Stack
         direction="row"
         justifyContent={`${isRoot ? "right" : "space-between"}`}
@@ -65,6 +66,9 @@ export default function StoragePage() {
             display: `${isRoot ? "none" : ""}`,
           }}
           color="secondary"
+          onClick={() =>
+            dispatch(setCurrentDir(currentDir?.parent ?? currentUser.files[0]))
+          }
         >
           <Typography variant="h4" textAlign="center">
             Назад

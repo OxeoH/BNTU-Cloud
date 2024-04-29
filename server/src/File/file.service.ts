@@ -4,7 +4,6 @@ import fs from "fs";
 import { File } from "./file.entity";
 import { CreateProps, FetchProps } from "./file.types";
 import { User } from "../User/user.entity";
-import userService from "../User/user.service";
 
 class FileService {
   fileRepository: Repository<File>;
@@ -58,7 +57,7 @@ class FileService {
     parent,
   }: FetchProps): Promise<File[] | null> {
     const response = await this.fileRepository.find({
-      where: { root: false },
+      where: { root: false, user },
       relations: ["parent"],
     });
 
@@ -67,11 +66,13 @@ class FileService {
         (file) =>
           (file = {
             ...file,
-            user: { ...user, files: [] },
-            parent: { ...parent, childs: [] },
+            user: { ...file.user, files: [] },
+            parent: { ...file.parent, childs: [] },
           })
       )
       .filter((file: File) => file.parent.id === parent.id);
+
+    console.log("Files ffffffffffffff: ", files);
 
     return files ?? null;
   }

@@ -30,6 +30,7 @@ const CreateFilePopover = (props: PopoverProps) => {
   const { open, setOpen, anchorEl } = props;
   const options = Object.entries(FileType);
   const currentDir = useAppSelector((state) => state.file.currentDir);
+  const currentUser = useAppSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -37,9 +38,11 @@ const CreateFilePopover = (props: PopoverProps) => {
     try {
       const data = new FormData(e.currentTarget);
       const createData = {
-        name: `${data.get("name")}`,
+        name: `${data.get("name")}.${
+          Object.entries(FileType)[selectedType][1]
+        }`,
         type: Object.entries(FileType)[selectedType][1],
-        parentId: currentDir,
+        parentId: currentDir?.id ?? currentUser.files[0].id,
       };
 
       const newFile = await createFile(createData);

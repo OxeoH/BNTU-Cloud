@@ -4,12 +4,14 @@ import { File } from "../../api/File/types";
 
 export interface FilesState {
   files: File[];
-  currentDir: string;
+  currentDir: File | null;
+  rootDir: File | null;
 }
 
 const initialState: FilesState = {
   files: [],
-  currentDir: "",
+  currentDir: null,
+  rootDir: null,
 };
 
 export const fileSlice = createSlice({
@@ -19,8 +21,11 @@ export const fileSlice = createSlice({
     setFiles: (state, action: PayloadAction<File[]>) => {
       state.files = action.payload;
     },
-    setCurrentDir: (state, action: PayloadAction<string>) => {
+    setCurrentDir: (state, action: PayloadAction<File>) => {
       state.currentDir = action.payload;
+    },
+    setRootDir: (state, action: PayloadAction<File>) => {
+      state.rootDir = action.payload;
     },
     addFiles: (state, action: PayloadAction<File[]>) => {
       state.files = [...state.files, ...action.payload];
@@ -42,7 +47,7 @@ export const fileSlice = createSlice({
   },
 });
 
-export const { setFiles, setCurrentDir, addFiles, removeFiles } =
+export const { setFiles, setCurrentDir, setRootDir, addFiles, removeFiles } =
   fileSlice.actions;
 
 export default fileSlice.reducer;

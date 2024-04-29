@@ -9,7 +9,7 @@ function App() {
   return (
     <div className="main">
       <Navbar />
-      <Container maxWidth="xl" sx={{ pt: "1rem" }}>
+      <Container maxWidth="xl" sx={{ py: "1rem", px: "5rem" }}>
         <Routes>
           {defaultRoutes.map(({ path, Component }) => (
             <Route key={`${Component}`} path={path} element={<Component />} />

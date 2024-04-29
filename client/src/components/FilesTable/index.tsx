@@ -13,10 +13,10 @@ import { Stack } from "@mui/material";
 import { getFileIcon } from "../../shared/getFileIcon";
 import EnhancedTableHead, { Order } from "./EnhancedTableHead";
 import EnhancedTableToolbar from "./EnhancedTableToolbar";
-//import { rows } from "./mockRows";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
 import { setCurrentDir, setFiles } from "../../store/slices/fileSlice";
 import { getFiles } from "../../api/File";
+import { User } from "../../api/User/types";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -32,8 +32,8 @@ function getComparator<Key extends keyof any>(
   order: Order,
   orderBy: Key
 ): (
-  a: { [key in Key]: number | string | boolean | FileType },
-  b: { [key in Key]: number | string | boolean | FileType }
+  a: { [key in Key]: number | string | boolean | FileType | User | File },
+  b: { [key in Key]: number | string | boolean | FileType | User | File }
 ) => number {
   return order === "desc"
     ? (a, b) => descendingComparator(a, b, orderBy)
@@ -73,13 +73,16 @@ export default function EnhancedTable() {
 
   React.useEffect(() => {
     async function getCurrentFiles() {
-      dispatch(
-        setCurrentDir(currentDir.length ? currentDir : currentUser.files[0].id)
-      );
-      dispatch(setFiles(await getFiles(currentDir)));
+      try {
+        dispatch(
+          setFiles(await getFiles(currentDir?.id ?? currentUser.files[0].id))
+        );
+      } catch (e: any) {
+        console.log(e);
+      }
     }
-    getCurrentFiles();
-  }, []);
+    if (currentUser) getCurrentFiles();
+  }, [currentDir]);
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -99,7 +102,7 @@ export default function EnhancedTable() {
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
+  const handleClick = (event: React.MouseEvent, id: string) => {
     const selectedIndex = selected.indexOf(id);
     let newSelected: readonly string[] = [];
 
@@ -116,6 +119,10 @@ export default function EnhancedTable() {
       );
     }
     setSelected(newSelected);
+  };
+
+  const handleDoubleClick = (event: React.MouseEvent, row: File) => {
+    dispatch(setCurrentDir(row));
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -150,7 +157,8 @@ export default function EnhancedTable() {
         <EnhancedTableToolbar
           numSelected={selected.length}
           currentDir={
-            rows.find((row) => row.id === currentDir) ?? currentUser.files[0]
+            rows.find((row) => row.id === currentDir?.id) ??
+            currentUser.files[0]
           }
         />
         <TableContainer sx={{ maxHeight: "50vh" }}>
@@ -180,6 +188,7 @@ export default function EnhancedTable() {
                     role="checkbox"
                     aria-checked={isItemSelected}
                     onClick={(event) => handleClick(event, row.id)}
+                    onDoubleClick={(event) => handleDoubleClick(event, row)}
                     tabIndex={-1}
                     selected={isItemSelected}
                     sx={{ cursor: "pointer" }}

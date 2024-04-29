@@ -8,8 +8,8 @@ export type File = {
   size: number;
   path: string;
   root: boolean;
-  // user: User
-  // parent: File;
+  user: User;
+  parent: File;
   // childs: File[];
 };
 
