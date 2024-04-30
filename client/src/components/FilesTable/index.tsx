@@ -74,6 +74,11 @@ export default function EnhancedTable() {
   const currentDir = useAppSelector((state) => state.file.currentDir);
   const currentUser = useAppSelector((state) => state.user.currentUser);
   const rows = useAppSelector((state) => state.file.files);
+  const rootDir = useAppSelector((state) => state.file.rootDir);
+
+  React.useEffect(() => {
+    dispatch(setCurrentDir(rootDir ?? currentUser.files[0]));
+  }, []);
 
   React.useEffect(() => {
     async function getCurrentFiles() {
@@ -160,10 +165,7 @@ export default function EnhancedTable() {
       <Paper sx={{ width: "100%", overflow: "hidden", mb: 2 }}>
         <EnhancedTableToolbar
           numSelected={selected.length}
-          currentDir={
-            rows.find((row) => row.id === currentDir?.id) ??
-            currentUser.files[0]
-          }
+          currentDir={currentDir ?? currentUser.files[0]}
         />
         <TableContainer sx={{ maxHeight: "50vh" }}>
           <Table
@@ -223,7 +225,7 @@ export default function EnhancedTable() {
                           component="h4"
                           sx={{ ml: 10 }}
                         >
-                          {row.name}
+                          {row.name.split(`.${row.type}`)[0]}
                         </Typography>
                       </Stack>
                     </TableCell>

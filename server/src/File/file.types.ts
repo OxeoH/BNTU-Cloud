@@ -33,6 +33,7 @@ export enum FileType {
   JPEG = "jpeg",
   XLSX = "xlsx",
   PPTX = "pptx",
+  EXE = "exe",
 }
 
 export interface FetchProps {

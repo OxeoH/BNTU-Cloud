@@ -6,22 +6,43 @@ import {
   InsertDriveFile,
   MusicNote,
   VideoFile,
+  Album,
+  Microsoft,
 } from "@mui/icons-material";
+import { FileType } from "../api/File/types";
 
-export const getFileIcon = (type: string) => {
+export const getFileIcon = (type: FileType) => {
   switch (type) {
-    case "dir":
+    case FileType.DIR:
       return <Folder />;
-    case "mp3":
+    case FileType.MP3:
       return <MusicNote />;
-    case "txt":
+    case FileType.TXT:
       return <TextSnippet />;
-    case "zip":
+    case FileType.ZIP:
       return <FolderZip />;
-    case "img":
+    case FileType.RAR:
+      return <FolderZip />;
+    case FileType.PNG:
       return <Image />;
-    case "mp4":
+    case FileType.JPEG:
+      return <Image />;
+    case FileType.MP4:
       return <VideoFile />;
+    case FileType.IMG:
+      return <Album />;
+    case FileType.JSON:
+      return <InsertDriveFile />;
+    case FileType.DOCX:
+      return <Microsoft />;
+    case FileType.SLN:
+      return <InsertDriveFile />;
+    case FileType.XLSX:
+      return <Microsoft />;
+    case FileType.PPTX:
+      return <Microsoft />;
+    case FileType.EXE:
+      return <InsertDriveFile />;
     default:
       return <InsertDriveFile />;
   }

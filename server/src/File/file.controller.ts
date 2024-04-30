@@ -93,6 +93,7 @@ class FileController {
   public async uploadFile(req: Request, res: Response) {
     try {
       const uploadedFile = req.files?.file as fileUpload.UploadedFile;
+      console.log(uploadedFile);
 
       if (!uploadedFile)
         return res.status(400).json({ message: "Error: File not found" });

@@ -1,12 +1,29 @@
-import { Button, Stack, Typography } from "@mui/material";
+import { Button, Stack, Typography, styled } from "@mui/material";
 import { ProgressBar } from "../../widgets/ProgressBar";
 import FilesTable from "../../components/FilesTable";
-import { KeyboardBackspace, CreateNewFolder } from "@mui/icons-material";
+import {
+  KeyboardBackspace,
+  CreateNewFolder,
+  CloudUpload,
+} from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
 import { convertFromBytes } from "../../shared/convertFromBytes";
-import { useRef, useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import CreateFilePopover from "../../components/CreateFilePopover";
 import { setCurrentDir } from "../../store/slices/fileSlice";
+import { uploadFile } from "../../api/File";
+
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});
 
 export default function StoragePage() {
   const [openCreatePopover, setOpenCreatePopover] = useState(false);
@@ -17,6 +34,14 @@ export default function StoragePage() {
   const currentUser = useAppSelector((state) => state.user.currentUser);
   const currentDir = useAppSelector((state) => state.file.currentDir);
   const isRoot = currentUser.files[0].id === currentDir?.id;
+
+  const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    try {
+      Array.from(e.target.files ?? []).forEach(async (file) => {
+        await uploadFile(file, currentDir?.id ?? "");
+      });
+    } catch (e) {}
+  };
 
   return (
     <Stack direction="column" width="100%">
@@ -81,6 +106,24 @@ export default function StoragePage() {
           alignItems="center"
           maxWidth="40%"
         >
+          <Button
+            component="label"
+            role={undefined}
+            variant="contained"
+            tabIndex={-1}
+            sx={{ borderRadius: 20, px: 20, mr: 12 }}
+            color="secondary"
+            startIcon={<CloudUpload />}
+          >
+            <Typography variant="h4" textAlign="center">
+              Загрузить файл / папку
+            </Typography>
+            <VisuallyHiddenInput
+              type="file"
+              onChange={(e) => handleUpload(e)}
+              multiple
+            />
+          </Button>
           <Button
             variant="contained"
             startIcon={<CreateNewFolder />}
