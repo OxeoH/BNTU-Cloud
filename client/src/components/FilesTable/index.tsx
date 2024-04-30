@@ -32,8 +32,12 @@ function getComparator<Key extends keyof any>(
   order: Order,
   orderBy: Key
 ): (
-  a: { [key in Key]: number | string | boolean | FileType | User | File },
-  b: { [key in Key]: number | string | boolean | FileType | User | File }
+  a: {
+    [key in Key]: number | string | boolean | FileType | User | File | bigint;
+  },
+  b: {
+    [key in Key]: number | string | boolean | FileType | User | File | bigint;
+  }
 ) => number {
   return order === "desc"
     ? (a, b) => descendingComparator(a, b, orderBy)
@@ -122,7 +126,7 @@ export default function EnhancedTable() {
   };
 
   const handleDoubleClick = (event: React.MouseEvent, row: File) => {
-    dispatch(setCurrentDir(row));
+    if (row.type === FileType.DIR) dispatch(setCurrentDir(row));
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -230,7 +234,7 @@ export default function EnhancedTable() {
                     </TableCell>
                     <TableCell align="right">
                       <Typography variant="subtitle1" component="h4">
-                        {row.size}
+                        {row.size.toString()}
                       </Typography>
                     </TableCell>
                   </TableRow>

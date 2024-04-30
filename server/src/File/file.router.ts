@@ -11,7 +11,7 @@ fileRouter.get("", async (req: Request, res: Response) => {
   await fileController.fetchFiles(req, res);
 });
 fileRouter.post("/upload", async (req: Request, res: Response) => {
-  return res.status(200).json(req.body);
+  await fileController.uploadFile(req, res);
 });
 
 export default fileRouter;

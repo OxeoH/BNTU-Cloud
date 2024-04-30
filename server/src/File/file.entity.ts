@@ -4,7 +4,6 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   OneToMany,
-  JoinTable,
 } from "typeorm";
 import { User } from "../User/user.entity";
 import { FileType } from "./file.types";
@@ -23,8 +22,8 @@ export class File {
   @Column({ default: "" })
   access_link: string;
 
-  @Column({ default: 0 })
-  size: number;
+  @Column("bigint", { default: "0" })
+  size: bigint;
 
   @Column({ default: "" })
   path: string;

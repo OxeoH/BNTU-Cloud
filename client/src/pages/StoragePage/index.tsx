@@ -19,7 +19,7 @@ export default function StoragePage() {
   const isRoot = currentUser.files[0].id === currentDir?.id;
 
   return (
-    <Stack direction="column" width="100%" ref={anchorRef}>
+    <Stack direction="column" width="100%">
       <CreateFilePopover
         open={openCreatePopover}
         setOpen={setOpenCreatePopover}
@@ -94,7 +94,7 @@ export default function StoragePage() {
           </Button>
         </Stack>
       </Stack>
-      <Stack width="100%" alignItems="center" mb={20}>
+      <Stack width="100%" alignItems="center" mb={20} ref={anchorRef}>
         <FilesTable />
       </Stack>
     </Stack>

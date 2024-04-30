@@ -5,7 +5,7 @@ export type File = {
   name: string;
   type: FileType;
   access_link: string;
-  size: number;
+  size: bigint;
   path: string;
   root: boolean;
   user: User;
@@ -20,7 +20,15 @@ export enum FileType {
   ZIP = "zip",
   IMG = "img",
   MP4 = "mp4",
-  ANY = "any",
+  RAR = "rar",
+  JSON = "json",
+  DOCX = "docx",
+  SLN = "sln",
+  CS = "cs",
+  PNG = "png",
+  JPEG = "jpeg",
+  XLSX = "xlsx",
+  PPTX = "pptx",
 }
 
 export interface CreateFileProps {

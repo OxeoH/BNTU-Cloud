@@ -31,7 +31,7 @@ class FileService {
   }
 
   public async createNewFile(file: CreateProps): Promise<File | null> {
-    const { name, type, parent, user, path } = file;
+    const { name, type, parent, user, path, root, size } = file;
 
     const newFile = this.fileRepository.create();
     newFile.name = name;
@@ -40,6 +40,8 @@ class FileService {
     newFile.path = path;
     newFile.parent = parent;
     newFile.childs = [];
+    newFile.root = root;
+    newFile.size = size;
 
     const createdFile = await this.fileRepository.save(newFile);
     const data = {

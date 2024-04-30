@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import express from "express";
+import filrUpload from "express-fileupload";
 
 import cors from "cors";
 import AppDataSource from "./data-source";
@@ -12,7 +13,12 @@ const app = express();
 app.use(cors());
 
 app.use(express.json());
-
+app.use(
+  filrUpload({
+    useTempFiles: true,
+    tempFileDir: "/tmp/",
+  })
+);
 app.use("/api/user", userRouter);
 app.use("/api/files", fileRouter);
 

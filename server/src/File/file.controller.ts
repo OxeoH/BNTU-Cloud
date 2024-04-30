@@ -1,13 +1,11 @@
 import { Request, Response } from "express";
-import bcrypt from "bcryptjs";
 import { File } from "./file.entity";
-import fs from "fs";
 import fileService from "./file.service";
 import { verifyTokenMiddleware } from "../middlewares/verifyTokenMiddleware";
 import userService from "../User/user.service";
-import { FileProps } from "./file.types";
+import { FileProps, FileType } from "./file.types";
 import fileManager from "./file.manager";
-import { User } from "../User/user.entity";
+import fileUpload from "express-fileupload";
 
 class FileController {
   constructor() {}
@@ -35,6 +33,7 @@ class FileController {
       file.user = candidate;
       file.type = type;
       file.childs = [];
+      file.root = false;
 
       if (parent) {
         file.path = `${parent.path}\\${file.name}`;
@@ -85,6 +84,86 @@ class FileController {
         return res.status(404).json({ message: "Error: Files not found" });
 
       return res.status(200).json(files);
+    } catch (e) {
+      console.log(e);
+      res.status(400).json({ message: `Error: ${e}` });
+    }
+  }
+
+  public async uploadFile(req: Request, res: Response) {
+    try {
+      const uploadedFile = req.files?.file as fileUpload.UploadedFile;
+
+      if (!uploadedFile)
+        return res.status(400).json({ message: "Error: File not found" });
+
+      const token = req.headers.authorization?.split(" ")[1];
+      const { parentId }: { parentId: string } = req.body;
+
+      const userData = verifyTokenMiddleware(token ?? "");
+
+      if (!userData)
+        return res.status(403).json({ message: "Error: Token was expired" });
+
+      const candidate = await userService.getUserById(userData.id);
+
+      if (!candidate)
+        return res.status(403).json({ message: "Error: User not found" });
+
+      const parent = await fileService.getFileById(parentId);
+
+      if (candidate.diskSpace - candidate.usedSpace < uploadedFile.size)
+        return res
+          .status(400)
+          .json({ message: "Error: Need more storage space" });
+
+      candidate.usedSpace += uploadedFile.size;
+
+      let filePath = "";
+      if (parent) {
+        filePath =
+          process.env.FILES_PATH +
+          `\\${candidate.id}\\${parent.path}\\${uploadedFile.name}`;
+      } else {
+        filePath =
+          process.env.FILES_PATH + `\\${candidate.id}\\${uploadedFile.name}`;
+      }
+
+      if (fileManager.checkIsExists(filePath))
+        return res.status(400).json({ message: "Error: File already exists" });
+
+      uploadedFile.mv(filePath);
+
+      const type = uploadedFile.name.split(".").pop() as FileType;
+
+      if (type && !Object.values(FileType).includes(type)) {
+        return res.status(400).json({ message: "Error: Unknown type of file" });
+      }
+
+      let file = new File();
+
+      file.name = uploadedFile.name;
+      file.user = candidate;
+      file.type = type;
+      file.size = BigInt(uploadedFile.size);
+      file.access_link = "";
+      file.childs = [];
+      file.root = false;
+
+      if (parent) {
+        file.path = `${parent.path}\\${file.name}`;
+        file.parent = parent;
+
+        parent.childs.push(file);
+      }
+
+      await userService.userRepository.save(candidate);
+      const newFile = await fileService.createNewFile(file);
+
+      if (!newFile)
+        return res.status(400).json({ message: "Error: File wasn't created" });
+
+      return res.status(200).json(newFile);
     } catch (e) {
       console.log(e);
       res.status(400).json({ message: `Error: ${e}` });

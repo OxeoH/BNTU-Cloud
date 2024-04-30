@@ -7,6 +7,8 @@ export type CreateProps = {
   parent: File;
   path: string;
   user: User;
+  root: boolean;
+  size: bigint;
 };
 
 export interface FileProps {
@@ -22,6 +24,15 @@ export enum FileType {
   ZIP = "zip",
   IMG = "img",
   MP4 = "mp4",
+  RAR = "rar",
+  JSON = "json",
+  DOCX = "docx",
+  SLN = "sln",
+  CS = "cs",
+  PNG = "png",
+  JPEG = "jpeg",
+  XLSX = "xlsx",
+  PPTX = "pptx",
 }
 
 export interface FetchProps {

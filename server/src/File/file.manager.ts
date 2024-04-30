@@ -18,6 +18,11 @@ class FileManager {
       }
     });
   }
+
+  public checkIsExists(path: string) {
+    if (fs.existsSync(path)) return true;
+    return false;
+  }
 }
 
 export default new FileManager();
