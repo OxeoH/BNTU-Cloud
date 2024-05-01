@@ -12,6 +12,7 @@ import { ChangeEvent, useRef, useState } from "react";
 import CreateFilePopover from "../../components/CreateFilePopover";
 import { addFiles, setCurrentDir } from "../../store/slices/fileSlice";
 import { uploadFile } from "../../api/File";
+import { setUser } from "../../store/slices/userSlice";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -40,10 +41,16 @@ export default function StoragePage() {
       Array.from(e.target.files ?? []).forEach(async (file) => {
         console.log("File to upload: ", file);
         console.log("Parent dir for file to upload: ", currentDir?.id);
+        const uploaded = await uploadFile(
+          file,
+          currentDir?.id ?? currentUser.files[0].id
+        );
+        dispatch(addFiles([uploaded]));
         dispatch(
-          addFiles([
-            await uploadFile(file, currentDir?.id ?? currentUser.files[0].id),
-          ])
+          setUser({
+            ...currentUser,
+            usedSpace: BigInt(currentUser.usedSpace) + BigInt(uploaded.size),
+          })
         );
       });
     } catch (e) {}
@@ -73,13 +80,14 @@ export default function StoragePage() {
           />
         </Stack>
         <Typography
-          variant="subtitle1"
+          variant="subtitle2"
           component="h4"
           textAlign="center"
           mt={6}
         >
-          Использовано {convertFromBytes(currentUser.usedSpace)} из{" "}
-          {convertFromBytes(currentUser.diskSpace)}
+          Использовано{" "}
+          <strong>{convertFromBytes(currentUser.usedSpace)}</strong> из{" "}
+          <strong>{convertFromBytes(currentUser.diskSpace)}</strong>
         </Typography>
       </Stack>
       <Stack
