@@ -2,7 +2,7 @@ import { Repository } from "typeorm";
 import AppDataSource from "../../data-source";
 import fs from "fs";
 import { File } from "./file.entity";
-import { CreateProps, FetchProps } from "./file.types";
+import { CreateProps, FetchProps, FileType } from "./file.types";
 import { User } from "../User/user.entity";
 
 class FileService {
@@ -68,15 +68,39 @@ class FileService {
         (file) =>
           (file = {
             ...file,
-            user: { ...file.user, files: [] },
-            parent: { ...file.parent, childs: [] },
+            user: { ...file.user, files: [] as File[] },
+            parent: { ...file.parent, childs: [] as File[] },
           })
       )
       .filter((file: File) => file.parent.id === parent.id);
 
-    console.log("Files ffffffffffffff: ", files);
+    const withSizes = await this.getSizes({ user, filesArr: files });
+    return withSizes ?? [];
+  }
+  public async getSizes({
+    user,
+    filesArr,
+  }: {
+    user: User;
+    filesArr: File[];
+  }): Promise<File[] | null> {
+    let files: File[] = [];
+    for (let i = 0; i < filesArr.length; i++) {
+      const withSize =
+        filesArr[i].type === FileType.DIR
+          ? {
+              ...filesArr[i],
+              size: (
+                await this.fileRepository.find({
+                  where: { parent: filesArr[i], user },
+                })
+              ).reduce((sum, child) => BigInt(sum) + BigInt(child.size), 0n),
+            }
+          : filesArr[i];
+      files.push(withSize);
+    }
 
-    return files ?? null;
+    return files;
   }
 }
 

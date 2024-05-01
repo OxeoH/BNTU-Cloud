@@ -12,6 +12,7 @@ import {
 import React, { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
 import { logout } from "../../store/slices/userSlice";
+import { clearFiles, setCurrentDir } from "../../store/slices/fileSlice";
 
 export default function Profile() {
   const { isAuth, currentUser } = useAppSelector((state) => state.user);
@@ -34,6 +35,7 @@ export default function Profile() {
   const handleExit = () => {
     handleClose();
     dispatch(logout());
+    dispatch(clearFiles());
     navigate(LOGIN_ROUTE);
   };
   const handleClose = () => {

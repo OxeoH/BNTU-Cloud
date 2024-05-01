@@ -6,6 +6,7 @@ import userService from "../User/user.service";
 import { FileProps, FileType } from "./file.types";
 import fileManager from "./file.manager";
 import fileUpload from "express-fileupload";
+import customJSONStringifier from "./utils/customJSONStringifier";
 
 class FileController {
   constructor() {}
@@ -26,6 +27,7 @@ class FileController {
         return res.status(403).json({ message: "Error: User not found" });
 
       const parent = await fileService.getFileById(parentId);
+      console.log("Parent from creating file: ", parent);
 
       let file = new File();
 
@@ -83,7 +85,7 @@ class FileController {
       if (!files)
         return res.status(404).json({ message: "Error: Files not found" });
 
-      return res.status(200).json(files);
+      return res.status(200).send(customJSONStringifier(files));
     } catch (e) {
       console.log(e);
       res.status(400).json({ message: `Error: ${e}` });
@@ -93,7 +95,6 @@ class FileController {
   public async uploadFile(req: Request, res: Response) {
     try {
       const uploadedFile = req.files?.file as fileUpload.UploadedFile;
-      console.log(uploadedFile);
 
       if (!uploadedFile)
         return res.status(400).json({ message: "Error: File not found" });
@@ -118,7 +119,8 @@ class FileController {
           .status(400)
           .json({ message: "Error: Need more storage space" });
 
-      candidate.usedSpace += uploadedFile.size;
+      candidate.usedSpace =
+        BigInt(candidate.usedSpace) + BigInt(uploadedFile.size);
 
       let filePath = "";
       if (parent) {
@@ -154,17 +156,14 @@ class FileController {
       if (parent) {
         file.path = `${parent.path}\\${file.name}`;
         file.parent = parent;
-
-        parent.childs.push(file);
       }
-
       await userService.userRepository.save(candidate);
       const newFile = await fileService.createNewFile(file);
 
       if (!newFile)
         return res.status(400).json({ message: "Error: File wasn't created" });
 
-      return res.status(200).json(newFile);
+      return res.status(200).send(customJSONStringifier(newFile));
     } catch (e) {
       console.log(e);
       res.status(400).json({ message: `Error: ${e}` });

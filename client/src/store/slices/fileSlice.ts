@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { File } from "../../api/File/types";
+import { logout } from "./userSlice";
 
 export interface FilesState {
   files: File[];
@@ -35,6 +36,9 @@ export const fileSlice = createSlice({
         (file) => !action.payload.includes(file)
       );
     },
+    clearFiles: (state) => {
+      state = initialState;
+    },
     // increment: (state) => {
     //   state.value += 1;
     // },
@@ -47,7 +51,13 @@ export const fileSlice = createSlice({
   },
 });
 
-export const { setFiles, setCurrentDir, setRootDir, addFiles, removeFiles } =
-  fileSlice.actions;
+export const {
+  setFiles,
+  setCurrentDir,
+  setRootDir,
+  addFiles,
+  removeFiles,
+  clearFiles,
+} = fileSlice.actions;
 
 export default fileSlice.reducer;

@@ -49,10 +49,10 @@ export class User {
   confirmed: boolean;
 
   @Column({ type: "bigint", default: 1024 ** 3 * 4 })
-  diskSpace: number;
+  diskSpace: bigint;
 
   @Column({ type: "bigint", default: 0 })
-  usedSpace: number;
+  usedSpace: bigint;
 
   @OneToMany(() => File, (file: File) => file.user, {
     eager: true,

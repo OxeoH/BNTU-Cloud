@@ -21,7 +21,7 @@ export const createFile = async (props: CreateFileProps) => {
 export const uploadFile = async (file: File, currentDir: string) => {
   const formdata: any = new FormData();
   formdata.append("file", file);
-  currentDir ?? formdata.append("parentId", currentDir);
+  formdata.append("parentId", currentDir);
   const { data } = await $host.post<MyFile>("api/files/upload", formdata, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     onUploadProgress: (progressEvent) => {
