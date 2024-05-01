@@ -34,8 +34,8 @@ export default function Profile() {
   };
   const handleExit = () => {
     handleClose();
-    dispatch(logout());
     dispatch(clearFiles());
+    dispatch(logout());
     navigate(LOGIN_ROUTE);
   };
   const handleClose = () => {

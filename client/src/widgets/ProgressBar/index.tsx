@@ -4,10 +4,10 @@ export const ProgressBar = ({
   size,
   value,
 }: {
-  size: number;
-  value: number;
+  size: string;
+  value: string;
 }) => {
-  const used = (value * 100) / size;
+  const used = (+value * 100) / +size;
 
   const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
     height: 10,

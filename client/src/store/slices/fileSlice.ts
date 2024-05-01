@@ -1,7 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { File } from "../../api/File/types";
-import { logout } from "./userSlice";
 
 export interface FilesState {
   files: File[];

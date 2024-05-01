@@ -17,6 +17,7 @@ import { useAppDispatch, useAppSelector } from "../../shared/hooks";
 import { setCurrentDir, setFiles } from "../../store/slices/fileSlice";
 import { getFiles } from "../../api/File";
 import { User } from "../../api/User/types";
+import { convertFromBytes } from "../../shared/convertFromBytes";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -236,7 +237,7 @@ export default function EnhancedTable() {
                     </TableCell>
                     <TableCell align="right">
                       <Typography variant="subtitle1" component="h4">
-                        {row.size.toString()}
+                        {convertFromBytes(row.size)}
                       </Typography>
                     </TableCell>
                   </TableRow>

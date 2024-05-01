@@ -43,8 +43,8 @@ export type User = {
   group: string;
   role: UserRole;
   confirmed: boolean;
-  diskSpace: number;
-  usedSpace: number;
+  diskSpace: bigint;
+  usedSpace: bigint;
   files: File[];
 };
 

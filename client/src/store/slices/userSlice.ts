@@ -17,8 +17,8 @@ const emptyUser: User = {
   group: "",
   role: UserRole.STUDENT,
   confirmed: false,
-  diskSpace: 0,
-  usedSpace: 0,
+  diskSpace: BigInt(0),
+  usedSpace: BigInt(0),
   files: [],
 };
 

@@ -64,8 +64,8 @@ export default function StoragePage() {
       >
         <Stack width="96%" alignSelf="center">
           <ProgressBar
-            size={convertFromBytes(currentUser.diskSpace)}
-            value={convertFromBytes(currentUser.usedSpace)}
+            size={currentUser.diskSpace.toString()}
+            value={currentUser.usedSpace.toString()}
           />
         </Stack>
         <Typography
@@ -74,8 +74,8 @@ export default function StoragePage() {
           textAlign="center"
           mt={6}
         >
-          Использовано {convertFromBytes(currentUser.usedSpace)}ГБ из{" "}
-          {convertFromBytes(currentUser.diskSpace)}ГБ
+          Использовано {convertFromBytes(currentUser.usedSpace)} из{" "}
+          {convertFromBytes(currentUser.diskSpace)}
         </Typography>
       </Stack>
       <Stack
@@ -118,7 +118,7 @@ export default function StoragePage() {
             startIcon={<CloudUpload />}
           >
             <Typography variant="h4" textAlign="center">
-              Загрузить файл / папку
+              Загрузить файл
             </Typography>
             <VisuallyHiddenInput
               type="file"

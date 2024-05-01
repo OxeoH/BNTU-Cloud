@@ -63,7 +63,7 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             component="h5"
             color={(theme) => theme.palette.primary.main}
           >
-            {currentDir.root ? "Мой диск" : currentDir.name}
+            {currentDir.root ? "Мой диск" : currentDir.name.split(".")[0]}
           </Typography>
         </Stack>
       )}
