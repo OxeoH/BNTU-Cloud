@@ -10,7 +10,7 @@ import { useAppDispatch, useAppSelector } from "../../shared/hooks";
 import { convertFromBytes } from "../../shared/convertFromBytes";
 import { ChangeEvent, useRef, useState } from "react";
 import CreateFilePopover from "../../components/CreateFilePopover";
-import { setCurrentDir } from "../../store/slices/fileSlice";
+import { addFiles, setCurrentDir } from "../../store/slices/fileSlice";
 import { uploadFile } from "../../api/File";
 
 const VisuallyHiddenInput = styled("input")({
@@ -40,7 +40,11 @@ export default function StoragePage() {
       Array.from(e.target.files ?? []).forEach(async (file) => {
         console.log("File to upload: ", file);
         console.log("Parent dir for file to upload: ", currentDir?.id);
-        await uploadFile(file, currentDir?.id ?? currentUser.files[0].id);
+        dispatch(
+          addFiles([
+            await uploadFile(file, currentDir?.id ?? currentUser.files[0].id),
+          ])
+        );
       });
     } catch (e) {}
   };
