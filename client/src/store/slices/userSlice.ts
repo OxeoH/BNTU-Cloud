@@ -17,8 +17,8 @@ const emptyUser: User = {
   group: "",
   role: UserRole.STUDENT,
   confirmed: false,
-  diskSpace: BigInt(0),
-  usedSpace: BigInt(0),
+  diskSpace: "0",
+  usedSpace: "0",
   files: [],
 };
 
@@ -36,23 +36,11 @@ export const counterSlice = createSlice({
       state.isAuth = true;
     },
     logout: (state) => {
-      //localStorage.setItem("token", "");
       state.currentUser = emptyUser;
       state.isAuth = false;
     },
-    // increment: (state) => {
-    //   state.value += 1;
-    // },
-    // decrement: (state) => {
-    //   state.value -= 1;
-    // },
-    // incrementByAmount: (state, action: PayloadAction<number>) => {
-    //   state.value += action.payload;
-    // },
   },
 });
-
-// Action creators are generated for each case reducer function
 export const { setUser, logout } = counterSlice.actions;
 
 export default counterSlice.reducer;

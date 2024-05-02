@@ -51,7 +51,7 @@ class FileController {
       if (!newFile)
         return res.status(400).json({ message: "Error: File wasn't created" });
 
-      return res.status(200).json(newFile);
+      return res.status(200).send(customJSONStringifier(newFile));
     } catch (e) {
       console.log(e);
       res.status(400).json({ message: `Error: ${e}` });
@@ -119,10 +119,12 @@ class FileController {
           .status(400)
           .json({ message: "Error: Need more storage space" });
 
+      candidate.diskSpace = BigInt(candidate.diskSpace);
       candidate.usedSpace =
         BigInt(candidate.usedSpace) + BigInt(uploadedFile.size);
 
       let filePath = "";
+
       if (parent) {
         filePath =
           process.env.FILES_PATH +

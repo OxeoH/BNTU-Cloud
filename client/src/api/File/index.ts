@@ -18,19 +18,19 @@ export const createFile = async (props: CreateFileProps) => {
   return data;
 };
 
-export const uploadFile = async (file: File, currentDir: string) => {
+export const uploadFile = async (
+  file: File,
+  currentDir: MyFile,
+  setProgress: React.Dispatch<React.SetStateAction<number>>
+) => {
   const formdata: any = new FormData();
+
   formdata.append("file", file);
-  formdata.append("parentId", currentDir);
+  formdata.append("parentId", currentDir.id);
   const { data } = await $host.post<MyFile>("api/files/upload", formdata, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     onUploadProgress: (progressEvent) => {
-      // if (progressEvent.total) {
-      //   let progress = Math.round(
-      //     (progressEvent.loaded * 100) / progressEvent.        );
-      //   console.log(progress);
-      // }\\
-      console.log(progressEvent.estimated);
+      setProgress((progressEvent.progress ?? 1) * 100);
     },
   });
   return data;

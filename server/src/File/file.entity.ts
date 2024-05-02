@@ -23,7 +23,7 @@ export class File {
   @Column({ default: "" })
   access_link: string;
 
-  @Column("bigint", { default: "0" })
+  @Column("bigint", { default: BigInt(0) })
   size: bigint;
 
   @Column({ default: "" })

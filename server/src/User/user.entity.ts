@@ -51,7 +51,7 @@ export class User {
   @Column({ type: "bigint", default: BigInt(1024 ** 3 * 4) })
   diskSpace: bigint;
 
-  @Column({ type: "bigint", default: 0 })
+  @Column({ type: "bigint", default: BigInt(0) })
   usedSpace: bigint;
 
   @OneToMany(() => File, (file: File) => file.user, {

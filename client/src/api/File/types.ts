@@ -5,7 +5,7 @@ export type File = {
   name: string;
   type: FileType;
   access_link: string;
-  size: bigint;
+  size: string;
   path: string;
   root: boolean;
   user: User;

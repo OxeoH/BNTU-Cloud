@@ -20,7 +20,7 @@ class FileService {
 
     if (candidate) {
       const childsList: File[] = await this.fileRepository.find({
-        where: { parent: candidate },
+        where: { parent: { id: candidate.id } },
       });
       candidate.childs = childsList.length ? childsList : [];
 
@@ -77,6 +77,7 @@ class FileService {
     const withSizes = await this.getSizes({ user, filesArr: files });
     return withSizes ?? [];
   }
+
   public async getSizes({
     user,
     filesArr,

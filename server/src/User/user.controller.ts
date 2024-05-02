@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs";
 import { verifyTokenMiddleware } from "../middlewares/verifyTokenMiddleware";
 import checkEmail from "./utils/checkEmail";
 import fileService from "../File/file.service";
+import customJSONStringifier from "../File/utils/customJSONStringifier";
 
 class UserController {
   hashSalt: number;
@@ -32,7 +33,7 @@ class UserController {
         return res.status(404).json({ message: "User not found" });
       }
 
-      res.status(200).json(userData);
+      res.status(200).send(customJSONStringifier(userData));
     } catch (e) {
       res.status(500).json({ message: `Error: ${e}` });
     }
@@ -55,9 +56,12 @@ class UserController {
       if (!user)
         return res.status(400).json({ message: "Error: Cannot find user" });
 
-      return res
-        .status(200)
-        .json({ token, user: (({ password, ...o }) => o)(user) });
+      return res.status(200).send(
+        customJSONStringifier({
+          token,
+          user: (({ password, ...o }) => o)(user),
+        })
+      );
     } catch (e) {
       res.status(500).json({ message: `Error: ${e}` });
     }

@@ -148,7 +148,9 @@ export default function EnhancedTable() {
   };
 
   const handleDoubleClick = (event: React.MouseEvent, row: File) => {
-    if (row.type === FileType.DIR) dispatch(setCurrentDir(row));
+    if (row.type === FileType.DIR) {
+      dispatch(setCurrentDir(row));
+    }
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -258,7 +260,7 @@ export default function EnhancedTable() {
                     </TableCell>
                     <TableCell align="right">
                       <Typography variant="subtitle1" component="h4">
-                        {convertFromBytes(row.size)}
+                        {convertFromBytes(BigInt(row.size))}
                       </Typography>
                     </TableCell>
                   </TableRow>
