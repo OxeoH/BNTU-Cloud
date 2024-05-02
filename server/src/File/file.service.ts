@@ -59,7 +59,7 @@ class FileService {
     parent,
   }: FetchProps): Promise<File[] | null> {
     const response = await this.fileRepository.find({
-      where: { root: false, user },
+      where: { root: false, user: { id: user.id } },
       relations: ["parent"],
     });
 

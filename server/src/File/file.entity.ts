@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   OneToMany,
+  CreateDateColumn,
 } from "typeorm";
 import { User } from "../User/user.entity";
 import { FileType } from "./file.types";
@@ -30,6 +31,9 @@ export class File {
 
   @Column({ default: false })
   root: boolean;
+
+  @CreateDateColumn({ type: "timestamp" })
+  uploaded: Date;
 
   @ManyToOne(() => User, (user) => user.id)
   user: User;

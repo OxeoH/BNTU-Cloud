@@ -39,8 +39,6 @@ export default function StoragePage() {
   const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     try {
       Array.from(e.target.files ?? []).forEach(async (file) => {
-        console.log("File to upload: ", file);
-        console.log("Parent dir for file to upload: ", currentDir?.id);
         const uploaded = await uploadFile(
           file,
           currentDir?.id ?? currentUser.files[0].id

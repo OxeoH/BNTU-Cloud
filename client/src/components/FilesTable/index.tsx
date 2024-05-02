@@ -34,10 +34,26 @@ function getComparator<Key extends keyof any>(
   orderBy: Key
 ): (
   a: {
-    [key in Key]: number | string | boolean | FileType | User | File | bigint;
+    [key in Key]:
+      | number
+      | string
+      | boolean
+      | FileType
+      | User
+      | File
+      | bigint
+      | Date;
   },
   b: {
-    [key in Key]: number | string | boolean | FileType | User | File | bigint;
+    [key in Key]:
+      | number
+      | string
+      | boolean
+      | FileType
+      | User
+      | File
+      | bigint
+      | Date;
   }
 ) => number {
   return order === "desc"
@@ -233,6 +249,11 @@ export default function EnhancedTable() {
                     <TableCell align="right">
                       <Typography variant="subtitle1" component="h4">
                         {`.${row.type}`}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="subtitle1" component="h4">
+                        {row.uploaded.toString().slice(0, 10)}
                       </Typography>
                     </TableCell>
                     <TableCell align="right">

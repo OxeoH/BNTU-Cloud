@@ -51,6 +51,7 @@ export default function RegisterPage() {
       };
 
       const response = await registration(newUser);
+
       navigate(LOGIN_ROUTE);
     } catch (e: any) {
       //TODO: Error type

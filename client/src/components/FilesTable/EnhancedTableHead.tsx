@@ -31,6 +31,12 @@ const headCells: readonly HeadCell[] = [
     label: "Тип",
   },
   {
+    id: "uploaded",
+    numeric: true,
+    disablePadding: false,
+    label: "Дата загрузки",
+  },
+  {
     id: "size",
     numeric: true,
     disablePadding: false,

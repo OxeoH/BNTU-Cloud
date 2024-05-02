@@ -10,6 +10,7 @@ export type File = {
   root: boolean;
   user: User;
   parent: File;
+  uploaded: Date;
   // childs: File[];
 };
 
