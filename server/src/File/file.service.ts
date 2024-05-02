@@ -86,17 +86,36 @@ class FileService {
   }): Promise<File[] | null> {
     let files: File[] = [];
     for (let i = 0; i < filesArr.length; i++) {
+      const updateSize = async (id: string) => {
+        const sizesSum = (
+          await this.fileRepository.find({
+            where: {
+              parent: { id: filesArr[i].id },
+              user: { id: user.id },
+            },
+          })
+        ).reduce((sum, child) => BigInt(sum) + BigInt(child.size), 0n);
+
+        await this.fileRepository
+          .createQueryBuilder()
+          .update(File)
+          .set({
+            size: sizesSum,
+          })
+          .where("id = :id", { id })
+          .execute();
+
+        return sizesSum;
+      };
+
       const withSize =
         filesArr[i].type === FileType.DIR
           ? {
               ...filesArr[i],
-              size: (
-                await this.fileRepository.find({
-                  where: { parent: filesArr[i], user },
-                })
-              ).reduce((sum, child) => BigInt(sum) + BigInt(child.size), 0n),
+              size: await updateSize(filesArr[i].id),
             }
           : filesArr[i];
+
       files.push(withSize);
     }
 

@@ -48,7 +48,7 @@ export class User {
   @Column()
   confirmed: boolean;
 
-  @Column({ type: "bigint", default: 1024 ** 3 * 4 })
+  @Column({ type: "bigint", default: BigInt(1024 ** 3 * 4) })
   diskSpace: bigint;
 
   @Column({ type: "bigint", default: 0 })
