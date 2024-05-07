@@ -14,12 +14,12 @@ class FileManager {
             fs.mkdirSync(filePath);
             resolve({ message: "Directory created successfully" });
           } else {
-            fs.appendFileSync(filePath, "");
-            resolve({ message: "Error: File created successfully" });
+            fs.appendFileSync(filePath + `.${file.type}`, "");
+            resolve({ message: "File created successfully" });
           }
         } else {
           if (file.type === FileType.DIR) {
-            reject({ message: "Directory already exists" });
+            reject({ message: "Error: Directory already exists" });
           } else {
             reject({ message: "Error: File already exists" });
           }
@@ -33,23 +33,27 @@ class FileManager {
   public async deleteFile(file: File) {
     const filePath = process.env.FILES_PATH + `\\${file.user.id}\\${file.path}`;
 
-    if (file.type === FileType.DIR) {
-      fs.rmdirSync(filePath);
-    } else {
-      fs.unlinkSync(filePath);
-    }
-    fs;
+    console.log(file.path);
 
     return new Promise((resolve, reject) => {
       try {
         if (!fs.existsSync(filePath)) {
-          fs.rmdirSync(filePath);
-          resolve({ message: "Directory created successfully" });
+          if (file.type === FileType.DIR) {
+            fs.rmdirSync(filePath);
+            resolve({ message: "Directory was deleted successfully" });
+          } else {
+            fs.unlinkSync(filePath + `.${file.type}`);
+            resolve({ message: "File was deleted successfully" });
+          }
         } else {
-          reject({ message: "Error: Directory already exists" });
+          if (file.type === FileType.DIR) {
+            reject({ message: "Error: Directory was not found" });
+          } else {
+            reject({ message: "Error: File was not found" });
+          }
         }
       } catch (e) {
-        return reject({ error: "Error: Unknown FileManager error" });
+        return reject({ error: "Unknown FileManager error" });
       }
     });
   }

@@ -18,4 +18,8 @@ fileRouter.get("/download", async (req: Request, res: Response) => {
   await fileController.downloadFile(req, res);
 });
 
+fileRouter.post("/delete", async (req: Request, res: Response) => {
+  await fileController.deleteFile(req, res);
+});
+
 export default fileRouter;

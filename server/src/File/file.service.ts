@@ -16,6 +16,7 @@ class FileService {
   public async getFileById(fileId: string) {
     const candidate = await this.fileRepository.findOne({
       where: { id: fileId },
+      relations: ["user"],
     });
 
     if (candidate) {

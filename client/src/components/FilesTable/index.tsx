@@ -15,7 +15,7 @@ import EnhancedTableHead, { Order } from "./EnhancedTableHead";
 import EnhancedTableToolbar from "./EnhancedTableToolbar";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
 import { setCurrentDir, setFiles } from "../../store/slices/fileSlice";
-import { downloadFile, getFiles } from "../../api/File";
+import { deleteFile, downloadFile, getFiles } from "../../api/File";
 import { User } from "../../api/User/types";
 import { convertFromBytes } from "../../shared/convertFromBytes";
 import { Delete, Download } from "@mui/icons-material";
@@ -163,6 +163,8 @@ export default function EnhancedTable() {
     e.stopPropagation();
 
     try {
+      const deletedFile = await deleteFile(fileId);
+      console.log(deletedFile);
     } catch (e) {
       console.log(e);
     }

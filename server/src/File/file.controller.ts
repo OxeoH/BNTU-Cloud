@@ -61,7 +61,7 @@ class FileController {
   public async deleteFile(req: Request, res: Response) {
     try {
       const token = req.headers.authorization?.split(" ")[1];
-      const { id }: { id: string } = req.body.id;
+      const { id }: { id: string } = req.body;
 
       const userData = verifyTokenMiddleware(token ?? "");
 
@@ -226,7 +226,11 @@ class FileController {
         return res.status(403).json({ message: "Error: User not found" });
 
       const filePath =
-        process.env.FILES_PATH + "\\" + candidate.id + downloadingFile.path;
+        process.env.FILES_PATH +
+        "\\" +
+        candidate.id +
+        downloadingFile.path +
+        `.${downloadingFile.type}`;
 
       if (fileManager.checkIsExists(filePath)) {
         return res.status(200).download(filePath, downloadingFile.name);
