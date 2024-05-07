@@ -9,15 +9,17 @@ import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import { File, FileType } from "../../api/File/types";
-import { Stack } from "@mui/material";
+import { Avatar, IconButton, Stack } from "@mui/material";
 import { getFileIcon } from "../../shared/getFileIcon";
 import EnhancedTableHead, { Order } from "./EnhancedTableHead";
 import EnhancedTableToolbar from "./EnhancedTableToolbar";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
 import { setCurrentDir, setFiles } from "../../store/slices/fileSlice";
-import { getFiles } from "../../api/File";
+import { downloadFile, getFiles } from "../../api/File";
 import { User } from "../../api/User/types";
 import { convertFromBytes } from "../../shared/convertFromBytes";
+import { Delete, Download } from "@mui/icons-material";
+import { avatarToString } from "../../shared/avatarToString";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -147,6 +149,25 @@ export default function EnhancedTable() {
     setSelected(newSelected);
   };
 
+  const handleDownloadClick = async (e: React.MouseEvent, file: File) => {
+    e.stopPropagation();
+
+    try {
+      await downloadFile(file);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const handleDeleteClick = async (e: React.MouseEvent, fileId: string) => {
+    e.stopPropagation();
+
+    try {
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const handleDoubleClick = (event: React.MouseEvent, row: File) => {
     if (row.type === FileType.DIR) {
       dispatch(setCurrentDir(row));
@@ -262,6 +283,49 @@ export default function EnhancedTable() {
                       <Typography variant="subtitle1" component="h4">
                         {convertFromBytes(BigInt(row.size))}
                       </Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Stack
+                        direction="row"
+                        justifyContent="right"
+                        alignItems="center"
+                      >
+                        <Typography variant="caption" sx={{ mr: 10 }}>
+                          {row.user.email}
+                        </Typography>
+                        <Avatar
+                          {...avatarToString(
+                            row.user.surname + " " + row.user.name
+                          )}
+                          sx={{
+                            bgcolor: (theme) => theme.palette.primary.light,
+                            color: (theme) => theme.palette.secondary.main,
+                            width: 36,
+                            height: 36,
+                          }}
+                        />
+                      </Stack>
+                    </TableCell>
+                    <TableCell align="right">
+                      {row.type !== FileType.DIR ? (
+                        <IconButton
+                          aria-label="download"
+                          size="large"
+                          onClick={(e) => handleDownloadClick(e, row)}
+                        >
+                          <Download />
+                        </IconButton>
+                      ) : (
+                        <></>
+                      )}
+
+                      <IconButton
+                        aria-label="delete"
+                        size="large"
+                        onClick={(e) => handleDeleteClick(e, row.id)}
+                      >
+                        <Delete />
+                      </IconButton>
                     </TableCell>
                   </TableRow>
                 );

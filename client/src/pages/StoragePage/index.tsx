@@ -13,7 +13,11 @@ import CreateFilePopover from "../../components/CreateFilePopover";
 import { addFiles, setCurrentDir } from "../../store/slices/fileSlice";
 import { uploadFile } from "../../api/File";
 import { setUser } from "../../store/slices/userSlice";
-import SnackBar from "../../components/Snackbar";
+import SnackBar, {
+  DurationType,
+  NotifyType,
+  SnackBarProps,
+} from "../../components/Snackbar";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -32,6 +36,15 @@ export default function StoragePage() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [openUploadSnack, setOpenUploadSnack] = useState(false);
+  // const [snackProps, setSnackProps] = useState<SnackBarProps>({
+  //   open: openUploadSnack,
+  //   setOpen: setOpenUploadSnack,
+  //   type: NotifyType.TEXT,
+  //   duration: DurationType.PROGRESS,
+  //   message: `Загружаем ${estimatedFile}. Прогресс ${uploadProgress.toFixed(
+  //     2
+  //   )}%`,
+  // });
   const [estimatedFile, setEstimatedFile] = useState("");
   const anchorRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
@@ -78,7 +91,8 @@ export default function StoragePage() {
       <SnackBar
         open={openUploadSnack}
         setOpen={setOpenUploadSnack}
-        type={"progress"}
+        type={NotifyType.TEXT}
+        duration={DurationType.PROGRESS}
         message={`Загружаем ${estimatedFile}. Прогресс ${uploadProgress.toFixed(
           2
         )}%`}

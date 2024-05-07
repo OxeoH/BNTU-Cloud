@@ -42,6 +42,12 @@ const headCells: readonly HeadCell[] = [
     disablePadding: false,
     label: "Размер",
   },
+  {
+    id: "user",
+    numeric: true,
+    disablePadding: false,
+    label: "Владелец",
+  },
 ];
 
 export type Order = "asc" | "desc";

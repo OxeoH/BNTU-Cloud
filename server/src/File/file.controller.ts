@@ -27,7 +27,6 @@ class FileController {
         return res.status(403).json({ message: "Error: User not found" });
 
       const parent = await fileService.getFileById(parentId);
-      console.log("Parent from creating file: ", parent);
 
       let file = new File();
 
@@ -36,6 +35,7 @@ class FileController {
       file.type = type;
       file.childs = [];
       file.root = false;
+      file.path = name;
 
       if (parent) {
         file.path = `${parent.path}\\${file.name}`;
@@ -52,6 +52,35 @@ class FileController {
         return res.status(400).json({ message: "Error: File wasn't created" });
 
       return res.status(200).send(customJSONStringifier(newFile));
+    } catch (e) {
+      console.log(e);
+      res.status(400).json({ message: `Error: ${e}` });
+    }
+  }
+
+  public async deleteFile(req: Request, res: Response) {
+    try {
+      const token = req.headers.authorization?.split(" ")[1];
+      const { id }: { id: string } = req.body.id;
+
+      const userData = verifyTokenMiddleware(token ?? "");
+
+      if (!userData)
+        return res.status(403).json({ message: "Error: Token was expired" });
+
+      const candidate = await userService.getUserById(userData.id);
+
+      if (!candidate)
+        return res.status(403).json({ message: "Error: User not found" });
+
+      const fileToDelete = await fileService.getFileById(id);
+
+      if (fileToDelete) {
+        await fileManager.deleteFile(fileToDelete);
+        const deleted = await fileService.deleteFile(fileToDelete.id);
+        return res.status(200).send(customJSONStringifier(deleted));
+      }
+      return res.status(404).json({ message: "Error: File not found" });
     } catch (e) {
       console.log(e);
       res.status(400).json({ message: `Error: ${e}` });
@@ -169,6 +198,43 @@ class FileController {
     } catch (e) {
       console.log(e);
       res.status(400).json({ message: `Error: ${e}` });
+    }
+  }
+
+  public async downloadFile(req: Request, res: Response) {
+    try {
+      const downloadId = req.query.id ?? "";
+
+      if (!downloadId)
+        return res.status(400).json({ message: "Error: Incorrect files id" });
+
+      const downloadingFile = await fileService.getFileById(`${downloadId}`);
+
+      if (!downloadingFile)
+        return res.status(400).json({ message: "Error: File not found" });
+
+      const token = req.headers.authorization?.split(" ")[1];
+
+      const userData = verifyTokenMiddleware(token ?? "");
+
+      if (!userData)
+        return res.status(403).json({ message: "Error: Token was expired" });
+
+      const candidate = await userService.getUserById(userData.id);
+
+      if (!candidate)
+        return res.status(403).json({ message: "Error: User not found" });
+
+      const filePath =
+        process.env.FILES_PATH + "\\" + candidate.id + downloadingFile.path;
+
+      if (fileManager.checkIsExists(filePath)) {
+        return res.status(200).download(filePath, downloadingFile.name);
+      }
+      return res.status(400).json({ message: "Error: File not found" });
+    } catch (e) {
+      console.log(e);
+      res.status(500).json({ message: e });
     }
   }
 }

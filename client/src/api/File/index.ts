@@ -35,3 +35,34 @@ export const uploadFile = async (
   });
   return data;
 };
+
+export const downloadFile = async (file: MyFile) => {
+  // const { status, data } = await $host.get(`api/files/download`, {
+  //   headers: {
+  //     Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //     "Content-Type": "multipart/form-data",
+  //   },
+  //   params: { id: file.id },
+  //   responseType: "blob",
+  // });
+
+  const response = await fetch(
+    `http://localhost:5000/api/files/download?id=${file.id}`,
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }
+  );
+
+  if (response.status === 200) {
+    const blob = await response.blob();
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = downloadUrl;
+    link.download = file.name;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }
+};

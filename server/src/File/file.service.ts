@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import { DeleteResult, Repository } from "typeorm";
 import AppDataSource from "../../data-source";
 import fs from "fs";
 import { File } from "./file.entity";
@@ -49,9 +49,23 @@ class FileService {
       user: { ...user, files: [] },
       parent: { ...parent, childs: [], user: { ...user, files: [] } },
     };
-    console.log("Created file from service: ", data);
 
     return data;
+  }
+
+  public async deleteFile(id: string): Promise<File | null> {
+    const deleteCandidate = await this.fileRepository.findOne({
+      where: { id },
+    });
+    console.log("deleted file from service: ", deleteCandidate);
+
+    if (deleteCandidate) {
+      const deleteRes = await this.fileRepository.remove(deleteCandidate);
+      console.log(deleteRes);
+      return deleteRes;
+    }
+
+    return null;
   }
 
   public async fetchFiles({
@@ -60,7 +74,7 @@ class FileService {
   }: FetchProps): Promise<File[] | null> {
     const response = await this.fileRepository.find({
       where: { root: false, user: { id: user.id } },
-      relations: ["parent"],
+      relations: ["parent", "user"],
     });
 
     const files = response
@@ -68,7 +82,7 @@ class FileService {
         (file) =>
           (file = {
             ...file,
-            user: { ...file.user, files: [] as File[] },
+            user: { ...file.user, password: "", files: [] as File[] },
             parent: { ...file.parent, childs: [] as File[] },
           })
       )

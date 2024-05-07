@@ -13,19 +13,12 @@ import React, { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
 import { logout } from "../../store/slices/userSlice";
 import { clearFiles, setCurrentDir } from "../../store/slices/fileSlice";
+import { avatarToString } from "../../shared/avatarToString";
 
 export default function Profile() {
   const { isAuth, currentUser } = useAppSelector((state) => state.user);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  function stringAvatar(name: string) {
-    return {
-      //   sx: {
-      //     bgcolor: stringToColor(name),
-      //   },
-      children: `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`,
-    };
-  }
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -56,7 +49,7 @@ export default function Profile() {
             onClick={handleClick}
           >
             <Avatar
-              {...stringAvatar(currentUser.surname + " " + currentUser.name)}
+              {...avatarToString(currentUser.surname + " " + currentUser.name)}
               sx={{
                 bgcolor: "white",
                 color: (theme) => theme.palette.primary.main,
