@@ -44,7 +44,7 @@ class FileController {
         parent.childs.push(file);
       }
 
-      await fileManager.createDir(file);
+      await fileManager.createDirOrFile(file);
 
       const newFile = await fileService.createNewFile(file);
 

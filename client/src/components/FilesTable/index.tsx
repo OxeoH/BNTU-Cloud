@@ -265,7 +265,7 @@ export default function EnhancedTable() {
                           component="h4"
                           sx={{ ml: 10 }}
                         >
-                          {row.name.split(`.${row.type}`)[0]}
+                          {row.name}
                         </Typography>
                       </Stack>
                     </TableCell>

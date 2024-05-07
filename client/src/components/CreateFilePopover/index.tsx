@@ -38,9 +38,7 @@ const CreateFilePopover = (props: PopoverProps) => {
     try {
       const data = new FormData(e.currentTarget);
       const createData = {
-        name: `${data.get("name")}.${
-          Object.entries(FileType)[selectedType][1]
-        }`,
+        name: `${data.get("name")}`,
         type: Object.entries(FileType)[selectedType][1],
         parentId: currentDir?.id ?? currentUser.files[0].id,
       };

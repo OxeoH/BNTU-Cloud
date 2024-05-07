@@ -36,15 +36,7 @@ export default function StoragePage() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [openUploadSnack, setOpenUploadSnack] = useState(false);
-  // const [snackProps, setSnackProps] = useState<SnackBarProps>({
-  //   open: openUploadSnack,
-  //   setOpen: setOpenUploadSnack,
-  //   type: NotifyType.TEXT,
-  //   duration: DurationType.PROGRESS,
-  //   message: `Загружаем ${estimatedFile}. Прогресс ${uploadProgress.toFixed(
-  //     2
-  //   )}%`,
-  // });
+
   const [estimatedFile, setEstimatedFile] = useState("");
   const anchorRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();

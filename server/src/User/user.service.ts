@@ -72,7 +72,7 @@ class UserService {
     userDir.access_link = "";
     userDir.root = true;
 
-    await fileManager.createDir(userDir);
+    await fileManager.createDirOrFile(userDir);
 
     await fileService.createNewFile(userDir);
 
