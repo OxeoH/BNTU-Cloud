@@ -31,18 +31,16 @@ class FileManager {
   }
 
   public async deleteFile(file: File) {
-    const filePath = process.env.FILES_PATH + `\\${file.user.id}\\${file.path}`;
-
-    console.log(file.path);
+    const filePath = process.env.FILES_PATH + `\\${file.user.id}${file.path}`;
 
     return new Promise((resolve, reject) => {
       try {
-        if (!fs.existsSync(filePath)) {
+        if (fs.existsSync(filePath)) {
           if (file.type === FileType.DIR) {
             fs.rmdirSync(filePath);
             resolve({ message: "Directory was deleted successfully" });
           } else {
-            fs.unlinkSync(filePath + `.${file.type}`);
+            fs.unlinkSync(filePath);
             resolve({ message: "File was deleted successfully" });
           }
         } else {
@@ -53,7 +51,7 @@ class FileManager {
           }
         }
       } catch (e) {
-        return reject({ error: "Unknown FileManager error" });
+        return reject({ error: e });
       }
     });
   }

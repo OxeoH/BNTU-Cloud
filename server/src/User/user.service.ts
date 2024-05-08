@@ -39,6 +39,11 @@ class UserService {
     const candidate = await this.userRepository.findOne({
       where: { id: userId },
     });
+    if (candidate) {
+      candidate.files = candidate.files.sort((a, b) =>
+        a.root === b.root ? 0 : a.root ? -1 : 1
+      );
+    }
 
     return candidate ?? null;
   }

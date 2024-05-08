@@ -119,6 +119,15 @@ export default function EnhancedTableHead(props: EnhancedTableProps) {
             </TableSortLabel>
           </TableCell>
         ))}
+        <TableCell align="right">
+          <Typography
+            variant="h5"
+            component="h5"
+            color={(theme) => theme.palette.text.primary}
+          >
+            Действие
+          </Typography>
+        </TableCell>
       </TableRow>
     </TableHead>
   );

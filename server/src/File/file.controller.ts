@@ -78,7 +78,10 @@ class FileController {
       if (fileToDelete) {
         await fileManager.deleteFile(fileToDelete);
         const deleted = await fileService.deleteFile(fileToDelete.id);
-        return res.status(200).send(customJSONStringifier(deleted));
+        if (deleted) {
+          return res.status(200).send(customJSONStringifier(deleted));
+        }
+        return res.status(400).send({ message: "Error: File was not found" });
       }
       return res.status(404).json({ message: "Error: File not found" });
     } catch (e) {

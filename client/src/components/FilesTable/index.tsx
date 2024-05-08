@@ -14,7 +14,11 @@ import { getFileIcon } from "../../shared/getFileIcon";
 import EnhancedTableHead, { Order } from "./EnhancedTableHead";
 import EnhancedTableToolbar from "./EnhancedTableToolbar";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
-import { setCurrentDir, setFiles } from "../../store/slices/fileSlice";
+import {
+  removeFiles,
+  setCurrentDir,
+  setFiles,
+} from "../../store/slices/fileSlice";
 import { deleteFile, downloadFile, getFiles } from "../../api/File";
 import { User } from "../../api/User/types";
 import { convertFromBytes } from "../../shared/convertFromBytes";
@@ -159,12 +163,11 @@ export default function EnhancedTable() {
     }
   };
 
-  const handleDeleteClick = async (e: React.MouseEvent, fileId: string) => {
+  const handleDeleteClick = async (e: React.MouseEvent, file: File) => {
     e.stopPropagation();
-
     try {
-      const deletedFile = await deleteFile(fileId);
-      console.log(deletedFile);
+      const deletedFile = await deleteFile(file.id);
+      if (deletedFile.id === file.id) dispatch(removeFiles([file.id]));
     } catch (e) {
       console.log(e);
     }
@@ -324,7 +327,7 @@ export default function EnhancedTable() {
                       <IconButton
                         aria-label="delete"
                         size="large"
-                        onClick={(e) => handleDeleteClick(e, row.id)}
+                        onClick={(e) => handleDeleteClick(e, row)}
                       >
                         <Delete />
                       </IconButton>

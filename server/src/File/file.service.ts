@@ -58,11 +58,10 @@ class FileService {
     const deleteCandidate = await this.fileRepository.findOne({
       where: { id },
     });
-    console.log("deleted file from service: ", deleteCandidate);
 
     if (deleteCandidate) {
       const deleteRes = await this.fileRepository.remove(deleteCandidate);
-      console.log(deleteRes);
+      deleteRes.id = id;
       return deleteRes;
     }
 

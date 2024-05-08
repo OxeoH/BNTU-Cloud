@@ -30,9 +30,9 @@ export const fileSlice = createSlice({
     addFiles: (state, action: PayloadAction<File[]>) => {
       state.files = [...state.files, ...action.payload];
     },
-    removeFiles: (state, action: PayloadAction<File[]>) => {
+    removeFiles: (state, action: PayloadAction<string[]>) => {
       state.files = state.files.filter(
-        (file) => !action.payload.includes(file)
+        (file) => !action.payload.includes(file.id)
       );
     },
     clearFiles: (state) => {
