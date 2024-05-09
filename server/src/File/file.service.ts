@@ -40,6 +40,7 @@ class FileService {
     newFile.user = user;
     newFile.path = path;
     newFile.parent = parent;
+    newFile.shared = [];
     newFile.childs = [];
     newFile.root = root;
     newFile.size = size;

@@ -65,6 +65,7 @@ class UserService {
     newUser.role = role;
     newUser.confirmed = false;
     newUser.avatar = "";
+    newUser.shared = [];
 
     const createdUser = await this.userRepository.save(newUser);
 

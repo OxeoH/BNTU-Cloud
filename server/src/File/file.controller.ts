@@ -34,6 +34,7 @@ class FileController {
       file.user = candidate;
       file.type = type;
       file.childs = [];
+      file.shared = [];
       file.root = false;
       file.path = name;
 
@@ -79,6 +80,8 @@ class FileController {
         await fileManager.deleteFile(fileToDelete);
         const deleted = await fileService.deleteFile(fileToDelete.id);
         if (deleted) {
+          candidate.usedSpace =
+            BigInt(candidate.usedSpace) - BigInt(deleted.size);
           return res.status(200).send(customJSONStringifier(deleted));
         }
         return res.status(400).send({ message: "Error: File was not found" });
@@ -185,6 +188,7 @@ class FileController {
       file.size = BigInt(uploadedFile.size);
       file.access_link = "";
       file.childs = [];
+      file.shared = [];
       file.root = false;
 
       if (parent) {

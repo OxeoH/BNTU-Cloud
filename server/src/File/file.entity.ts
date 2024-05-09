@@ -5,6 +5,7 @@ import {
   ManyToOne,
   OneToMany,
   CreateDateColumn,
+  ManyToMany,
 } from "typeorm";
 import { User } from "../User/user.entity";
 import { FileType } from "./file.types";
@@ -43,4 +44,7 @@ export class File {
 
   @OneToMany(() => File, (File) => File.id)
   childs: File[];
+
+  @ManyToMany(() => User, (user) => user.shared)
+  shared: User[];
 }

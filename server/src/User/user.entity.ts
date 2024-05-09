@@ -54,9 +54,13 @@ export class User {
   @Column({ type: "bigint", default: BigInt(0) })
   usedSpace: bigint;
 
-  @OneToMany(() => File, (file: File) => file.user, {
+  @OneToMany(() => File, (file) => file.user, {
     eager: true,
   })
   @JoinTable()
   files: File[];
+
+  @ManyToMany(() => File, (file) => file.shared)
+  @JoinTable()
+  shared: File[];
 }
