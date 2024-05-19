@@ -6,7 +6,6 @@ import {
   InsertDriveFile,
   MusicNote,
   VideoFile,
-  Album,
   Microsoft,
 } from "@mui/icons-material";
 import { FileType } from "../api/File/types";
@@ -29,8 +28,6 @@ export const getFileIcon = (type: FileType) => {
       return <Image />;
     case FileType.MP4:
       return <VideoFile />;
-    case FileType.IMG:
-      return <Album />;
     case FileType.JSON:
       return <InsertDriveFile />;
     case FileType.DOCX:

@@ -19,7 +19,6 @@ export enum FileType {
   MP3 = "mp3",
   TXT = "txt",
   ZIP = "zip",
-  IMG = "img",
   MP4 = "mp4",
   RAR = "rar",
   JSON = "json",
