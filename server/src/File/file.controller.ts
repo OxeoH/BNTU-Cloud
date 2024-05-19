@@ -37,10 +37,12 @@ class FileController {
       file.childs = [];
       file.shared = [];
       file.root = false;
-      file.path = name;
+      file.path = `${file.name}${
+        file.type !== FileType.DIR ? `.${file.type}` : ``
+      }`;
 
       if (parent) {
-        file.path = `${parent.path}\\${file.name}`;
+        file.path = `${parent.path}\\${file.path}`;
         file.parent = parent;
 
         parent.childs.push(file);
@@ -175,17 +177,22 @@ class FileController {
       if (fileManager.checkIsExists(filePath))
         return res.status(400).json({ message: "Error: File already exists" });
 
-      uploadedFile.mv(filePath);
-
+      const uplName = uploadedFile.name.split(".").reverse().pop();
       const type = uploadedFile.name.split(".").pop() as FileType;
 
-      if (type && !Object.values(FileType).includes(type)) {
+      if (type && !Object.values(FileType).includes(type as FileType)) {
         return res.status(400).json({ message: "Error: Unknown type of file" });
       }
 
+      if (!uplName) {
+        return res.status(400).json({ message: "Error: Wrong file name" });
+      }
+
+      uploadedFile.mv(filePath);
+
       let file = new File();
 
-      file.name = uploadedFile.name;
+      file.name = uplName;
       file.user = candidate;
       file.type = type;
       file.size = BigInt(uploadedFile.size);
@@ -193,11 +200,17 @@ class FileController {
       file.childs = [];
       file.shared = [];
       file.root = false;
+      file.path = `${file.name}${
+        file.type !== FileType.DIR ? `.${file.type}` : ``
+      }`;
 
       if (parent) {
-        file.path = `${parent.path}\\${file.name}`;
+        file.path = `${parent.path}\\${file.path}`;
         file.parent = parent;
+
+        parent.childs.push(file);
       }
+
       await userService.userRepository.save(candidate);
       const newFile = await fileService.createNewFile(file);
 
@@ -240,7 +253,15 @@ class FileController {
         process.env.FILES_PATH + "\\" + candidate.id + downloadingFile.path;
 
       if (fileManager.checkIsExists(filePath)) {
-        return res.status(200).download(filePath, downloadingFile.name);
+        console.log(filePath);
+        console.log(downloadingFile.name + `.${downloadingFile.type}`);
+
+        return res
+          .status(200)
+          .download(
+            filePath,
+            downloadingFile.name + `.${downloadingFile.type}`
+          );
       }
       return res.status(400).json({ message: "Error: File not found" });
     } catch (e) {

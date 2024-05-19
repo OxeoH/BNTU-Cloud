@@ -7,6 +7,8 @@ class FileManager {
     const filePath = process.env.FILES_PATH + `\\${file.user.id}\\${file.path}`;
     console.log(file.path);
 
+    console.log(file);
+
     return new Promise((resolve, reject) => {
       try {
         if (!fs.existsSync(filePath)) {
@@ -14,7 +16,7 @@ class FileManager {
             fs.mkdirSync(filePath);
             resolve({ message: "Directory created successfully" });
           } else {
-            fs.appendFileSync(filePath + `.${file.type}`, "");
+            fs.appendFileSync(filePath, "");
             resolve({ message: "File created successfully" });
           }
         } else {
