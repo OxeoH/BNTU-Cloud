@@ -37,9 +37,13 @@ export const uploadFile = async (
 };
 
 export const deleteFile = async (id: string) => {
-  const { data } = await $host.post<MyFile>("api/files/delete", id, {
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-  });
+  const { data } = await $host.post<MyFile>(
+    "api/files/delete",
+    { id },
+    {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    }
+  );
   return data;
 };
 

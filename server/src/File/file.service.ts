@@ -24,7 +24,6 @@ class FileService {
         where: { parent: { id: candidate.id } },
       });
       candidate.childs = childsList.length ? childsList : [];
-
       return candidate;
     }
 

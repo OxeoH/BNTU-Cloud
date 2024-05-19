@@ -24,6 +24,7 @@ import { User } from "../../api/User/types";
 import { convertFromBytes } from "../../shared/convertFromBytes";
 import { Delete, Download } from "@mui/icons-material";
 import { avatarToString } from "../../shared/avatarToString";
+import { setUser } from "../../store/slices/userSlice";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -165,9 +166,20 @@ export default function EnhancedTable() {
 
   const handleDeleteClick = async (e: React.MouseEvent, file: File) => {
     e.stopPropagation();
+
     try {
       const deletedFile = await deleteFile(file.id);
-      if (deletedFile.id === file.id) dispatch(removeFiles([file.id]));
+      if (deletedFile.id === file.id) {
+        dispatch(
+          setUser({
+            ...currentUser,
+            usedSpace: (
+              BigInt(currentUser.usedSpace) - BigInt(deletedFile.size)
+            ).toString(),
+          })
+        );
+        dispatch(removeFiles([file.id]));
+      }
     } catch (e) {
       console.log(e);
     }

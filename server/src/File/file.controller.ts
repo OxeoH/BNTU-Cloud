@@ -7,6 +7,7 @@ import { FileProps, FileType } from "./file.types";
 import fileManager from "./file.manager";
 import fileUpload from "express-fileupload";
 import customJSONStringifier from "./utils/customJSONStringifier";
+import userController from "../User/user.controller";
 
 class FileController {
   constructor() {}
@@ -79,12 +80,14 @@ class FileController {
       if (fileToDelete) {
         await fileManager.deleteFile(fileToDelete);
         const deleted = await fileService.deleteFile(fileToDelete.id);
+
         if (deleted) {
           candidate.usedSpace =
             BigInt(candidate.usedSpace) - BigInt(deleted.size);
+          await userService.userRepository.save(candidate);
           return res.status(200).send(customJSONStringifier(deleted));
         }
-        return res.status(400).send({ message: "Error: File was not found" });
+        return res.status(400).send({ message: "Error: File not found" });
       }
       return res.status(404).json({ message: "Error: File not found" });
     } catch (e) {
@@ -217,8 +220,9 @@ class FileController {
 
       const downloadingFile = await fileService.getFileById(`${downloadId}`);
 
-      if (!downloadingFile)
+      if (!downloadingFile) {
         return res.status(400).json({ message: "Error: File not found" });
+      }
 
       const token = req.headers.authorization?.split(" ")[1];
 
@@ -233,11 +237,7 @@ class FileController {
         return res.status(403).json({ message: "Error: User not found" });
 
       const filePath =
-        process.env.FILES_PATH +
-        "\\" +
-        candidate.id +
-        downloadingFile.path +
-        `.${downloadingFile.type}`;
+        process.env.FILES_PATH + "\\" + candidate.id + downloadingFile.path;
 
       if (fileManager.checkIsExists(filePath)) {
         return res.status(200).download(filePath, downloadingFile.name);
