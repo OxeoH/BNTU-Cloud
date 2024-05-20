@@ -22,9 +22,10 @@ import {
 import { deleteFile, downloadFile, getFiles } from "../../api/File";
 import { User } from "../../api/User/types";
 import { convertFromBytes } from "../../shared/convertFromBytes";
-import { Delete, Download } from "@mui/icons-material";
+import { Delete, Download, FormatListBulleted } from "@mui/icons-material";
 import { avatarToString } from "../../shared/avatarToString";
 import { setUser } from "../../store/slices/userSlice";
+import theme from "../../shared/theme/theme";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -231,143 +232,176 @@ export default function EnhancedTable() {
             aria-label="sticky table"
             size="medium"
           >
-            <EnhancedTableHead
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={rows.length}
-            />
-            <TableBody>
-              {visibleRows.map((row, index) => {
-                const isItemSelected = isSelected(row.id);
-                const labelId = `enhanced-table-checkbox-${index}`;
+            {!visibleRows.length ? (
+              <Stack
+                width="100%"
+                direction="column"
+                justifyContent="center"
+                alignItems="center"
+                height={300}
+              >
+                <Typography variant="h2" color="InfoText" sx={{ my: 10 }}>
+                  Здесь могли быть ваши файлы
+                </Typography>
+                <Typography
+                  variant="subtitle1"
+                  color={(theme) => theme.palette.primary.main}
+                  sx={{ my: 10 }}
+                >
+                  Создайте или загрузите несколько, чтобы начать пользоваться
+                  таблицей
+                </Typography>
+                <FormatListBulleted
+                  fontSize="large"
+                  color="primary"
+                  sx={{ my: 10 }}
+                />
+              </Stack>
+            ) : (
+              <>
+                <EnhancedTableHead
+                  numSelected={selected.length}
+                  order={order}
+                  orderBy={orderBy}
+                  onSelectAllClick={handleSelectAllClick}
+                  onRequestSort={handleRequestSort}
+                  rowCount={rows.length}
+                />
+                <TableBody>
+                  {visibleRows.map((row, index) => {
+                    const isItemSelected = isSelected(row.id);
+                    const labelId = `enhanced-table-checkbox-${index}`;
 
-                return (
-                  <TableRow
-                    hover
-                    key={index}
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    onClick={(event) => handleClick(event, row.id)}
-                    onDoubleClick={(event) => handleDoubleClick(event, row)}
-                    tabIndex={-1}
-                    selected={isItemSelected}
-                    sx={{ cursor: "pointer" }}
-                  >
-                    <TableCell padding="checkbox">
-                      {/* <Checkbox
+                    return (
+                      <TableRow
+                        hover
+                        key={index}
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        onClick={(event) => handleClick(event, row.id)}
+                        onDoubleClick={(event) => handleDoubleClick(event, row)}
+                        tabIndex={-1}
+                        selected={isItemSelected}
+                        sx={{ cursor: "pointer" }}
+                      >
+                        <TableCell padding="checkbox">
+                          {/* <Checkbox
                         color="primary"
                         checked={isItemSelected}
                         inputProps={{
                           "aria-labelledby": labelId,
                         }}
                       /> */}
-                    </TableCell>
-                    <TableCell
-                      component="th"
-                      id={labelId}
-                      scope="row"
-                      padding="none"
-                    >
-                      <Stack
-                        direction="row"
-                        justifyContent="left"
-                        alignItems="center"
-                      >
-                        {getFileIcon(row.type)}
-                        <Typography
-                          variant="subtitle1"
-                          component="h4"
-                          sx={{ ml: 10 }}
+                        </TableCell>
+                        <TableCell
+                          component="th"
+                          id={labelId}
+                          scope="row"
+                          padding="none"
                         >
-                          {row.name}
-                        </Typography>
-                      </Stack>
-                    </TableCell>
-                    <TableCell align="right">
-                      <Typography variant="subtitle1" component="h4">
-                        {`.${row.type}`}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                      <Typography variant="subtitle1" component="h4">
-                        {row.uploaded.toString().slice(0, 10)}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                      <Typography variant="subtitle1" component="h4">
-                        {convertFromBytes(BigInt(row.size))}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                      <Stack
-                        direction="row"
-                        justifyContent="right"
-                        alignItems="center"
-                      >
-                        <Typography variant="caption" sx={{ mr: 10 }}>
-                          {row.user.email}
-                        </Typography>
-                        <Avatar
-                          {...avatarToString(
-                            row.user.surname + " " + row.user.name
+                          <Stack
+                            direction="row"
+                            justifyContent="left"
+                            alignItems="center"
+                          >
+                            {getFileIcon(row.type)}
+                            <Typography
+                              variant="subtitle1"
+                              component="h4"
+                              sx={{ ml: 10 }}
+                            >
+                              {row.name}
+                            </Typography>
+                          </Stack>
+                        </TableCell>
+                        <TableCell align="right">
+                          <Typography variant="subtitle1" component="h4">
+                            {`.${row.type}`}
+                          </Typography>
+                        </TableCell>
+                        <TableCell align="right">
+                          <Typography variant="subtitle1" component="h4">
+                            {row.uploaded.toString().slice(0, 10)}
+                          </Typography>
+                        </TableCell>
+                        <TableCell align="right">
+                          <Typography variant="subtitle1" component="h4">
+                            {convertFromBytes(BigInt(row.size))}
+                          </Typography>
+                        </TableCell>
+                        <TableCell align="right">
+                          <Stack
+                            direction="row"
+                            justifyContent="right"
+                            alignItems="center"
+                          >
+                            <Typography variant="caption" sx={{ mr: 10 }}>
+                              {row.user.email}
+                            </Typography>
+                            <Avatar
+                              {...avatarToString(
+                                row.user.surname + " " + row.user.name
+                              )}
+                              sx={{
+                                bgcolor: (theme) => theme.palette.primary.light,
+                                color: (theme) => theme.palette.secondary.main,
+                                width: 36,
+                                height: 36,
+                              }}
+                            />
+                          </Stack>
+                        </TableCell>
+                        <TableCell align="right">
+                          {row.type !== FileType.DIR ? (
+                            <IconButton
+                              aria-label="download"
+                              size="large"
+                              onClick={(e) => handleDownloadClick(e, row)}
+                            >
+                              <Download />
+                            </IconButton>
+                          ) : (
+                            <></>
                           )}
-                          sx={{
-                            bgcolor: (theme) => theme.palette.primary.light,
-                            color: (theme) => theme.palette.secondary.main,
-                            width: 36,
-                            height: 36,
-                          }}
-                        />
-                      </Stack>
-                    </TableCell>
-                    <TableCell align="right">
-                      {row.type !== FileType.DIR ? (
-                        <IconButton
-                          aria-label="download"
-                          size="large"
-                          onClick={(e) => handleDownloadClick(e, row)}
-                        >
-                          <Download />
-                        </IconButton>
-                      ) : (
-                        <></>
-                      )}
 
-                      <IconButton
-                        aria-label="delete"
-                        size="large"
-                        onClick={(e) => handleDeleteClick(e, row)}
-                      >
-                        <Delete />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: 53 * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
+                          <IconButton
+                            aria-label="delete"
+                            size="large"
+                            onClick={(e) => handleDeleteClick(e, row)}
+                          >
+                            <Delete />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                  {emptyRows > 0 && (
+                    <TableRow
+                      style={{
+                        height: 53 * emptyRows,
+                      }}
+                    >
+                      <TableCell colSpan={6} />
+                    </TableRow>
+                  )}
+                </TableBody>
+              </>
+            )}
           </Table>
         </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[10, 25, 50]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+        {visibleRows.length ? (
+          <TablePagination
+            rowsPerPageOptions={[10, 25, 50]}
+            component="div"
+            count={rows.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        ) : (
+          <></>
+        )}
       </Paper>
     </Box>
   );
