@@ -31,15 +31,16 @@ class FileController {
 
       let file = new File();
 
-      file.name = name;
+      file.name = `${name}${type !== FileType.DIR ? `.${type}` : ``}`;
       file.user = candidate;
       file.type = type;
       file.childs = [];
       file.shared = [];
       file.root = false;
-      file.path = `${file.name}${
-        file.type !== FileType.DIR ? `.${file.type}` : ``
-      }`;
+      file.path = file.name;
+      // `${file.name}${
+      //   file.type !== FileType.DIR ? `.${file.type}` : ``
+      // }`;
 
       if (parent) {
         file.path = `${parent.path}\\${file.path}`;
@@ -192,7 +193,7 @@ class FileController {
 
       let file = new File();
 
-      file.name = uplName;
+      file.name = uploadedFile.name;
       file.user = candidate;
       file.type = type;
       file.size = BigInt(uploadedFile.size);
@@ -200,9 +201,7 @@ class FileController {
       file.childs = [];
       file.shared = [];
       file.root = false;
-      file.path = `${file.name}${
-        file.type !== FileType.DIR ? `.${file.type}` : ``
-      }`;
+      file.path = uploadedFile.name;
 
       if (parent) {
         file.path = `${parent.path}\\${file.path}`;
@@ -254,9 +253,10 @@ class FileController {
 
       if (fileManager.checkIsExists(filePath)) {
         console.log(filePath);
-        console.log(downloadingFile.name);
 
-        return res.status(200).download(filePath, downloadingFile.name);
+        const name = `${downloadingFile.name}.${downloadingFile.type}`;
+        console.log(name);
+        return res.status(200).download(filePath, name);
       }
       return res.status(400).json({ message: "Error: File not found" });
     } catch (e) {
