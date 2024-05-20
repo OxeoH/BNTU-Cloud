@@ -20,6 +20,7 @@ import {
 import { uploadFile } from "../../api/File";
 import { setUser } from "../../store/slices/userSlice";
 import Uploader from "../../components/Uploader";
+import TableFilters from "../../components/TableFilters";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -109,6 +110,7 @@ export default function StoragePage() {
           <strong>{convertFromBytes(BigInt(currentUser.diskSpace))}</strong>
         </Typography>
       </Stack>
+      <TableFilters />
       <Stack
         direction="row"
         justifyContent={`${isRoot ? "right" : "space-between"}`}
