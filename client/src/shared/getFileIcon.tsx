@@ -24,7 +24,7 @@ export const getFileIcon = (type: FileType) => {
       return <FolderZip />;
     case FileType.PNG:
       return <Image />;
-    case FileType.JPEG:
+    case FileType.JPG:
       return <Image />;
     case FileType.MP4:
       return <VideoFile />;

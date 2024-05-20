@@ -26,7 +26,7 @@ export enum FileType {
   SLN = "sln",
   CS = "cs",
   PNG = "png",
-  JPEG = "jpeg",
+  JPG = "jpg",
   XLSX = "xlsx",
   PPTX = "pptx",
   EXE = "exe",

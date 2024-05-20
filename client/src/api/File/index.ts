@@ -1,5 +1,13 @@
+import {
+  ActionCreatorWithPayload,
+  ThunkDispatch,
+  UnknownAction,
+} from "@reduxjs/toolkit";
+import { FilesState, UploaderItem } from "../../store/slices/fileSlice";
 import { $host } from "../index";
-import { CreateFileProps, File as MyFile } from "./types";
+import { CreateFileProps, FileType, File as MyFile } from "./types";
+import { CounterState } from "../../store/slices/counterSlice";
+import { UserState } from "../../store/slices/userSlice";
 
 export const getFiles = async (parentId: string) => {
   const { data } = await $host.get<MyFile[]>(`api/files`, {
@@ -21,16 +29,40 @@ export const createFile = async (props: CreateFileProps) => {
 export const uploadFile = async (
   file: File,
   currentDir: MyFile,
-  setProgress: React.Dispatch<React.SetStateAction<number>>
+  dispatch: ThunkDispatch<
+    {
+      counter: CounterState;
+      user: UserState;
+      file: FilesState;
+    },
+    undefined,
+    UnknownAction
+  >,
+  addUploadingFiles: ActionCreatorWithPayload<
+    UploaderItem,
+    "file/addUploadingFiles"
+  >,
+  setUploadingProgress: ActionCreatorWithPayload<
+    UploaderItem,
+    "file/setUploadingProgress"
+  >
 ) => {
   const formdata: any = new FormData();
-
+  let uploading: UploaderItem = {
+    id: Date.now(),
+    name: file.name,
+    type: file.name.split(".").pop() as FileType,
+    progress: 0,
+  };
+  dispatch(addUploadingFiles(uploading));
   formdata.append("file", file);
   formdata.append("parentId", currentDir.id);
+
   const { data } = await $host.post<MyFile>("api/files/upload", formdata, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     onUploadProgress: (progressEvent) => {
-      setProgress((progressEvent.progress ?? 1) * 100);
+      uploading.progress = (progressEvent.progress ?? 1) * 100;
+      dispatch(setUploadingProgress(uploading));
     },
   });
   return data;

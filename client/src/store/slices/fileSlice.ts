@@ -1,17 +1,25 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { File } from "../../api/File/types";
+import { File, FileType } from "../../api/File/types";
 
+export interface UploaderItem {
+  id: number;
+  name: string;
+  type: FileType;
+  progress: number;
+}
 export interface FilesState {
   files: File[];
   currentDir: File | null;
   rootDir: File | null;
+  uploadingFiles: UploaderItem[];
 }
 
 const initialState: FilesState = {
   files: [],
   currentDir: null,
   rootDir: null,
+  uploadingFiles: [],
 };
 
 export const fileSlice = createSlice({
@@ -38,15 +46,23 @@ export const fileSlice = createSlice({
     clearFiles: (state) => {
       state = initialState;
     },
-    // increment: (state) => {
-    //   state.value += 1;
-    // },
-    // decrement: (state) => {
-    //   state.value -= 1;
-    // },
-    // incrementByAmount: (state, action: PayloadAction<number>) => {
-    //   state.value += action.payload;
-    // },
+    //Uploader
+    setUploadingFiles: (state, action: PayloadAction<UploaderItem[]>) => {
+      state.uploadingFiles = action.payload;
+    },
+    addUploadingFiles: (state, action: PayloadAction<UploaderItem>) => {
+      state.uploadingFiles.push(action.payload);
+    },
+    setUploadingProgress: (state, action: PayloadAction<UploaderItem>) => {
+      state.uploadingFiles.map((file) =>
+        file.id == action.payload.id
+          ? (file.progress = action.payload.progress)
+          : file
+      );
+    },
+    clearUploadingFiles: (state) => {
+      state.uploadingFiles = [];
+    },
   },
 });
 
@@ -57,6 +73,10 @@ export const {
   addFiles,
   removeFiles,
   clearFiles,
+  setUploadingFiles,
+  addUploadingFiles,
+  clearUploadingFiles,
+  setUploadingProgress,
 } = fileSlice.actions;
 
 export default fileSlice.reducer;

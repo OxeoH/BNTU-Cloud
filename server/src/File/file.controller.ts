@@ -254,14 +254,9 @@ class FileController {
 
       if (fileManager.checkIsExists(filePath)) {
         console.log(filePath);
-        console.log(downloadingFile.name + `.${downloadingFile.type}`);
+        console.log(downloadingFile.name);
 
-        return res
-          .status(200)
-          .download(
-            filePath,
-            downloadingFile.name + `.${downloadingFile.type}`
-          );
+        return res.status(200).download(filePath, downloadingFile.name);
       }
       return res.status(400).json({ message: "Error: File not found" });
     } catch (e) {
