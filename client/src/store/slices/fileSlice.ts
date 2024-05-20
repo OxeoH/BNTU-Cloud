@@ -61,7 +61,9 @@ export const fileSlice = createSlice({
       );
     },
     clearUploadingFiles: (state) => {
-      state.uploadingFiles = [];
+      state.uploadingFiles = state.uploadingFiles.filter(
+        (file) => file.progress !== 100
+      );
     },
   },
 });

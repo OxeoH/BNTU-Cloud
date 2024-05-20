@@ -9,10 +9,9 @@ import {
 } from "@mui/icons-material";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
 import { convertFromBytes } from "../../shared/convertFromBytes";
-import { ChangeEvent, useCallback, useRef, useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import CreateFilePopover from "../../components/CreateFilePopover";
 import {
-  UploaderItem,
   addFiles,
   addUploadingFiles,
   setCurrentDir,
@@ -20,13 +19,7 @@ import {
 } from "../../store/slices/fileSlice";
 import { uploadFile } from "../../api/File";
 import { setUser } from "../../store/slices/userSlice";
-import SnackBar, {
-  DurationType,
-  NotifyType,
-  SnackBarProps,
-} from "../../components/Snackbar";
 import Uploader from "../../components/Uploader";
-import { FileType } from "../../api/File/types";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -43,12 +36,8 @@ const VisuallyHiddenInput = styled("input")({
 export default function StoragePage() {
   const [openCreatePopover, setOpenCreatePopover] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [openUploadSnack, setOpenUploadSnack] = useState(false);
 
   const [openUploader, setOpenUploader] = useState(false);
-
-  const [estimatedFile, setEstimatedFile] = useState("");
   const anchorRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
 
@@ -56,10 +45,7 @@ export default function StoragePage() {
   const currentDir = useAppSelector((state) => state.file.currentDir);
   const isRoot = currentUser.files[0].id === currentDir?.id;
 
-  const handleUpload = async (
-    e: ChangeEvent<HTMLInputElement>,
-    setUploadProgress: React.Dispatch<React.SetStateAction<number>>
-  ) => {
+  const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     try {
       Array.from(e.target.files ?? []).forEach(async (file) => {
         setOpenUploader(true);
@@ -72,7 +58,6 @@ export default function StoragePage() {
           addUploadingFiles,
           setUploadingProgress
         );
-        setOpenUploadSnack(false);
 
         dispatch(addFiles([uploaded]));
         dispatch(
@@ -85,32 +70,13 @@ export default function StoragePage() {
         );
       });
     } catch (e) {
-      setOpenUploadSnack(false);
-      setUploadProgress(0);
-      setEstimatedFile("");
+      console.log(e);
     }
   };
 
   return (
     <Stack direction="column" width="100%">
-      <Uploader
-        // files={[
-        //   { name: "LOl.exe", type: FileType.DOCX, progress: 100 },
-        //   { name: "Test.exe", type: FileType.MP3, progress: 100 },
-        //   { name: estimatedFile, type: FileType.JPG, progress: uploadProgress },
-        // ]}
-        setOpen={setOpenUploader}
-        open={openUploader}
-      />
-      <SnackBar
-        open={openUploadSnack}
-        setOpen={setOpenUploadSnack}
-        type={NotifyType.TEXT}
-        duration={DurationType.PROGRESS}
-        message={`Загружаем ${estimatedFile}. Прогресс ${uploadProgress.toFixed(
-          2
-        )}%`}
-      />
+      <Uploader setOpen={setOpenUploader} open={openUploader} />
       <CreateFilePopover
         open={openCreatePopover}
         setOpen={setOpenCreatePopover}
@@ -200,7 +166,7 @@ export default function StoragePage() {
             </Typography>
             <VisuallyHiddenInput
               type="file"
-              onChange={(e) => handleUpload(e, setUploadProgress)}
+              onChange={(e) => handleUpload(e)}
               multiple
             />
           </Button>

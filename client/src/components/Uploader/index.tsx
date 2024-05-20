@@ -1,4 +1,4 @@
-import { Check, Close, Delete } from "@mui/icons-material";
+import { Check, Close, Delete, Upload } from "@mui/icons-material";
 import {
   Box,
   CircularProgress,
@@ -63,13 +63,17 @@ const Uploader = ({ open, setOpen }: UploaderProps) => {
             >
               Загрузки
             </Typography>
-            <IconButton
-              aria-label="delete"
-              size="large"
-              onClick={() => handleDeleteClick()}
-            >
-              <Delete />
-            </IconButton>
+            {files.length ? (
+              <IconButton
+                aria-label="delete"
+                size="large"
+                onClick={() => handleDeleteClick()}
+              >
+                <Delete />
+              </IconButton>
+            ) : (
+              <></>
+            )}
           </Stack>
           <List
             sx={{
@@ -79,7 +83,16 @@ const Uploader = ({ open, setOpen }: UploaderProps) => {
             }}
           >
             {!files.length ? (
-              <Typography>Пусто</Typography>
+              <Stack
+                direction="column"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <Typography component="h6" color="GrayText" sx={{ my: 6 }}>
+                  Список пуст. Начните загружать файлы
+                </Typography>
+                <Upload color="disabled" fontSize="large" />
+              </Stack>
             ) : (
               files.map((file) => (
                 <Stack key={file.id}>
