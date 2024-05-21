@@ -6,6 +6,7 @@ import { User } from "../../api/User/types";
 export interface Filter {
   filetype: FileType | null;
   user: User | null;
+  name: string | null;
 }
 
 export interface FilterOption {
@@ -15,7 +16,7 @@ export interface FilterOption {
 
 export interface IFilter {
   name: string;
-  type: "filetype" | "user";
+  type: "filetype" | "user" | "name";
   options: FilterOption[];
 }
 
@@ -26,6 +27,11 @@ export interface FilterSlice {
 }
 
 const filtersList: IFilter[] = [
+  {
+    name: "Название",
+    type: "name",
+    options: [],
+  },
   {
     name: "Тип",
     type: "filetype",
@@ -41,6 +47,7 @@ const filtersList: IFilter[] = [
       { value: "sasha@gmail.com", title: "sasha@gmail.com" },
     ],
   },
+
   // {
   //   name: "Местоположение",
   //   options: [
@@ -56,6 +63,7 @@ const initialState: FilterSlice = {
   filter: {
     filetype: null,
     user: null,
+    name: null,
   },
   filtersList,
 };

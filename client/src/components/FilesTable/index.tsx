@@ -132,6 +132,13 @@ export default function EnhancedTable() {
               );
             }
             return true;
+          })
+          .filter((file) => {
+            if (!applied) return true;
+            if (filter.name != null) {
+              return file.name.includes(filter.name);
+            }
+            return true;
           });
 
         dispatch(setFiles(filtered));
