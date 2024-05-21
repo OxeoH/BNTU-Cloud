@@ -100,6 +100,7 @@ export default function EnhancedTable() {
   const currentUser = useAppSelector((state) => state.user.currentUser);
   const rows = useAppSelector((state) => state.file.files);
   const rootDir = useAppSelector((state) => state.file.rootDir);
+  const { filter, applied } = useAppSelector((state) => state.filter);
 
   React.useEffect(() => {
     dispatch(setCurrentDir(rootDir ?? currentUser.files[0]));
@@ -108,15 +109,35 @@ export default function EnhancedTable() {
   React.useEffect(() => {
     async function getCurrentFiles() {
       try {
-        dispatch(
-          setFiles(await getFiles(currentDir?.id ?? currentUser.files[0].id))
-        );
+        const filtered = (
+          await getFiles(currentDir?.id ?? currentUser.files[0].id)
+        )
+          .filter((file) => {
+            if (!applied) return true;
+            if (filter.filetype != null) {
+              return file.type === filter.filetype;
+            }
+            return true;
+          })
+          .filter((file) => {
+            if (!applied) return true;
+            if (filter.user != null) {
+              return (
+                file.user.login === filter.user.login &&
+                file.user.email === filter.user.email &&
+                file.user.id === filter.user.id
+              );
+            }
+            return true;
+          });
+
+        dispatch(setFiles(filtered));
       } catch (e: any) {
         console.log(e);
       }
     }
     if (currentUser) getCurrentFiles();
-  }, [currentDir]);
+  }, [currentDir, filter, applied]);
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
