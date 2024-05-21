@@ -1,33 +1,13 @@
-import { Autocomplete, Stack, TextField } from "@mui/material";
-import React from "react";
-import { FileType } from "../../api/File/types";
+import { Stack } from "@mui/material";
+import { useAppDispatch, useAppSelector } from "../../shared/hooks";
+import FilterItem from "../FilterItem";
 
 const TableFilters = () => {
-  let typeOptions = Object.entries(FileType);
+  const dispatch = useAppDispatch();
+  const filterStore = useAppSelector((state) => state.filter);
 
-  const filtersList = [
-    {
-      name: "Тип",
-      options: typeOptions.map((entry) => {
-        return { value: entry[0], title: entry[1] };
-      }),
-    },
-    {
-      name: "Люди",
-      options: [
-        { value: "egor@gmail.com", title: "egor@gmail.com" },
-        { value: "sasha@gmail.com", title: "sasha@gmail.com" },
-      ],
-    },
-    {
-      name: "Местоположение",
-      options: [
-        { value: "all", title: "В любом месте" },
-        { value: "my", title: "Моё хранилище" },
-        { value: "shared", title: "Доступные мне" },
-      ],
-    },
-  ];
+  //const [filter, setFilter] = useState<Filter>(filterStore.filter);
+
   return (
     <Stack
       direction="row"
@@ -36,32 +16,8 @@ const TableFilters = () => {
       alignItems="center"
       my={20}
     >
-      {filtersList.map((item) => (
-        <Autocomplete
-          freeSolo
-          fullWidth
-          sx={{ mx: 20 }}
-          options={item.options.map((option) => option.title)}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label={item.name}
-              InputProps={{
-                ...params.InputProps,
-                style: {
-                  borderRadius: 20,
-                  borderColor: "ActiveBorder",
-                },
-              }}
-              InputLabelProps={{
-                style: {
-                  borderRadius: 20,
-                  borderColor: "ActiveBorder",
-                },
-              }}
-            />
-          )}
-        />
+      {filterStore.filtersList.map((item) => (
+        <FilterItem item={item} />
       ))}
     </Stack>
   );

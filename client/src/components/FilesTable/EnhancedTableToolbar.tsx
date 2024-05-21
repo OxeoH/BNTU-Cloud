@@ -1,4 +1,10 @@
-import { FolderOpen, Inventory, FilterList, Delete } from "@mui/icons-material";
+import {
+  FolderOpen,
+  Inventory,
+  FilterList,
+  Delete,
+  FilterListOff,
+} from "@mui/icons-material";
 import {
   Box,
   IconButton,
@@ -9,6 +15,9 @@ import {
   alpha,
 } from "@mui/material";
 import { File } from "../../api/File/types";
+import { toggleApplied } from "../../store/slices/filterSlice";
+import { useAppDispatch, useAppSelector } from "../../shared/hooks";
+import { useState } from "react";
 
 interface EnhancedTableToolbarProps {
   numSelected: number;
@@ -17,6 +26,10 @@ interface EnhancedTableToolbarProps {
 
 export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const { numSelected, currentDir } = props;
+
+  const dispatch = useAppDispatch();
+  const filter = useAppSelector((state) => state.filter);
+  const [apply, setApply] = useState(filter.applied);
 
   return (
     <Toolbar
@@ -75,15 +88,23 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             </IconButton>
           </Tooltip>
         ) : (
-          <></>
+          <Tooltip
+            title={apply ? "Фильтрация: Включена" : "Фильтрация: Выключена"}
+          >
+            <IconButton
+              onClick={() => {
+                dispatch(toggleApplied());
+                setApply(!apply);
+              }}
+            >
+              {apply ? (
+                <FilterList color="primary" />
+              ) : (
+                <FilterListOff color="primary" />
+              )}
+            </IconButton>
+          </Tooltip>
         )}
-        {/* (
-           <Tooltip title="Filter list">
-             <IconButton>
-               <FilterList color="primary" />
-             </IconButton>
-           </Tooltip>
-         )} */}
       </Box>
     </Toolbar>
   );
