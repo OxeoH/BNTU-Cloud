@@ -6,8 +6,8 @@ import {
 import { FilesState, UploaderItem } from "../../store/slices/fileSlice";
 import { $host } from "../index";
 import { CreateFileProps, FileType, File as MyFile } from "./types";
-import { CounterState } from "../../store/slices/counterSlice";
 import { UserState } from "../../store/slices/userSlice";
+import { FilterSlice } from "../../store/slices/filterSlice";
 
 export const getFiles = async (parentId: string) => {
   const { data } = await $host.get<MyFile[]>(`api/files`, {
@@ -31,7 +31,7 @@ export const uploadFile = async (
   currentDir: MyFile,
   dispatch: ThunkDispatch<
     {
-      counter: CounterState;
+      filter: FilterSlice;
       user: UserState;
       file: FilesState;
     },

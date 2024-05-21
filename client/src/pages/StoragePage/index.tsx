@@ -110,12 +110,11 @@ export default function StoragePage() {
           <strong>{convertFromBytes(BigInt(currentUser.diskSpace))}</strong>
         </Typography>
       </Stack>
-      <TableFilters />
+
       <Stack
         direction="row"
         justifyContent={`${isRoot ? "right" : "space-between"}`}
         alignItems="center"
-        mb={20}
       >
         <Button
           variant="contained"
@@ -185,6 +184,7 @@ export default function StoragePage() {
           </Button>
         </Stack>
       </Stack>
+      <TableFilters />
       <Stack width="100%" alignItems="center" mb={20} ref={anchorRef}>
         <FilesTable />
       </Stack>

@@ -1,5 +1,5 @@
 import { Middleware, configureStore } from "@reduxjs/toolkit";
-import counterReducer from "./slices/counterSlice";
+import filterReducer from "./slices/filterSlice";
 import userReducer from "./slices/userSlice";
 import fileReducer from "./slices/fileSlice";
 
@@ -17,7 +17,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(bigIntMiddleware),
   reducer: {
-    counter: counterReducer,
+    filter: filterReducer,
     user: userReducer,
     file: fileReducer,
   },

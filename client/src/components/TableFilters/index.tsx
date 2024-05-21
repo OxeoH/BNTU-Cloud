@@ -50,11 +50,13 @@ const TableFilters = () => {
                 ...params.InputProps,
                 style: {
                   borderRadius: 20,
+                  borderColor: "ActiveBorder",
                 },
               }}
               InputLabelProps={{
                 style: {
                   borderRadius: 20,
+                  borderColor: "ActiveBorder",
                 },
               }}
             />

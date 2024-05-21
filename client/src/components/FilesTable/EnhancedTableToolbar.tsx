@@ -75,12 +75,15 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             </IconButton>
           </Tooltip>
         ) : (
-          <Tooltip title="Filter list">
-            <IconButton>
-              <FilterList color="primary" />
-            </IconButton>
-          </Tooltip>
+          <></>
         )}
+        {/* (
+           <Tooltip title="Filter list">
+             <IconButton>
+               <FilterList color="primary" />
+             </IconButton>
+           </Tooltip>
+         )} */}
       </Box>
     </Toolbar>
   );
