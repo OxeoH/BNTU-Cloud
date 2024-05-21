@@ -21,6 +21,7 @@ import { uploadFile } from "../../api/File";
 import { setUser } from "../../store/slices/userSlice";
 import Uploader from "../../components/Uploader";
 import TableFilters from "../../components/TableFilters";
+import { toggleApplied } from "../../store/slices/filterSlice";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -48,6 +49,7 @@ export default function StoragePage() {
 
   const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     try {
+      dispatch(toggleApplied(false));
       Array.from(e.target.files ?? []).forEach(async (file) => {
         setOpenUploader(true);
         const choosen = currentDir?.id ? currentDir : currentUser.files[0];
@@ -61,6 +63,7 @@ export default function StoragePage() {
         );
 
         dispatch(addFiles([uploaded]));
+        setOpenUploader(false);
         dispatch(
           setUser({
             ...currentUser,

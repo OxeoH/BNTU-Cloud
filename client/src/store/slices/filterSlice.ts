@@ -68,8 +68,8 @@ export const filterSlice = createSlice({
       state.applied = true;
       state.filter = action.payload;
     },
-    toggleApplied: (state) => {
-      state.applied = !state.applied;
+    toggleApplied: (state, action: PayloadAction<boolean>) => {
+      state.applied = action.payload;
     },
     clearFilter: (state) => {
       state = initialState;

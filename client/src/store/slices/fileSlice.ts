@@ -55,7 +55,7 @@ export const fileSlice = createSlice({
     },
     setUploadingProgress: (state, action: PayloadAction<UploaderItem>) => {
       state.uploadingFiles.map((file) =>
-        file.id == action.payload.id
+        file.id === action.payload.id
           ? (file.progress = action.payload.progress)
           : file
       );

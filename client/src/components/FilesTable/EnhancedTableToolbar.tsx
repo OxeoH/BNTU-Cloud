@@ -29,7 +29,6 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
 
   const dispatch = useAppDispatch();
   const filter = useAppSelector((state) => state.filter);
-  const [apply, setApply] = useState(filter.applied);
 
   return (
     <Toolbar
@@ -89,15 +88,16 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           </Tooltip>
         ) : (
           <Tooltip
-            title={apply ? "Фильтрация: Включена" : "Фильтрация: Выключена"}
+            title={
+              filter.applied ? "Фильтрация: Включена" : "Фильтрация: Выключена"
+            }
           >
             <IconButton
               onClick={() => {
-                dispatch(toggleApplied());
-                setApply(!apply);
+                dispatch(toggleApplied(!filter.applied));
               }}
             >
-              {apply ? (
+              {filter.applied ? (
                 <FilterList color="primary" />
               ) : (
                 <FilterListOff color="primary" />
