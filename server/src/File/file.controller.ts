@@ -8,6 +8,7 @@ import fileManager from "./file.manager";
 import fileUpload from "express-fileupload";
 import customJSONStringifier from "./utils/customJSONStringifier";
 import userController from "../User/user.controller";
+const uuidv4 = require("uuid").v4;
 
 class FileController {
   constructor() {}
@@ -262,6 +263,67 @@ class FileController {
     } catch (e) {
       console.log(e);
       res.status(500).json({ message: e });
+    }
+  }
+
+  public async uploadAvatar(req: Request, res: Response) {
+    try {
+      const uploadedAvatar = req.files?.file as fileUpload.UploadedFile;
+
+      if (!uploadedAvatar)
+        return res.status(400).json({ message: "Error: Bad Request" });
+
+      const token = req.headers.authorization?.split(" ")[1];
+
+      const userData = verifyTokenMiddleware(token ?? "");
+
+      if (!userData)
+        return res.status(403).json({ message: "Error: Token was expired" });
+
+      const candidate = await userService.getUserById(userData.id);
+
+      if (!candidate)
+        return res.status(403).json({ message: "Error: User not found" });
+
+      await fileManager.deleteAvatar(candidate.avatar);
+
+      const avatarName = uuidv4() + ".jpg";
+      uploadedAvatar.mv(process.env.STATIC_PATH + `\\${avatarName}`);
+      candidate.avatar = avatarName;
+      await userService.userRepository.save(candidate);
+
+      return res.status(200).send({ avatar: avatarName });
+    } catch (e) {
+      console.log(e);
+      res.status(400).json({ message: `Error: ${e}` });
+    }
+  }
+
+  public async deleteAvatar(req: Request, res: Response) {
+    try {
+      const token = req.headers.authorization?.split(" ")[1];
+
+      const userData = verifyTokenMiddleware(token ?? "");
+
+      if (!userData)
+        return res.status(403).json({ message: "Error: Token was expired" });
+
+      const candidate = await userService.getUserById(userData.id);
+
+      if (!candidate)
+        return res.status(403).json({ message: "Error: User not found" });
+
+      await fileManager.deleteAvatar(candidate.avatar);
+      candidate.avatar = "";
+
+      await userService.userRepository.save(candidate);
+
+      return res
+        .status(200)
+        .send({ message: "Avatar was deleted successfully" });
+    } catch (e) {
+      console.log(e);
+      res.status(400).json({ message: `Error: ${e}` });
     }
   }
 }

@@ -11,7 +11,7 @@ import fileRouter from "./src/File/file.router";
 
 const app = express();
 app.use(cors());
-
+app.use(express.static("static"));
 app.use(express.json());
 app.use(
   filrUpload({

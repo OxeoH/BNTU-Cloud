@@ -7,15 +7,31 @@ import {
   Menu,
   MenuItem,
   Stack,
+  Tooltip,
   Typography,
+  styled,
 } from "@mui/material";
 import React, { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
-import { logout } from "../../store/slices/userSlice";
-import { clearFiles, setCurrentDir } from "../../store/slices/fileSlice";
-import { avatarToString } from "../../shared/avatarToString";
+import { logout, setAvatar } from "../../store/slices/userSlice";
+import { clearFiles } from "../../store/slices/fileSlice";
+import { getAvatar } from "../../shared/getAvatar";
+import { uploadAvatar } from "../../api/File";
+import { AccountCircle, ExitToApp } from "@mui/icons-material";
 
 export default function Profile() {
+  const VisuallyHiddenInput = styled("input")({
+    clip: "rect(0 0 0 0)",
+    clipPath: "inset(50%)",
+    height: 1,
+    overflow: "hidden",
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    whiteSpace: "nowrap",
+    width: 1,
+  });
+
   const { isAuth, currentUser } = useAppSelector((state) => state.user);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -30,6 +46,20 @@ export default function Profile() {
     dispatch(clearFiles());
     dispatch(logout());
     navigate(LOGIN_ROUTE);
+  };
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    //e.stopPropagation();
+    try {
+      const avatarFile = e.target.files ? e.target.files[0] : null;
+
+      if (avatarFile) {
+        const { avatar } = await uploadAvatar(avatarFile);
+        dispatch(setAvatar(avatar ?? ""));
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
   const handleClose = () => {
     setAnchorEl(null);
@@ -48,17 +78,26 @@ export default function Profile() {
             aria-expanded={open ? "true" : undefined}
             onClick={handleClick}
           >
+            <Tooltip title={currentUser.login}>
+              <Typography variant="h5" sx={{ mr: 10 }}>
+                {currentUser.login.length > 12
+                  ? currentUser.login.slice(0, 12) + "..."
+                  : currentUser.login}
+              </Typography>
+            </Tooltip>
             <Avatar
-              {...avatarToString(currentUser.surname + " " + currentUser.name)}
+              {...getAvatar(
+                currentUser.surname + " " + currentUser.name,
+                currentUser.avatar
+              )}
               sx={{
                 bgcolor: "white",
                 color: (theme) => theme.palette.primary.main,
-                mr: 10,
+
                 width: 44,
                 height: 44,
               }}
             />
-            <Typography variant="subtitle1"></Typography>
           </Stack>
 
           <Menu
@@ -88,7 +127,47 @@ export default function Profile() {
               {currentUser.surname + " " + currentUser.name}
             </Typography>
             <Divider />
-            <MenuItem onClick={handleExit}>Выйти</MenuItem>
+            <Button
+              component="label"
+              variant="contained"
+              sx={{
+                width: "100%",
+                borderRadius: 0,
+                justifyContent: "flex-start",
+                color: (theme) => theme.palette.text.primary,
+              }}
+              tabIndex={-1}
+              color="secondary"
+              startIcon={<AccountCircle color="primary" />}
+            >
+              <Typography variant="h4" textAlign="center">
+                Сменить аватар
+              </Typography>
+              <VisuallyHiddenInput
+                type="file"
+                accept=".jpg,.jpeg"
+                onChange={(e) => handleAvatarChange(e)}
+              />
+            </Button>
+            <Divider />
+            <Button
+              component="label"
+              variant="contained"
+              sx={{
+                width: "100%",
+                borderRadius: 0,
+                justifyContent: "flex-start",
+                color: (theme) => theme.palette.text.primary,
+              }}
+              tabIndex={-1}
+              color="secondary"
+              startIcon={<ExitToApp color="primary" />}
+              onClick={handleExit}
+            >
+              <Typography variant="h4" textAlign="center">
+                Выйти
+              </Typography>
+            </Button>
           </Menu>
         </>
       ) : (

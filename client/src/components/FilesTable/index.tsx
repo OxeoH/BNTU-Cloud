@@ -23,7 +23,7 @@ import { deleteFile, downloadFile, getFiles } from "../../api/File";
 import { User } from "../../api/User/types";
 import { convertFromBytes } from "../../shared/convertFromBytes";
 import { Delete, Download, FormatListBulleted } from "@mui/icons-material";
-import { avatarToString } from "../../shared/avatarToString";
+import { getAvatar } from "../../shared/getAvatar";
 import { setUser } from "../../store/slices/userSlice";
 import theme from "../../shared/theme/theme";
 import SkeletonLoader from "../SkeletonLoader";
@@ -149,7 +149,7 @@ export default function EnhancedTable() {
       }
     }
     if (currentUser) getCurrentFiles();
-  }, [currentDir, filter, applied]);
+  }, [currentDir, filter, applied, currentUser.avatar]);
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -347,9 +347,11 @@ export default function EnhancedTable() {
                         <Typography variant="caption" sx={{ mr: 10 }}>
                           {row.user.email}
                         </Typography>
+
                         <Avatar
-                          {...avatarToString(
-                            row.user.surname + " " + row.user.name
+                          {...getAvatar(
+                            row.user.surname + " " + row.user.name,
+                            row.user.avatar
                           )}
                           sx={{
                             bgcolor: (theme) => theme.palette.primary.light,

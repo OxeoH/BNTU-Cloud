@@ -58,6 +58,23 @@ class FileManager {
     });
   }
 
+  public async deleteAvatar(avatar: string) {
+    const avatarPath = process.env.STATIC_PATH + `\\${avatar}`;
+
+    return new Promise((resolve, reject) => {
+      try {
+        if (fs.existsSync(avatarPath)) {
+          fs.unlinkSync(avatarPath);
+          resolve({ message: "Avatar was deleted successfully" });
+        } else {
+          resolve({ message: "Error: Avatar was not found" });
+        }
+      } catch (e) {
+        return reject({ error: e });
+      }
+    });
+  }
+
   public checkIsExists(path: string) {
     if (fs.existsSync(path)) return true;
     return false;

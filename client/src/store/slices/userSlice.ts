@@ -39,8 +39,11 @@ export const counterSlice = createSlice({
       state.currentUser = emptyUser;
       state.isAuth = false;
     },
+    setAvatar: (state, action: PayloadAction<string>) => {
+      state.currentUser.avatar = action.payload;
+    },
   },
 });
-export const { setUser, logout } = counterSlice.actions;
+export const { setUser, logout, setAvatar } = counterSlice.actions;
 
 export default counterSlice.reducer;

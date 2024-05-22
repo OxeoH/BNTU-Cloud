@@ -68,6 +68,28 @@ export const uploadFile = async (
   return data;
 };
 
+export const uploadAvatar = async (file: File) => {
+  const formdata: any = new FormData();
+
+  formdata.append("file", file);
+
+  const { data } = await $host.post<{ avatar: string }>(
+    "api/files/avatar",
+    formdata,
+    {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    }
+  );
+  return data;
+};
+
+export const deleteAvatar = async () => {
+  const { data } = await $host.delete<{ message: string }>("api/files/avatar", {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+  return { data };
+};
+
 export const deleteFile = async (id: string) => {
   const { data } = await $host.post<MyFile>(
     "api/files/delete",

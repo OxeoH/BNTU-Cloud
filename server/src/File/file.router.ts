@@ -13,6 +13,12 @@ fileRouter.get("", async (req: Request, res: Response) => {
 fileRouter.post("/upload", async (req: Request, res: Response) => {
   await fileController.uploadFile(req, res);
 });
+fileRouter.post("/avatar", async (req: Request, res: Response) => {
+  await fileController.uploadAvatar(req, res);
+});
+fileRouter.delete("/avatar", async (req: Request, res: Response) => {
+  await fileController.deleteAvatar(req, res);
+});
 
 fileRouter.get("/download", async (req: Request, res: Response) => {
   await fileController.downloadFile(req, res);
