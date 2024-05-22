@@ -77,6 +77,7 @@ export default function Profile() {
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
             onClick={handleClick}
+            sx={{ cursor: "pointer" }}
           >
             <Tooltip title={currentUser.login}>
               <Typography variant="h5" sx={{ mr: 10 }}>
@@ -161,7 +162,7 @@ export default function Profile() {
               }}
               tabIndex={-1}
               color="secondary"
-              startIcon={<ExitToApp color="primary" />}
+              startIcon={<ExitToApp color="error" />}
               onClick={handleExit}
             >
               <Typography variant="h4" textAlign="center">
