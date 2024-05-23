@@ -12,6 +12,7 @@ export type File = {
   parent: File;
   uploaded: Date;
   // childs: File[];
+  // shared: File[];
 };
 
 export enum FileType {

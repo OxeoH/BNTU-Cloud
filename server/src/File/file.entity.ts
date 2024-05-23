@@ -6,6 +6,7 @@ import {
   OneToMany,
   CreateDateColumn,
   ManyToMany,
+  JoinTable,
 } from "typeorm";
 import { User } from "../User/user.entity";
 import { FileType } from "./file.types";

@@ -4,6 +4,7 @@ import {
   AuthResponse,
   RegisterProps,
   RegisterResponse,
+  User,
   VerifyProps,
 } from "./types";
 
@@ -14,6 +15,18 @@ export const registration = async (props: RegisterProps) => {
   );
 
   return data.message;
+};
+
+export const getAllUsers = async () => {
+  try {
+    const { data } = await $host.get<User[]>("api/user/all", {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    });
+
+    return data ?? ([] as User[]);
+  } catch (e: any) {
+    console.log(e);
+  }
 };
 
 export const authorization = async (props: AuthProps) => {

@@ -285,7 +285,8 @@ class FileController {
       if (!candidate)
         return res.status(403).json({ message: "Error: User not found" });
 
-      await fileManager.deleteAvatar(candidate.avatar);
+      if (candidate.avatar.length)
+        await fileManager.deleteAvatar(candidate.avatar);
 
       const avatarName = uuidv4() + ".jpg";
       uploadedAvatar.mv(process.env.STATIC_PATH + `\\${avatarName}`);

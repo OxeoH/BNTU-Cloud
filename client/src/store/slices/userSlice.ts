@@ -3,6 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import { User, UserRole } from "../../api/User/types";
 
 export interface UserState {
+  users: User[];
   currentUser: User;
   isAuth: boolean;
 }
@@ -19,10 +20,12 @@ const emptyUser: User = {
   confirmed: false,
   diskSpace: "0",
   usedSpace: "0",
+  contacts: [],
   files: [],
 };
 
 const initialState: UserState = {
+  users: [],
   currentUser: emptyUser,
   isAuth: false,
 };
@@ -31,6 +34,9 @@ export const counterSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
+    setUsers: (state, action: PayloadAction<User[]>) => {
+      state.users = action.payload;
+    },
     setUser: (state, action: PayloadAction<User>) => {
       state.currentUser = action.payload;
       state.isAuth = true;
@@ -44,6 +50,6 @@ export const counterSlice = createSlice({
     },
   },
 });
-export const { setUser, logout, setAvatar } = counterSlice.actions;
+export const { setUser, setUsers, logout, setAvatar } = counterSlice.actions;
 
 export default counterSlice.reducer;

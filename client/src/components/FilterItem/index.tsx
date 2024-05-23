@@ -1,14 +1,27 @@
 import { Autocomplete, TextField } from "@mui/material";
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
-import { IFilter, setFilter } from "../../store/slices/filterSlice";
+import {
+  FileFilter,
+  IFileFilter,
+  IUserFilter,
+  UserFilter,
+} from "../../store/slices/filterSlice";
+import { ActionCreatorWithPayload } from "@reduxjs/toolkit";
 
-const Filter = ({ item }: { item: IFilter }) => {
+export interface FilterItemProps {
+  item: IFileFilter | IUserFilter;
+  setFilter: any;
+  // | ActionCreatorWithPayload<UserFilter, "filters/setUserFilter">
+  // | ActionCreatorWithPayload<FileFilter, "filters/setFileFilter">;
+
+  filter: FileFilter | UserFilter;
+}
+
+const FilterItem = ({ item, setFilter, filter }: FilterItemProps) => {
   const dispatch = useAppDispatch();
-  const filter = useAppSelector((state) => state.filter.filter);
   const [value, setValue] = React.useState<string | null>(null);
   const [inputValue, setInputValue] = React.useState("");
-  console.log(item.type);
 
   const handleChange = (event: any, newValue: string | null) => {
     dispatch(setFilter({ ...filter, [item.type]: newValue }));
@@ -56,4 +69,4 @@ const Filter = ({ item }: { item: IFilter }) => {
   );
 };
 
-export default Filter;
+export default FilterItem;

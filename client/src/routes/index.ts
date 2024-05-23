@@ -4,6 +4,7 @@ import NotFoundPage from "../pages/NotFoundPage";
 import RegisterPage from "../pages/RegisterPage";
 import SettingsPage from "../pages/SettingsPage";
 import StoragePage from "../pages/StoragePage";
+import UsersPage from "../pages/UsersPage";
 import WelcomePage from "../pages/WelcomePage";
 
 import {
@@ -14,6 +15,7 @@ import {
   REGISTER_ROUTE,
   SETTINGS_ROUTE,
   STORAGE_ROUTE,
+  USERS_ROUTE,
 } from "./utils/consts";
 
 export const authRoutes: RouteType[] = [
@@ -44,6 +46,10 @@ export const authRoutes: RouteType[] = [
   {
     path: SETTINGS_ROUTE,
     Component: SettingsPage,
+  },
+  {
+    path: USERS_ROUTE,
+    Component: UsersPage,
   },
 ];
 

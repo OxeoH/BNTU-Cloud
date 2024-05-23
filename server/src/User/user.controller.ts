@@ -74,7 +74,6 @@ class UserController {
       // const empties = Object.values(registerParams).filter((param) => {
       //   return param.toString().trim().length === 0;
       // });
-
       const candidate = await userService.checkIsNewUser(registerParams.login);
 
       if (!candidate) {
@@ -102,6 +101,38 @@ class UserController {
           message: `User with login ${registerParams.login} is already exists`,
         });
       }
+    } catch (e) {
+      res.status(500).json({ message: `Error: ${e}` });
+    }
+  }
+
+  public async getAllUsers(req: Request, res: Response) {
+    try {
+      const token = req.headers.authorization?.split(" ")[1];
+
+      if (!token)
+        return res.status(401).json({ message: "Error: Wrong token" });
+
+      const userData = verifyTokenMiddleware(token);
+
+      if (!userData)
+        return res.status(403).json({ message: "Error: Token was expired" });
+
+      const user = await userService.getUserById(userData.id);
+
+      if (!user)
+        return res.status(400).json({ message: "Error: Cannot find user" });
+
+      const users = await userService.getAll();
+
+      if (!users)
+        return res.status(400).json({ message: "Error: Cannot get users" });
+
+      return res.status(200).send(
+        customJSONStringifier({
+          users: users.map((item) => (({ password, ...o }) => o)(item)),
+        })
+      );
     } catch (e) {
       res.status(500).json({ message: `Error: ${e}` });
     }

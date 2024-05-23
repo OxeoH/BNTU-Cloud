@@ -8,29 +8,23 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
-import { File, FileType } from "../../api/File/types";
-import { Avatar, IconButton, Stack, Tooltip } from "@mui/material";
-import { getFileIcon } from "../../shared/getFileIcon";
+import { Avatar, Badge, IconButton, Stack, Tooltip } from "@mui/material";
 import EnhancedTableHead, { Order } from "./EnhancedTableHead";
 import EnhancedTableToolbar from "./EnhancedTableToolbar";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
+import { User, UserRole } from "../../api/User/types";
 import {
-  removeFiles,
-  setCurrentDir,
-  setFiles,
-} from "../../store/slices/fileSlice";
-import { deleteFile, downloadFile, getFiles } from "../../api/File";
-import { User } from "../../api/User/types";
-import { convertFromBytes } from "../../shared/convertFromBytes";
-import {
-  Delete,
-  Download,
-  FormatListBulleted,
-  LockOpen,
+  AdminPanelSettings,
+  People,
+  PersonAdd,
+  PersonRemove,
+  School,
 } from "@mui/icons-material";
 import { getAvatar } from "../../shared/getAvatar";
-import { setUser } from "../../store/slices/userSlice";
+import { setUsers } from "../../store/slices/userSlice";
 import SkeletonLoader from "../SkeletonLoader";
+import { getAllUsers } from "../../api/User";
+import { File } from "../../api/File/types";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -47,26 +41,10 @@ function getComparator<Key extends keyof any>(
   orderBy: Key
 ): (
   a: {
-    [key in Key]:
-      | number
-      | string
-      | boolean
-      | FileType
-      | User
-      | File
-      | bigint
-      | Date;
+    [key in Key]: User | UserRole | string | boolean | File[] | User[];
   },
   b: {
-    [key in Key]:
-      | number
-      | string
-      | boolean
-      | FileType
-      | User
-      | File
-      | bigint
-      | Date;
+    [key in Key]: User | UserRole | string | boolean | File[] | User[];
   }
 ) => number {
   return order === "desc"
@@ -95,76 +73,96 @@ function stableSort<T>(
 
 export default function EnhancedTable() {
   const [order, setOrder] = React.useState<Order>("asc");
-  const [orderBy, setOrderBy] = React.useState<keyof File>("size");
+  const [orderBy, setOrderBy] = React.useState<keyof User>("login");
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [loader, setLoader] = React.useState(false);
 
   const dispatch = useAppDispatch();
-  const currentDir = useAppSelector((state) => state.file.currentDir);
   const currentUser = useAppSelector((state) => state.user.currentUser);
-  const rows = useAppSelector((state) => state.file.files);
-  const rootDir = useAppSelector((state) => state.file.rootDir);
-  const { fileFilter, fileFilterApplied } = useAppSelector(
+  const rows = useAppSelector((state) => state.user.users);
+  const { userFilter, userFilterApplied } = useAppSelector(
     (state) => state.filter
   );
 
   React.useEffect(() => {
-    dispatch(setCurrentDir(rootDir ?? currentUser.files[0]));
-  }, []);
-
-  React.useEffect(() => {
-    async function getCurrentFiles() {
+    async function getUsersList() {
       try {
         setLoader(true);
-        const filtered = (
-          await getFiles(currentDir?.id ?? currentUser.files[0].id)
-        )
-          .filter((file) => {
-            if (!fileFilterApplied) return true;
-            if (fileFilter.filetype != null) {
-              return file.type === fileFilter.filetype;
-            }
-            return true;
-          })
-          .filter((file) => {
-            if (!fileFilterApplied) return true;
-            if (fileFilter.user != null) {
-              return (
-                file.user.login === fileFilter.user.login &&
-                file.user.email === fileFilter.user.email &&
-                file.user.id === fileFilter.user.id
+        const filteredUsers = (await getAllUsers())!
+          .filter((user) => {
+            if (!userFilterApplied) return true;
+            if (userFilter.name != null) {
+              return (user.name + user.surname + user.patronymic).includes(
+                userFilter.name
               );
             }
             return true;
           })
-          .filter((file) => {
-            if (!fileFilterApplied) return true;
-            if (fileFilter.name != null) {
-              return file.name.includes(fileFilter.name);
+          .filter((user) => {
+            if (!userFilterApplied) return true;
+            if (userFilter.email != null) {
+              return user.email === userFilter.email;
+            }
+            return true;
+          })
+          .filter((user) => {
+            if (!userFilterApplied) return true;
+            if (userFilter.group != null) {
+              return user.group === userFilter.group;
+            }
+            return true;
+          })
+          .filter((user) => {
+            if (!userFilterApplied) return true;
+            if (userFilter.login != null) {
+              return user.login === userFilter.login;
+            }
+            return true;
+          })
+          .filter((user) => {
+            if (!userFilterApplied) return true;
+            if (userFilter.role != null) {
+              return user.role === userFilter.role;
             }
             return true;
           });
 
-        dispatch(setFiles(filtered));
+        dispatch(setUsers(filteredUsers));
       } catch (e: any) {
         console.log(e);
       } finally {
         setLoader(false);
       }
     }
-    if (currentUser) getCurrentFiles();
-  }, [currentDir, fileFilter, fileFilterApplied, currentUser.avatar]);
+    if (currentUser) getUsersList();
+  }, [userFilter, userFilterApplied, currentUser.avatar]);
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
-    property: keyof File
+    property: keyof User
   ) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
+
+  const getRoleIcon = (role: UserRole) => {
+    switch (role) {
+      case UserRole.ADMIN:
+        return <AdminPanelSettings />;
+      case UserRole.TEACHER:
+        return <Badge />;
+      case UserRole.STUDENT:
+        return <School />;
+      default:
+        return <School />;
+    }
+  };
+
+  const handleRemoveContact = (e: React.MouseEvent, contact: User) => {};
+  const handleAddContact = (e: React.MouseEvent, contact: User) => {};
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -194,45 +192,7 @@ export default function EnhancedTable() {
     setSelected(newSelected);
   };
 
-  const handleDownloadClick = async (e: React.MouseEvent, file: File) => {
-    e.stopPropagation();
-
-    try {
-      await downloadFile(file);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-  const handleConfigureAccess = async (e: React.MouseEvent, file: File) => {
-    e.stopPropagation();
-  };
-
-  const handleDeleteClick = async (e: React.MouseEvent, file: File) => {
-    e.stopPropagation();
-
-    try {
-      const deletedFile = await deleteFile(file.id);
-      if (deletedFile.id === file.id) {
-        dispatch(
-          setUser({
-            ...currentUser,
-            usedSpace: (
-              BigInt(currentUser.usedSpace) - BigInt(deletedFile.size)
-            ).toString(),
-          })
-        );
-        dispatch(removeFiles([file.id]));
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  const handleDoubleClick = (event: React.MouseEvent, row: File) => {
-    if (row.type === FileType.DIR) {
-      dispatch(setCurrentDir(row));
-    }
-  };
+  const handleDoubleClick = (event: React.MouseEvent, row: User) => {};
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -259,7 +219,7 @@ export default function EnhancedTable() {
       ),
     [order, orderBy, page, rows, rowsPerPage]
   );
-  const renderContent = (isLoading: boolean, files: File[]) => {
+  const renderContent = (isLoading: boolean, users: User[]) => {
     if (isLoading)
       return (
         <Stack
@@ -274,7 +234,7 @@ export default function EnhancedTable() {
         </Stack>
       );
     if (!isLoading) {
-      if (files.length) {
+      if (users.length) {
         return (
           <>
             <EnhancedTableHead
@@ -322,89 +282,86 @@ export default function EnhancedTable() {
                         justifyContent="left"
                         alignItems="center"
                       >
-                        {getFileIcon(row.type)}
-                        <Typography
-                          variant="subtitle1"
-                          component="h4"
-                          sx={{ ml: 10 }}
-                        >
-                          {row.name}
-                        </Typography>
-                      </Stack>
-                    </TableCell>
-                    <TableCell align="right">
-                      <Typography variant="subtitle1" component="h4">
-                        {`.${row.type}`}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                      <Typography variant="subtitle1" component="h4">
-                        {row.uploaded.toString().slice(0, 10)}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                      <Typography variant="subtitle1" component="h4">
-                        {convertFromBytes(BigInt(row.size))}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                      <Stack
-                        direction="row"
-                        justifyContent="right"
-                        alignItems="center"
-                      >
-                        <Typography variant="caption" sx={{ mr: 10 }}>
-                          {row.user.email}
-                        </Typography>
-
                         <Avatar
                           {...getAvatar(
-                            row.user.surname + " " + row.user.name,
-                            row.user.avatar
+                            row.surname + " " + row.name,
+                            row.avatar
                           )}
                           sx={{
                             bgcolor: (theme) => theme.palette.primary.light,
                             color: (theme) => theme.palette.secondary.main,
                             width: 36,
                             height: 36,
+                            mr: 10,
                           }}
                         />
+                        <Stack
+                          direction="column"
+                          justifyContent="space-between"
+                          alignItems="left"
+                        >
+                          <Typography variant="subtitle1" component="h4">
+                            {row.login}
+                          </Typography>
+                          <Typography variant="subtitle2" component="h4">
+                            {row.email}
+                          </Typography>
+                        </Stack>
+                      </Stack>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Tooltip
+                        title={`${row.surname} ${row.name} ${row.patronymic}`}
+                      >
+                        <Typography variant="subtitle1" component="h4">
+                          {`${row.surname} ${row.name[0]}. ${row.patronymic[0]}.`}
+                        </Typography>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="subtitle1" component="h4">
+                        {row.group}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Stack
+                        direction="row"
+                        justifyContent="left"
+                        alignItems="center"
+                      >
+                        <Typography
+                          variant="subtitle1"
+                          component="h4"
+                          sx={{ mr: 10 }}
+                        >
+                          {row.role[0].toLocaleUpperCase() + row.role.slice(1)}
+                        </Typography>
+                        {getRoleIcon(row.role)}
                       </Stack>
                     </TableCell>
 
                     <TableCell align="right">
-                      <Tooltip title="Настроить доступ" sx={{ mr: 5 }}>
-                        <IconButton
-                          aria-label="delete"
-                          size="large"
-                          onClick={(e) => handleConfigureAccess(e, row)}
-                        >
-                          <LockOpen />
-                        </IconButton>
-                      </Tooltip>
-
-                      {row.type !== FileType.DIR ? (
-                        <Tooltip title="Скачать" sx={{ mr: 5 }}>
+                      {currentUser.contacts.includes(row) ? (
+                        <Tooltip title="Добавить в контакты" sx={{ mr: 5 }}>
                           <IconButton
-                            aria-label="download"
+                            aria-label="delete"
                             size="large"
-                            onClick={(e) => handleDownloadClick(e, row)}
+                            onClick={(e) => handleRemoveContact(e, row)}
                           >
-                            <Download />
+                            <PersonRemove />
                           </IconButton>
                         </Tooltip>
                       ) : (
-                        <></>
+                        <Tooltip title="Добавить в контакты" sx={{ mr: 5 }}>
+                          <IconButton
+                            aria-label="delete"
+                            size="large"
+                            onClick={(e) => handleAddContact(e, row)}
+                          >
+                            <PersonAdd />
+                          </IconButton>
+                        </Tooltip>
                       )}
-                      <Tooltip title="Удалить" sx={{ mr: 5 }}>
-                        <IconButton
-                          aria-label="delete"
-                          size="large"
-                          onClick={(e) => handleDeleteClick(e, row)}
-                        >
-                          <Delete />
-                        </IconButton>
-                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 );
@@ -432,20 +389,16 @@ export default function EnhancedTable() {
           overflow="hidden"
         >
           <Typography variant="h2" color="InfoText" sx={{ my: 10 }}>
-            Здесь могли быть ваши файлы
+            Тут никого нет...
           </Typography>
           <Typography
             variant="subtitle1"
             color={(theme) => theme.palette.primary.main}
             sx={{ my: 10 }}
           >
-            Создайте или загрузите несколько, чтобы начать пользоваться таблицей
+            Пригласи одногруппников / коллег, чтобы добавить их в контакты
           </Typography>
-          <FormatListBulleted
-            fontSize="large"
-            color="primary"
-            sx={{ my: 10 }}
-          />
+          <People fontSize="large" color="primary" sx={{ my: 10 }} />
         </Stack>
       );
     }
@@ -454,10 +407,7 @@ export default function EnhancedTable() {
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", overflow: "hidden", mb: 2 }}>
-        <EnhancedTableToolbar
-          numSelected={selected.length}
-          currentDir={currentDir ?? currentUser.files[0]}
-        />
+        <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer sx={{ maxHeight: "50vh" }}>
           <Table
             sx={{ minWidth: 750, p: 2 }}

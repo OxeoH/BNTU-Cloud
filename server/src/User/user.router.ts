@@ -39,4 +39,8 @@ userRouter.post(
 userRouter.get("/verify-auth", async (req: Request, res: Response) => {
   await userController.checkIsAuth(req, res);
 });
+
+userRouter.get("/all", async (req: Request, res: Response) => {
+  await userController.getAllUsers(req, res);
+});
 export default userRouter;

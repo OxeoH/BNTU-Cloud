@@ -5,6 +5,7 @@ import {
   OneToMany,
   JoinTable,
   ManyToMany,
+  JoinColumn,
 } from "typeorm";
 import { File } from "../File/file.entity";
 import { UserRole } from "./user.types";
@@ -61,6 +62,8 @@ export class User {
   files: File[];
 
   @ManyToMany(() => File, (file) => file.shared)
-  @JoinTable()
   shared: File[];
+
+  @OneToMany(() => User, (user) => user.id)
+  contacts: User[];
 }

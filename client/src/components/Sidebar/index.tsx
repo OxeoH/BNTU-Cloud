@@ -22,12 +22,15 @@ import {
   MAIN_ROUTE,
   SETTINGS_ROUTE,
   STORAGE_ROUTE,
+  USERS_ROUTE,
 } from "../../routes/utils/consts";
 import { useNavigate } from "react-router-dom";
+import { People } from "@mui/icons-material";
 
 const optionsList = [
   { text: "Главная", route: MAIN_ROUTE },
   { text: "Мой диск", route: STORAGE_ROUTE },
+  { text: "Контакты", route: USERS_ROUTE },
   { text: "Настройки", route: SETTINGS_ROUTE },
   { text: "Помощь", route: HELP_ROUTE },
 ];
@@ -48,6 +51,8 @@ export default function Sidebar() {
         return <HomeIcon />;
       case "Мой диск":
         return <StorageIcon />;
+      case "Контакты":
+        return <People />;
       case "Библиотека":
         return <MenuBookIcon />;
       case "Помощь":
@@ -110,9 +115,9 @@ export default function Sidebar() {
           onClick={() => setIsSidebarOpened(false)}
           onKeyDown={() => setIsSidebarOpened(false)}
         >
-          {getOptions([optionsList[0], optionsList[1]])}
+          {getOptions([optionsList[0], optionsList[1], optionsList[2]])}
           <Divider />
-          {getOptions([optionsList[2], optionsList[3]])}
+          {getOptions([optionsList[3], optionsList[4]])}
         </Box>
       </Drawer>
     </>

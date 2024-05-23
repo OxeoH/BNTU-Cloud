@@ -14,18 +14,15 @@ import {
   Typography,
   alpha,
 } from "@mui/material";
-import { File } from "../../api/File/types";
-import { toggleFileFilterApplied } from "../../store/slices/filterSlice";
+import { toggleUserFilterApplied } from "../../store/slices/filterSlice";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
-import { useState } from "react";
 
 interface EnhancedTableToolbarProps {
   numSelected: number;
-  currentDir: File;
 }
 
 export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-  const { numSelected, currentDir } = props;
+  const { numSelected } = props;
 
   const dispatch = useAppDispatch();
   const filter = useAppSelector((state) => state.filter);
@@ -75,7 +72,7 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             component="h5"
             color={(theme) => theme.palette.primary.main}
           >
-            {currentDir.root ? "Мой диск" : currentDir.name.split(".")[0]}
+            Контакты
           </Typography>
         </Stack>
       )}
@@ -89,17 +86,17 @@ export default function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
         ) : (
           <Tooltip
             title={
-              filter.fileFilterApplied
+              filter.userFilterApplied
                 ? "Фильтрация: Включена"
                 : "Фильтрация: Выключена"
             }
           >
             <IconButton
               onClick={() => {
-                dispatch(toggleFileFilterApplied(!filter.fileFilterApplied));
+                dispatch(toggleUserFilterApplied(!filter.userFilterApplied));
               }}
             >
-              {filter.fileFilterApplied ? (
+              {filter.userFilterApplied ? (
                 <FilterList color="primary" />
               ) : (
                 <FilterListOff color="primary" />

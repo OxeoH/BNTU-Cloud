@@ -6,3 +6,4 @@ export const ADMIN_PANEL = "/admin";
 export const HELP_ROUTE = "/help";
 export const SETTINGS_ROUTE = "/settings";
 export const STORAGE_ROUTE = "/storage";
+export const USERS_ROUTE = "/users";

@@ -21,7 +21,10 @@ import { uploadFile } from "../../api/File";
 import { setUser } from "../../store/slices/userSlice";
 import Uploader from "../../components/Uploader";
 import TableFilters from "../../components/TableFilters";
-import { toggleApplied } from "../../store/slices/filterSlice";
+import {
+  setFileFilter,
+  toggleFileFilterApplied,
+} from "../../store/slices/filterSlice";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -46,10 +49,11 @@ export default function StoragePage() {
   const currentUser = useAppSelector((state) => state.user.currentUser);
   const currentDir = useAppSelector((state) => state.file.currentDir);
   const isRoot = currentUser.files[0].id === currentDir?.id;
+  const { fileFilter, filtersList } = useAppSelector((state) => state.filter);
 
   const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     try {
-      dispatch(toggleApplied(false));
+      dispatch(toggleFileFilterApplied(false));
       Array.from(e.target.files ?? []).forEach(async (file) => {
         setOpenUploader(true);
         const choosen = currentDir?.id ? currentDir : currentUser.files[0];
@@ -187,7 +191,11 @@ export default function StoragePage() {
           </Button>
         </Stack>
       </Stack>
-      <TableFilters />
+      <TableFilters
+        filters={filtersList}
+        filter={fileFilter}
+        setFilter={setFileFilter}
+      />
       <Stack width="100%" alignItems="center" mb={20} ref={anchorRef}>
         <FilesTable />
       </Stack>

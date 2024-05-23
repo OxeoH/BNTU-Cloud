@@ -27,7 +27,11 @@ class UserService {
   }
 
   public async checkIsNewUser(login: string) {
-    const candidate = await this.userRepository.find({ where: { login } });
+    const candidate = await this.userRepository.find({
+      where: { login },
+      relations: { shared: false, contacts: false },
+    });
+    console.log(candidate);
 
     if (candidate.length === 0) {
       return true;
@@ -43,6 +47,12 @@ class UserService {
       candidate.files = candidate.files.sort((a, b) =>
         a.root === b.root ? 0 : a.root ? -1 : 1
       );
+
+      const contactsCandidates = ((await this.getAll()) ?? []).filter(
+        (user) => user.id === candidate.id || !user.contacts.includes(candidate)
+      );
+
+      candidate.contacts = contactsCandidates;
     }
 
     return candidate ?? null;
@@ -65,6 +75,7 @@ class UserService {
     newUser.role = role;
     newUser.confirmed = false;
     newUser.avatar = "";
+    newUser.contacts = [];
     newUser.shared = [];
 
     const createdUser = await this.userRepository.save(newUser);
@@ -105,6 +116,7 @@ class UserService {
       if (!validPassword) {
         return null;
       }
+      user.contacts = [];
 
       const token = generateAccessToken(user.id, user.login);
 
@@ -117,6 +129,20 @@ class UserService {
             return res;
           }, {}),
       };
+    } catch (e) {
+      return null;
+    }
+  }
+
+  public async getAll() {
+    try {
+      const users = await this.userRepository.find();
+
+      if (!users) {
+        return null;
+      }
+
+      return users;
     } catch (e) {
       return null;
     }

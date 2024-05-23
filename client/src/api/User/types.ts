@@ -46,6 +46,8 @@ export type User = {
   diskSpace: string;
   usedSpace: string;
   files: File[];
+  // shared: File[];
+  contacts: User[];
 };
 
 export type RegisterResponse = {
