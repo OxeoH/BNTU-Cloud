@@ -2,6 +2,7 @@ import { File } from "./src/File/file.entity";
 import "reflect-metadata";
 import { DataSource } from "typeorm";
 import { User } from "./src/User/user.entity";
+import { Contact } from "./src/Contact/contact.entity";
 
 const AppDataSource = new DataSource({
   type: "postgres", //process.env.DB_TYPE,
@@ -11,7 +12,7 @@ const AppDataSource = new DataSource({
   password: process.env.DB_PASSWORD?.toString(),
   database: process.env.DB_NAME,
   synchronize: true,
-  entities: [File, User],
+  entities: [File, User, Contact],
 });
 
 export default AppDataSource;

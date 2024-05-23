@@ -98,7 +98,7 @@ const userFiltersList: IUserFilter[] = [
   },
   {
     name: "Роль",
-    type: "group",
+    type: "role",
     options: Object.entries(UserRole).map((entry) => {
       return { value: entry[0], title: entry[1] };
     }),

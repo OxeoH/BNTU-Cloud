@@ -1,3 +1,4 @@
+import { Contact } from "../Contact/types";
 import { File } from "../File/types";
 
 export type AuthResponse = {
@@ -47,7 +48,7 @@ export type User = {
   usedSpace: string;
   files: File[];
   // shared: File[];
-  contacts: User[];
+  contacts: Contact[];
 };
 
 export type RegisterResponse = {

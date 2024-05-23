@@ -209,8 +209,9 @@ export default function EnhancedTable() {
 
   const handleDeleteClick = async (e: React.MouseEvent, file: File) => {
     e.stopPropagation();
-
     try {
+      console.log(file);
+
       const deletedFile = await deleteFile(file.id);
       if (deletedFile.id === file.id) {
         dispatch(
@@ -394,7 +395,7 @@ export default function EnhancedTable() {
                           </IconButton>
                         </Tooltip>
                       ) : (
-                        <></>
+                        <TableBody></TableBody>
                       )}
                       <Tooltip title="Удалить" sx={{ mr: 5 }}>
                         <IconButton

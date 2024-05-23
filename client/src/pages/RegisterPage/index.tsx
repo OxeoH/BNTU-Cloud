@@ -37,8 +37,8 @@ export default function RegisterPage() {
     try {
       const data = new FormData(event.currentTarget);
       const newUser = {
-        surname: `${data.get("name")}`,
-        name: `${data.get("surname")}`,
+        surname: `${data.get("surname")}`,
+        name: `${data.get("name")}`,
         patronymic: `${data.get("patronymic")}`,
         login: `${data.get("login")}`,
         group:

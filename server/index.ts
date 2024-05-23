@@ -8,6 +8,7 @@ import cors from "cors";
 import AppDataSource from "./data-source";
 import userRouter from "./src/User/user.router";
 import fileRouter from "./src/File/file.router";
+import contactRouter from "./src/Contact/contact.router";
 
 const app = express();
 app.use(cors());
@@ -21,6 +22,7 @@ app.use(
 );
 app.use("/api/user", userRouter);
 app.use("/api/files", fileRouter);
+app.use("/api/contact", contactRouter);
 
 const port = process.env.PORT || 5000;
 

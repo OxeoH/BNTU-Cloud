@@ -8,7 +8,8 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
-import { Avatar, Badge, IconButton, Stack, Tooltip } from "@mui/material";
+import { Avatar, IconButton, Stack, Tooltip } from "@mui/material";
+import BadgeIcon from "@mui/icons-material/Badge";
 import EnhancedTableHead, { Order } from "./EnhancedTableHead";
 import EnhancedTableToolbar from "./EnhancedTableToolbar";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
@@ -25,6 +26,7 @@ import { setUsers } from "../../store/slices/userSlice";
 import SkeletonLoader from "../SkeletonLoader";
 import { getAllUsers } from "../../api/User";
 import { File } from "../../api/File/types";
+import { Contact } from "../../api/Contact/types";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -41,10 +43,24 @@ function getComparator<Key extends keyof any>(
   orderBy: Key
 ): (
   a: {
-    [key in Key]: User | UserRole | string | boolean | File[] | User[];
+    [key in Key]:
+      | User
+      | UserRole
+      | string
+      | boolean
+      | File[]
+      | User[]
+      | Contact[];
   },
   b: {
-    [key in Key]: User | UserRole | string | boolean | File[] | User[];
+    [key in Key]:
+      | User
+      | UserRole
+      | string
+      | boolean
+      | File[]
+      | User[]
+      | Contact[];
   }
 ) => number {
   return order === "desc"
@@ -68,7 +84,7 @@ function stableSort<T>(
     }
     return a[1] - b[1];
   });
-  return stabilizedThis.map((el) => el[0]);
+  return stabilizedThis.map((el) => el[0])!;
 }
 
 export default function EnhancedTable() {
@@ -90,7 +106,10 @@ export default function EnhancedTable() {
     async function getUsersList() {
       try {
         setLoader(true);
-        const filteredUsers = (await getAllUsers())!
+        const filteredUsers = ((await getAllUsers()) ?? [])
+          .filter((user) => {
+            return user.id !== currentUser.id;
+          })
           .filter((user) => {
             if (!userFilterApplied) return true;
             if (userFilter.name != null) {
@@ -129,7 +148,7 @@ export default function EnhancedTable() {
             return true;
           });
 
-        dispatch(setUsers(filteredUsers));
+        dispatch(setUsers(filteredUsers ?? []));
       } catch (e: any) {
         console.log(e);
       } finally {
@@ -153,7 +172,7 @@ export default function EnhancedTable() {
       case UserRole.ADMIN:
         return <AdminPanelSettings />;
       case UserRole.TEACHER:
-        return <Badge />;
+        return <BadgeIcon />;
       case UserRole.STUDENT:
         return <School />;
       default:
@@ -222,16 +241,18 @@ export default function EnhancedTable() {
   const renderContent = (isLoading: boolean, users: User[]) => {
     if (isLoading)
       return (
-        <Stack
-          width="100%"
-          direction="column"
-          justifyContent="center"
-          alignItems="center"
-          height={400}
-          overflow="hidden"
-        >
-          <SkeletonLoader count={5} />
-        </Stack>
+        <TableBody>
+          <Stack
+            width="100%"
+            direction="column"
+            justifyContent="center"
+            alignItems="center"
+            height={400}
+            overflow="hidden"
+          >
+            <SkeletonLoader count={5} />
+          </Stack>
+        </TableBody>
       );
     if (!isLoading) {
       if (users.length) {
@@ -309,7 +330,7 @@ export default function EnhancedTable() {
                         </Stack>
                       </Stack>
                     </TableCell>
-                    <TableCell align="right">
+                    <TableCell align="left">
                       <Tooltip
                         title={`${row.surname} ${row.name} ${row.patronymic}`}
                       >
@@ -318,10 +339,20 @@ export default function EnhancedTable() {
                         </Typography>
                       </Tooltip>
                     </TableCell>
-                    <TableCell align="right">
-                      <Typography variant="subtitle1" component="h4">
-                        {row.group}
-                      </Typography>
+                    <TableCell align="left">
+                      {row.group ? (
+                        <Typography variant="subtitle1" component="h4">
+                          {row.group}
+                        </Typography>
+                      ) : (
+                        <Typography
+                          variant="subtitle2"
+                          component="h6"
+                          color="GrayText"
+                        >
+                          Отсутствует
+                        </Typography>
+                      )}
                     </TableCell>
                     <TableCell align="right">
                       <Stack
@@ -329,19 +360,21 @@ export default function EnhancedTable() {
                         justifyContent="left"
                         alignItems="center"
                       >
+                        {getRoleIcon(row.role)}
                         <Typography
                           variant="subtitle1"
                           component="h4"
-                          sx={{ mr: 10 }}
+                          sx={{ ml: 10 }}
                         >
                           {row.role[0].toLocaleUpperCase() + row.role.slice(1)}
                         </Typography>
-                        {getRoleIcon(row.role)}
                       </Stack>
                     </TableCell>
 
                     <TableCell align="right">
-                      {currentUser.contacts.includes(row) ? (
+                      {currentUser.contacts.filter(
+                        (contact) => contact.user.id === row.id
+                      ).length ? (
                         <Tooltip title="Добавить в контакты" sx={{ mr: 5 }}>
                           <IconButton
                             aria-label="delete"
@@ -380,26 +413,28 @@ export default function EnhancedTable() {
         );
       }
       return (
-        <Stack
-          width="100%"
-          direction="column"
-          justifyContent="center"
-          alignItems="center"
-          height={400}
-          overflow="hidden"
-        >
-          <Typography variant="h2" color="InfoText" sx={{ my: 10 }}>
-            Тут никого нет...
-          </Typography>
-          <Typography
-            variant="subtitle1"
-            color={(theme) => theme.palette.primary.main}
-            sx={{ my: 10 }}
+        <TableBody>
+          <Stack
+            width="100%"
+            direction="column"
+            justifyContent="center"
+            alignItems="center"
+            height={400}
+            overflow="hidden"
           >
-            Пригласи одногруппников / коллег, чтобы добавить их в контакты
-          </Typography>
-          <People fontSize="large" color="primary" sx={{ my: 10 }} />
-        </Stack>
+            <Typography variant="h2" color="InfoText" sx={{ my: 10 }}>
+              Тут никого нет...
+            </Typography>
+            <Typography
+              variant="subtitle1"
+              color={(theme) => theme.palette.primary.main}
+              sx={{ my: 10 }}
+            >
+              Пригласи одногруппников / коллег, чтобы добавить их в контакты
+            </Typography>
+            <People fontSize="large" color="primary" sx={{ my: 10 }} />
+          </Stack>
+        </TableBody>
       );
     }
   };
@@ -415,7 +450,7 @@ export default function EnhancedTable() {
             aria-label="sticky table"
             size="medium"
           >
-            {renderContent(loader, visibleRows)}
+            <>{renderContent(loader, visibleRows)}</>
           </Table>
         </TableContainer>
         {visibleRows.length ? (

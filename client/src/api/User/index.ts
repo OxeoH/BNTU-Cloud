@@ -23,7 +23,7 @@ export const getAllUsers = async () => {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
 
-    return data ?? ([] as User[]);
+    return data ?? [];
   } catch (e: any) {
     console.log(e);
   }
@@ -55,20 +55,6 @@ export const verifyAuth = async () => {
     localStorage.setItem("token", "");
   }
 };
-
-// export const check = async () => {
-//   const { data } = await $host.post<AuthResponse>("api/user/check", {
-//     token: localStorage.getItem("token") ?? "",
-//   });
-
-//   localStorage.setItem("token", `${data.token}`);
-
-// const result: AuthResult = {
-//   user: jwt_decode<User>(data.token),
-//   groups: data.groups,
-// };
-
-//   return result;
 // };
 
 export const checkIsAdmin = async () => {

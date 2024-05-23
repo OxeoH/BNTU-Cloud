@@ -47,12 +47,7 @@ class UserService {
       candidate.files = candidate.files.sort((a, b) =>
         a.root === b.root ? 0 : a.root ? -1 : 1
       );
-
-      const contactsCandidates = ((await this.getAll()) ?? []).filter(
-        (user) => user.id === candidate.id || !user.contacts.includes(candidate)
-      );
-
-      candidate.contacts = contactsCandidates;
+      candidate.contacts = [];
     }
 
     return candidate ?? null;

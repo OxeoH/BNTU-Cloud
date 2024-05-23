@@ -82,8 +82,8 @@ class FileController {
       const fileToDelete = await fileService.getFileById(id);
 
       if (fileToDelete) {
+        const deleted = await fileService.deleteFile(fileToDelete);
         await fileManager.deleteFile(fileToDelete);
-        const deleted = await fileService.deleteFile(fileToDelete.id);
 
         if (deleted) {
           candidate.usedSpace =

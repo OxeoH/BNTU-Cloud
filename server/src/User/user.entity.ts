@@ -9,6 +9,7 @@ import {
 } from "typeorm";
 import { File } from "../File/file.entity";
 import { UserRole } from "./user.types";
+import { Contact } from "../Contact/contact.entity";
 
 @Entity()
 export class User {
@@ -64,6 +65,7 @@ export class User {
   @ManyToMany(() => File, (file) => file.shared)
   shared: File[];
 
-  @OneToMany(() => User, (user) => user.id)
-  contacts: User[];
+  @ManyToMany(() => Contact, (contact) => contact.id)
+  @JoinTable()
+  contacts: Contact[];
 }

@@ -128,11 +128,13 @@ class UserController {
       if (!users)
         return res.status(400).json({ message: "Error: Cannot get users" });
 
-      return res.status(200).send(
-        customJSONStringifier({
-          users: users.map((item) => (({ password, ...o }) => o)(item)),
-        })
-      );
+      return res
+        .status(200)
+        .send(
+          customJSONStringifier(
+            users.map((item) => (({ password, ...o }) => o)(item))
+          )
+        );
     } catch (e) {
       res.status(500).json({ message: `Error: ${e}` });
     }

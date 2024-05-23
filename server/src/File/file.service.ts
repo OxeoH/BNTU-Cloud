@@ -1,4 +1,9 @@
-import { DeleteResult, Repository } from "typeorm";
+import {
+  DeleteQueryBuilder,
+  DeleteResult,
+  Repository,
+  SelectQueryBuilder,
+} from "typeorm";
 import AppDataSource from "../../data-source";
 import fs from "fs";
 import { File } from "./file.entity";
@@ -54,15 +59,18 @@ class FileService {
     return data;
   }
 
-  public async deleteFile(id: string): Promise<File | null> {
-    const deleteCandidate = await this.fileRepository.findOne({
-      where: { id },
-    });
+  public async deleteFile(file: File): Promise<File | null> {
+    const queryBuilder: DeleteQueryBuilder<File> = this.fileRepository
+      .createQueryBuilder("file")
+      .delete()
+      .where("file.id = :id", {
+        id: file.id,
+      });
+    const fileToDelete = await queryBuilder.execute();
+    console.log(fileToDelete);
 
-    if (deleteCandidate) {
-      const deleteRes = await this.fileRepository.remove(deleteCandidate);
-      deleteRes.id = id;
-      return deleteRes;
+    if (fileToDelete) {
+      return file;
     }
 
     return null;
