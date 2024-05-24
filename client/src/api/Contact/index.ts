@@ -1,4 +1,3 @@
-import { User } from "../User/types";
 import { $host } from "../index";
 import { Contact } from "./types";
 

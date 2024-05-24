@@ -1,13 +1,12 @@
 import { Autocomplete, TextField } from "@mui/material";
 import React from "react";
-import { useAppDispatch, useAppSelector } from "../../shared/hooks";
+import { useAppDispatch } from "../../shared/hooks";
 import {
   FileFilter,
   IFileFilter,
   IUserFilter,
   UserFilter,
 } from "../../store/slices/filterSlice";
-import { ActionCreatorWithPayload } from "@reduxjs/toolkit";
 
 export interface FilterItemProps {
   item: IFileFilter | IUserFilter;

@@ -1,5 +1,4 @@
 import { Stack } from "@mui/material";
-import { useAppDispatch, useAppSelector } from "../../shared/hooks";
 import FilterItem from "../FilterItem";
 import {
   FileFilter,
@@ -18,8 +17,6 @@ export interface TableFilters {
 }
 
 const TableFilters = ({ filters, filter, setFilter }: TableFilters) => {
-  const dispatch = useAppDispatch();
-
   return (
     <Stack
       direction="row"

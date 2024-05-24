@@ -50,7 +50,7 @@ export default function RegisterPage() {
         role: selectedRole,
       };
 
-      const response = await registration(newUser);
+      await registration(newUser);
 
       navigate(LOGIN_ROUTE);
     } catch (e: any) {

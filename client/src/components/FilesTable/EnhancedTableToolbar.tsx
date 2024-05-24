@@ -17,7 +17,6 @@ import {
 import { File } from "../../api/File/types";
 import { toggleFileFilterApplied } from "../../store/slices/filterSlice";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
-import { useState } from "react";
 
 interface EnhancedTableToolbarProps {
   numSelected: number;

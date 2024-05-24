@@ -1,7 +1,5 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { LOGIN_ROUTE, MAIN_ROUTE } from "../../routes/utils/consts";
 import { verifyAuth } from "../../api/User";
 import { setUser } from "../../store/slices/userSlice";
 import { setCurrentDir, setRootDir } from "../../store/slices/fileSlice";
@@ -10,7 +8,6 @@ import { getUserContacts } from "../../api/Contact";
 import { Contact } from "../../api/Contact/types";
 
 export const AuthWrap = ({ children }: { children: any }) => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const currentDir = useAppSelector((state) => state.file.currentDir);
 
