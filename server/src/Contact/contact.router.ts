@@ -3,11 +3,11 @@ import contactController from "./contact.controller";
 
 const contactRouter = Router();
 
-contactRouter.post("/", async (req: Request, res: Response) => {
+contactRouter.post("/add", async (req: Request, res: Response) => {
   await contactController.addContact(req, res);
 });
 
-contactRouter.delete("/", async (req: Request, res: Response) => {
+contactRouter.post("/remove", async (req: Request, res: Response) => {
   await contactController.removeContact(req, res);
 });
 

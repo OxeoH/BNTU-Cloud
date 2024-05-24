@@ -22,11 +22,16 @@ import {
   School,
 } from "@mui/icons-material";
 import { getAvatar } from "../../shared/getAvatar";
-import { setUsers } from "../../store/slices/userSlice";
+import {
+  addContact,
+  removeContact,
+  setUsers,
+} from "../../store/slices/userSlice";
 import SkeletonLoader from "../SkeletonLoader";
 import { getAllUsers } from "../../api/User";
 import { File } from "../../api/File/types";
 import { Contact } from "../../api/Contact/types";
+import { addNewContact, deleteContact } from "../../api/Contact";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -180,8 +185,28 @@ export default function EnhancedTable() {
     }
   };
 
-  const handleRemoveContact = (e: React.MouseEvent, contact: User) => {};
-  const handleAddContact = (e: React.MouseEvent, contact: User) => {};
+  const handleRemoveContact = async (e: React.MouseEvent, contact: User) => {
+    e.stopPropagation();
+    try {
+      const removed = await deleteContact(contact.id);
+      if (removed) {
+        dispatch(removeContact(removed));
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const handleAddContact = async (e: React.MouseEvent, contact: User) => {
+    e.stopPropagation();
+    try {
+      const newContact = await addNewContact(contact.id);
+      if (newContact) {
+        dispatch(addContact(newContact));
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -373,10 +398,11 @@ export default function EnhancedTable() {
 
                     <TableCell align="right">
                       {currentUser.contacts.filter(
-                        (contact) => contact.user.id === row.id
+                        (contact) => contact.contactUser.id === row.id
                       ).length ? (
                         <Tooltip title="Удалить контакт" sx={{ mr: 5 }}>
                           <IconButton
+                            color="error"
                             aria-label="delete"
                             size="large"
                             onClick={(e) => handleRemoveContact(e, row)}
@@ -387,6 +413,7 @@ export default function EnhancedTable() {
                       ) : (
                         <Tooltip title="Добавить в контакты" sx={{ mr: 5 }}>
                           <IconButton
+                            color="primary"
                             aria-label="delete"
                             size="large"
                             onClick={(e) => handleAddContact(e, row)}

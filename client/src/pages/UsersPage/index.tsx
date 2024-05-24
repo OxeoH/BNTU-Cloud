@@ -22,21 +22,33 @@ export default function StoragePage() {
         direction="row"
         justifyContent={`${isRoot ? "right" : "space-between"}`}
         alignItems="center"
+        mt={10}
       >
         <Typography
           variant="h2"
-          color="InfoText"
+          color="primary"
           width="100%"
           textAlign="center"
         >
           Контакты
         </Typography>
       </Stack>
-      <TableFilters
-        filters={userFiltersList}
-        filter={userFilter}
-        setFilter={setUserFilter}
-      />
+      <Stack
+        direction="column"
+        justifyContent="left"
+        alignItems="center"
+        sx={{ my: 10 }}
+      >
+        <Typography variant="h5" color="text" width="100%" textAlign="left">
+          Фильтры:
+        </Typography>
+        <TableFilters
+          filters={userFiltersList}
+          filter={userFilter}
+          setFilter={setUserFilter}
+        />
+      </Stack>
+
       <Stack width="100%" alignItems="center" mb={20} ref={anchorRef}>
         <UsersTable />
       </Stack>

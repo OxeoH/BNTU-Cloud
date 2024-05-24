@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { User, UserRole } from "../../api/User/types";
+import { Contact } from "../../api/Contact/types";
 
 export interface UserState {
   users: User[];
@@ -48,8 +49,26 @@ export const counterSlice = createSlice({
     setAvatar: (state, action: PayloadAction<string>) => {
       state.currentUser.avatar = action.payload;
     },
+    addContact: (state, action: PayloadAction<Contact>) => {
+      state.currentUser.contacts = [
+        ...state.currentUser.contacts,
+        action.payload,
+      ];
+    },
+    removeContact: (state, action: PayloadAction<Contact>) => {
+      state.currentUser.contacts = state.currentUser.contacts.filter(
+        (contact) => contact.id !== action.payload.id
+      );
+    },
   },
 });
-export const { setUser, setUsers, logout, setAvatar } = counterSlice.actions;
+export const {
+  setUser,
+  setUsers,
+  logout,
+  setAvatar,
+  addContact,
+  removeContact,
+} = counterSlice.actions;
 
 export default counterSlice.reducer;

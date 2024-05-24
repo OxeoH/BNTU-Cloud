@@ -22,7 +22,7 @@ class ContactService {
       .createQueryBuilder("contact")
       .leftJoinAndSelect("contact.user", "user")
       .leftJoinAndSelect("contact.contactUser", "contactUser")
-      .where("user.id = :userId OR contactUser.id = :contactId", {
+      .where("user.id = :userId AND contactUser.id = :contactId", {
         userId: user.id,
         contactId: contactUser.id,
       });

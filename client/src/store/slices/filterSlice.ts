@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { FileType } from "../../api/File/types";
 import { User, UserRole } from "../../api/User/types";
+import { groupsList } from "../../shared/groupsList";
 
 export interface FileFilter {
   filetype: FileType | null;
@@ -94,13 +95,18 @@ const userFiltersList: IUserFilter[] = [
   {
     name: "Группа",
     type: "group",
-    options: [],
+    options: groupsList.map((entry) => {
+      return { value: `${entry}`, title: `${entry}` };
+    }),
   },
   {
     name: "Роль",
     type: "role",
     options: Object.entries(UserRole).map((entry) => {
-      return { value: entry[0], title: entry[1] };
+      return {
+        value: entry[0],
+        title: entry[1][0].toLocaleUpperCase() + entry[1].slice(1),
+      };
     }),
   },
 

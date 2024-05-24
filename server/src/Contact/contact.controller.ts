@@ -3,6 +3,7 @@ import userService from "../User/user.service";
 import { verifyTokenMiddleware } from "../middlewares/verifyTokenMiddleware";
 import customJSONStringifier from "../File/utils/customJSONStringifier";
 import contactService from "./contact.service";
+import { Contact } from "./contact.entity";
 
 class ContactController {
   // public async checkIsAuth(req: Request, res: Response) {
@@ -145,12 +146,10 @@ class ContactController {
 
       return res.status(200).send(
         customJSONStringifier({
-          contact: {
-            ...newContact,
-            user: (({ password, ...o }) => o)(thisUser),
-            contactUser: (({ password, ...o }) => o)(currentContact),
-          },
-        })
+          ...newContact,
+          user: (({ password, ...o }) => o)(thisUser),
+          contactUser: (({ password, ...o }) => o)(currentContact),
+        } as Contact)
       );
     } catch (e) {
       res.status(500).json({ message: `Error: ${e}` });
@@ -203,11 +202,7 @@ class ContactController {
           .status(400)
           .json({ message: "Error: Cannot remove contact" });
 
-      return res.status(200).send(
-        customJSONStringifier({
-          response,
-        })
-      );
+      return res.status(200).send(customJSONStringifier(response));
     } catch (e) {
       res.status(500).json({ message: `Error: ${e}` });
     }

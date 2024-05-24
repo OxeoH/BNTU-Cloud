@@ -1,14 +1,30 @@
+import { User } from "../User/types";
 import { $host } from "../index";
 import { Contact } from "./types";
 
-// export const registration = async (props: RegisterProps) => {
-//   const { data } = await $host.post<RegisterResponse>(
-//     "api/user/registration",
-//     props
-//   );
+export const addNewContact = async (contact: string) => {
+  const { data } = await $host.post<Contact>(
+    "api/contact/add",
+    { contact },
+    {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    }
+  );
 
-//   return data.message;
-// };
+  return data;
+};
+
+export const deleteContact = async (userContact: string) => {
+  const { data } = await $host.post<Contact>(
+    "api/contact/remove",
+    { userContact },
+    {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    }
+  );
+
+  return data;
+};
 
 export const getUserContacts = async () => {
   try {
