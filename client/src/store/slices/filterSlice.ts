@@ -3,6 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import { FileType } from "../../api/File/types";
 import { User, UserRole } from "../../api/User/types";
 import { groupsList } from "../../shared/groupsList";
+import { store } from "..";
 
 export interface FileFilter {
   filetype: FileType | null;
@@ -60,10 +61,7 @@ const filtersList: IFileFilter[] = [
   {
     name: "Владелец",
     type: "user",
-    options: [
-      { value: "egor@gmail.com", title: "egor@gmail.com" },
-      { value: "sasha@gmail.com", title: "sasha@gmail.com" },
-    ],
+    options: [],
   },
 
   // {
@@ -147,6 +145,22 @@ export const filterSlice = createSlice({
       state.fileFilterApplied = true;
       state.fileFilter = action.payload;
     },
+    updateUserOptions: (state, action: PayloadAction<User[]>) => {
+      state.filtersList = state.filtersList.map((filterNote) => {
+        if (filterNote.type === "user") {
+          return {
+            ...filterNote,
+            options: action.payload.map((entry) => {
+              return {
+                value: entry.email,
+                title: entry.email,
+              };
+            }),
+          };
+        }
+        return filterNote;
+      });
+    },
     toggleFileFilterApplied: (state, action: PayloadAction<boolean>) => {
       state.fileFilterApplied = action.payload;
     },
@@ -175,6 +189,7 @@ export const {
   setUserFilter,
   toggleUserFilterApplied,
   clearUserFilter,
+  updateUserOptions,
 } = filterSlice.actions;
 
 export default filterSlice.reducer;
