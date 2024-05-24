@@ -1,12 +1,8 @@
 import { Request, Response } from "express";
 import userService from "../User/user.service";
-import bcrypt from "bcryptjs";
 import { verifyTokenMiddleware } from "../middlewares/verifyTokenMiddleware";
-import fileService from "../File/file.service";
 import customJSONStringifier from "../File/utils/customJSONStringifier";
 import contactService from "./contact.service";
-import { ContactProps } from "./contact.types";
-import { User } from "../User/user.entity";
 
 class ContactController {
   // public async checkIsAuth(req: Request, res: Response) {
@@ -95,11 +91,7 @@ class ContactController {
 
       const contacts = await contactService.getUserContacts(user);
 
-      return res.status(200).send(
-        customJSONStringifier({
-          contacts: contacts ?? [],
-        })
-      );
+      return res.status(200).send(customJSONStringifier(contacts));
     } catch (e) {
       res.status(500).json({ message: `Error: ${e}` });
     }
@@ -127,24 +119,24 @@ class ContactController {
       if (!currentContact)
         return res.status(400).json({ message: "Error: Cannot find contact" });
 
-      const user = await userService.getUserById(userData.id);
+      const thisUser = await userService.getUserById(userData.id);
 
-      if (!user)
+      if (!thisUser)
         return res.status(400).json({ message: "Error: Cannot find user" });
 
       const candidateContact = await contactService.checkIsNewContact(
-        user,
+        thisUser,
         currentContact
       );
 
-      if (!candidateContact) {
+      if (candidateContact) {
         return res
           .status(400)
           .json({ message: "Error: Contact already exists" });
       }
 
       const newContact = await contactService.addNewContact({
-        user,
+        user: thisUser,
         contact: currentContact,
       });
 
@@ -153,7 +145,11 @@ class ContactController {
 
       return res.status(200).send(
         customJSONStringifier({
-          contact,
+          contact: {
+            ...newContact,
+            user: (({ password, ...o }) => o)(thisUser),
+            contactUser: (({ password, ...o }) => o)(currentContact),
+          },
         })
       );
     } catch (e) {
@@ -177,10 +173,8 @@ class ContactController {
 
       if (!userContact)
         return res.status(400).json({ message: "Error: Wrong contact" });
-      console.log("ID: ", userContact);
 
       const currentContact = await userService.getUserById(userContact);
-      console.log("User to remove from Contacts: ", currentContact);
 
       if (!currentContact)
         return res.status(400).json({ message: "Error: Cannot find contact" });
@@ -194,7 +188,6 @@ class ContactController {
         user,
         currentContact
       );
-      console.log(response);
 
       if (!response) {
         return res.status(400).json({ message: "Error: Cannot find contact" });

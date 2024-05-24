@@ -51,7 +51,6 @@ class ContactService {
         userId: user.id,
       });
     const userContacts = await queryBuilder.getMany();
-    console.log("Length: ", userContacts.length);
 
     return userContacts ?? null;
   }

@@ -375,7 +375,7 @@ export default function EnhancedTable() {
                       {currentUser.contacts.filter(
                         (contact) => contact.user.id === row.id
                       ).length ? (
-                        <Tooltip title="Добавить в контакты" sx={{ mr: 5 }}>
+                        <Tooltip title="Удалить контакт" sx={{ mr: 5 }}>
                           <IconButton
                             aria-label="delete"
                             size="large"
