@@ -142,7 +142,9 @@ export default function EnhancedTable() {
           .filter((file) => {
             if (!fileFilterApplied) return true;
             if (fileFilter.name != null) {
-              return file.name.includes(fileFilter.name);
+              return file.name
+                .toLocaleLowerCase()
+                .includes(fileFilter.name.toLocaleLowerCase());
             }
             return true;
           });
@@ -191,7 +193,7 @@ export default function EnhancedTable() {
         selected.slice(selectedIndex + 1)
       );
     }
-    setSelected(newSelected);
+    //setSelected(newSelected);
   };
 
   const handleDownloadClick = async (e: React.MouseEvent, file: File) => {

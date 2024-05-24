@@ -118,9 +118,9 @@ export default function EnhancedTable() {
           .filter((user) => {
             if (!userFilterApplied) return true;
             if (userFilter.name != null) {
-              return (user.name + user.surname + user.patronymic).includes(
-                userFilter.name
-              );
+              return (user.name + user.surname + user.patronymic)
+                .toLocaleLowerCase()
+                .includes(userFilter.name.toLocaleLowerCase());
             }
             return true;
           })
@@ -233,7 +233,7 @@ export default function EnhancedTable() {
         selected.slice(selectedIndex + 1)
       );
     }
-    setSelected(newSelected);
+    //setSelected(newSelected);
   };
 
   const handleDoubleClick = (event: React.MouseEvent, row: User) => {};

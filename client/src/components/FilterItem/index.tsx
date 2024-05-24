@@ -7,6 +7,7 @@ import {
   IUserFilter,
   UserFilter,
 } from "../../store/slices/filterSlice";
+import { UserRole } from "../../api/User/types";
 
 export interface FilterItemProps {
   item: IFileFilter | IUserFilter;
@@ -23,8 +24,13 @@ const FilterItem = ({ item, setFilter, filter }: FilterItemProps) => {
   const [inputValue, setInputValue] = React.useState("");
 
   const handleChange = (event: any, newValue: string | null) => {
-    dispatch(setFilter({ ...filter, [item.type]: newValue }));
     setValue(newValue);
+    dispatch(
+      setFilter({
+        ...filter,
+        [item.type]: newValue ? newValue.toLocaleLowerCase() : null,
+      })
+    );
   };
 
   const handleInputChange = (event: any, newInputValue: string) => {
@@ -34,8 +40,8 @@ const FilterItem = ({ item, setFilter, filter }: FilterItemProps) => {
   return (
     <Autocomplete
       value={value}
-      onChange={(event: any, newValue: string | null) =>
-        handleChange(event, newValue)
+      onChange={(event: any, value: string | null) =>
+        handleChange(event, value)
       }
       inputValue={inputValue}
       onInputChange={(event, newInputValue) =>

@@ -3,12 +3,12 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import { FileType } from "../../api/File/types";
 import { User, UserRole } from "../../api/User/types";
 import { groupsList } from "../../shared/groupsList";
-import { store } from "..";
 
 export interface FileFilter {
   filetype: FileType | null;
   user: User | null;
   name: string | null;
+  place: string | null;
 }
 
 export interface UserFilter {
@@ -17,6 +17,7 @@ export interface UserFilter {
   login: string | null;
   email: string | null;
   role: UserRole | null;
+  place: string | null;
 }
 
 export interface FilterOption {
@@ -28,6 +29,17 @@ export interface IFileFilter {
   name: string;
   type: keyof FileFilter;
   options: FilterOption[];
+}
+export enum FilesPlacing {
+  ALL = "В любом месте",
+  MY = "Моё хранилище",
+  SHARED = "Доступные мне",
+}
+
+export enum UsersPlacing {
+  ALL = "Все",
+  MY = "Только мои",
+  STRANGE = "Все, кроме моих",
 }
 
 export interface IUserFilter {
@@ -64,14 +76,13 @@ const filtersList: IFileFilter[] = [
     options: [],
   },
 
-  // {
-  //   name: "Местоположение",
-  //   options: [
-  //     { value: "all", title: "В любом месте" },
-  //     { value: "my", title: "Моё хранилище" },
-  //     { value: "shared", title: "Доступные мне" },
-  //   ],
-  // },
+  {
+    name: "Местоположение",
+    type: "place",
+    options: Object.entries(FilesPlacing).map((entry) => {
+      return { value: entry[0], title: entry[1] };
+    }),
+  },
 ];
 
 const userFiltersList: IUserFilter[] = [
@@ -107,15 +118,13 @@ const userFiltersList: IUserFilter[] = [
       };
     }),
   },
-
-  // {
-  //   name: "Местоположение",
-  //   options: [
-  //     { value: "all", title: "В любом месте" },
-  //     { value: "my", title: "Моё хранилище" },
-  //     { value: "shared", title: "Доступные мне" },
-  //   ],
-  // },
+  {
+    name: "Местоположение",
+    type: "place",
+    options: Object.entries(UsersPlacing).map((entry) => {
+      return { value: entry[0], title: entry[1] };
+    }),
+  },
 ];
 
 const initialState: FilterSlice = {
@@ -127,8 +136,10 @@ const initialState: FilterSlice = {
     login: null,
     email: null,
     role: null,
+    place: null,
   },
   fileFilter: {
+    place: null,
     filetype: null,
     user: null,
     name: null,
@@ -148,6 +159,21 @@ export const filterSlice = createSlice({
     updateUserOptions: (state, action: PayloadAction<User[]>) => {
       state.filtersList = state.filtersList.map((filterNote) => {
         if (filterNote.type === "user") {
+          return {
+            ...filterNote,
+            options: action.payload.map((entry) => {
+              return {
+                value: entry.email,
+                title: entry.email,
+              };
+            }),
+          };
+        }
+        return filterNote;
+      });
+
+      state.userFiltersList = state.userFiltersList.map((filterNote) => {
+        if (filterNote.type === "email") {
           return {
             ...filterNote,
             options: action.payload.map((entry) => {
