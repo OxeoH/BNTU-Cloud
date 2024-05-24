@@ -26,15 +26,20 @@ class UserService {
     this.userRepository = AppDataSource.getRepository<User>(User);
   }
 
-  public async checkIsNewUser(login: string) {
-    const candidate = await this.userRepository.find({
+  public async checkIsNewUser(login: string, email: string) {
+    const candidates1 = await this.userRepository.find({
       where: { login },
       relations: { shared: false, contacts: false },
     });
-    console.log(candidate);
+    console.log(candidates1);
 
-    if (candidate.length === 0) {
-      return true;
+    if (!candidates1.length) {
+      const candidates2 = await this.userRepository.find({
+        where: { email },
+        relations: { shared: false, contacts: false },
+      });
+      console.log(candidates2);
+      if (!candidates2.length) return true;
     }
     return false;
   }

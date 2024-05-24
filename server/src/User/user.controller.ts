@@ -74,11 +74,14 @@ class UserController {
       // const empties = Object.values(registerParams).filter((param) => {
       //   return param.toString().trim().length === 0;
       // });
-      const candidate = await userService.checkIsNewUser(registerParams.login);
+      const candidate = await userService.checkIsNewUser(
+        registerParams.login,
+        registerParams.email
+      );
 
       if (!candidate) {
         return res.status(400).json({
-          message: `User with login ${registerParams.login} is already exists`,
+          message: `User with login ${registerParams.login} or email ${registerParams.email} is already exists`,
         });
       }
 
