@@ -63,7 +63,7 @@ class FileController {
       res.status(400).json({ message: `Error: ${e}` });
     }
   }
-
+  //Вот код функции для удаления файла, она вызывает внутри вторую функцию, ее я отправлю следующей
   public async deleteFile(req: Request, res: Response) {
     try {
       const token = req.headers.authorization?.split(" ")[1];
@@ -98,6 +98,13 @@ class FileController {
       console.log(e);
       res.status(400).json({ message: `Error: ${e}` });
     }
+  }
+  public async testRec(req: Request, res: Response) {
+    //const { id }: { id: string } = req.body;
+    // await fileManager.recursiveDelete(
+    //   process.env.FILES_PATH + `\\5cb4bec1-8d2e-4087-a4ad-ac43cac44b62\\test`
+    // );
+    await fileService.recursiveDelete("78ee3bbc-502a-471a-a351-fbbe7837ab5b");
   }
   public async fetchFiles(req: Request, res: Response) {
     try {

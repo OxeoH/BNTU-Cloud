@@ -43,6 +43,7 @@ export default function Profile() {
   };
   const handleExit = () => {
     handleClose();
+    localStorage.setItem("token", "");
     dispatch(clearFiles());
     dispatch(logout());
     navigate(LOGIN_ROUTE);

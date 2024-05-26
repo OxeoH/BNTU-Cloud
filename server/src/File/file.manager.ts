@@ -1,6 +1,7 @@
 import fs from "fs";
 import { File } from "./file.entity";
 import { FileType } from "./file.types";
+import path from "path";
 
 class FileManager {
   public async createDirOrFile(file: File) {
@@ -30,6 +31,25 @@ class FileManager {
         return reject({ error: "Unknown FileManager error" });
       }
     });
+  }
+
+  public async recursiveDelete(pathToDelete: string): Promise<void> {
+    const files = await fs.promises.readdir(pathToDelete);
+
+    for (const file of files) {
+      console.log(file);
+
+      const filePath = path.join(pathToDelete, file);
+      const stat = await fs.promises.stat(filePath);
+
+      if (stat.isDirectory()) {
+        await this.recursiveDelete(filePath);
+      } else {
+        await fs.promises.unlink(filePath);
+      }
+    }
+
+    await fs.promises.rmdir(pathToDelete);
   }
 
   public async deleteFile(file: File) {

@@ -3,6 +3,7 @@ import {
   DeleteResult,
   Repository,
   SelectQueryBuilder,
+  getManager,
 } from "typeorm";
 import AppDataSource from "../../data-source";
 import fs from "fs";
@@ -143,6 +144,49 @@ class FileService {
     }
 
     return files;
+  }
+
+  public async recursiveDelete(id: string) {
+    const file = await this.fileRepository.findOne({
+      where: { id },
+    });
+    console.log("Current deleting: ", file);
+
+    if (!file) {
+      console.log("File not found");
+      return null;
+    }
+
+    const querySelectBuilder: SelectQueryBuilder<File> = this.fileRepository
+      .createQueryBuilder("file")
+      .leftJoinAndSelect("file.parent", "parent")
+      .where("parent.id = :parentId", {
+        parentId: file.id,
+      });
+    const fileChilds = await querySelectBuilder.getMany();
+    console.log("File childs: ", fileChilds);
+
+    if (fileChilds && fileChilds.length > 0 && file.type === FileType.DIR) {
+      for (const child of fileChilds) {
+        await this.recursiveDelete(child.id);
+      }
+    }
+
+    // await this.fileRepository.remove(file);
+    const queryDeleteBuilder: DeleteQueryBuilder<File> = this.fileRepository
+      .createQueryBuilder("file")
+      .delete()
+      .where("file.id = :id", {
+        id: file.id,
+      });
+    const fileToDelete = await queryDeleteBuilder.execute();
+    console.log(fileToDelete);
+
+    if (fileToDelete) {
+      return file;
+    }
+
+    return null;
   }
 }
 
