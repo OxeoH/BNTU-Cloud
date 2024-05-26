@@ -62,7 +62,8 @@ export class User {
   @JoinTable()
   files: File[];
 
-  @ManyToMany(() => File, (file) => file.shared)
+  @ManyToMany(() => File, { eager: true })
+  @JoinTable()
   shared: File[];
 
   @ManyToMany(() => Contact, (contact) => contact.id)

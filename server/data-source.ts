@@ -3,6 +3,7 @@ import "reflect-metadata";
 import { DataSource } from "typeorm";
 import { User } from "./src/User/user.entity";
 import { Contact } from "./src/Contact/contact.entity";
+import { Share } from "./src/Share/share.entity";
 
 const AppDataSource = new DataSource({
   type: "postgres", //process.env.DB_TYPE,
@@ -12,7 +13,7 @@ const AppDataSource = new DataSource({
   password: process.env.DB_PASSWORD?.toString(),
   database: process.env.DB_NAME,
   synchronize: true,
-  entities: [File, User, Contact],
+  entities: [File, User, Contact, Share],
 });
 
 export default AppDataSource;

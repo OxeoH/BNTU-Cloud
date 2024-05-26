@@ -135,7 +135,9 @@ class UserController {
         .status(200)
         .send(
           customJSONStringifier(
-            users.map((item) => (({ password, ...o }) => o)(item))
+            users
+              .map((item) => (({ password, ...o }) => o)(item))
+              .filter((u) => u.id !== user.id)
           )
         );
     } catch (e) {

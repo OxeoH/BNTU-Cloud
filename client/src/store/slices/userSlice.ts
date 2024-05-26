@@ -2,8 +2,10 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { User, UserRole } from "../../api/User/types";
 import { Contact } from "../../api/Contact/types";
+import { Share } from "../../api/Share/types";
 
 export interface UserState {
+  userShares: Share[];
   users: User[];
   currentUser: User;
   isAuth: boolean;
@@ -23,9 +25,11 @@ const emptyUser: User = {
   usedSpace: "0",
   contacts: [],
   files: [],
+  shared: [],
 };
 
 const initialState: UserState = {
+  userShares: [],
   users: [],
   currentUser: emptyUser,
   isAuth: false,
@@ -60,6 +64,17 @@ export const counterSlice = createSlice({
         (contact) => contact.id !== action.payload.id
       );
     },
+    setShares: (state, action: PayloadAction<Share[]>) => {
+      state.userShares = action.payload;
+    },
+    addShare: (state, action: PayloadAction<Share>) => {
+      state.userShares = [...state.userShares, action.payload];
+    },
+    removeShare: (state, action: PayloadAction<Share>) => {
+      state.userShares = state.userShares.filter(
+        (share) => share.id !== action.payload.id
+      );
+    },
   },
 });
 export const {
@@ -69,6 +84,9 @@ export const {
   setAvatar,
   addContact,
   removeContact,
+  addShare,
+  removeShare,
+  setShares,
 } = counterSlice.actions;
 
 export default counterSlice.reducer;

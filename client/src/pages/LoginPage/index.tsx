@@ -14,7 +14,7 @@ import { Logo } from "../../components/Logo";
 import { useNavigate } from "react-router-dom";
 import { authorization } from "../../api/User";
 import { useDispatch } from "react-redux";
-import { setUser } from "../../store/slices/userSlice";
+import { setUser, setUsers } from "../../store/slices/userSlice";
 import { setCurrentDir, setRootDir } from "../../store/slices/fileSlice";
 
 export default function LoginPage() {
@@ -31,7 +31,9 @@ export default function LoginPage() {
       };
 
       const response = await authorization(authData);
+      console.log(response.users);
 
+      dispatch(setUsers(response.users));
       dispatch(setUser(response.user));
       dispatch(setCurrentDir(response.user.files[0]));
       dispatch(setRootDir(response.user.files[0]));

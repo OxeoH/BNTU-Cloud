@@ -31,6 +31,7 @@ import {
 import { getAvatar } from "../../shared/getAvatar";
 import { setUser } from "../../store/slices/userSlice";
 import SkeletonLoader from "../SkeletonLoader";
+import ShareModal from "../ShareModal";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -54,8 +55,10 @@ function getComparator<Key extends keyof any>(
       | FileType
       | User
       | File
+      | File[]
       | bigint
-      | Date;
+      | Date
+      | User[];
   },
   b: {
     [key in Key]:
@@ -65,8 +68,10 @@ function getComparator<Key extends keyof any>(
       | FileType
       | User
       | File
+      | File[]
       | bigint
-      | Date;
+      | Date
+      | User[];
   }
 ) => number {
   return order === "desc"
@@ -100,6 +105,9 @@ export default function EnhancedTable() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [loader, setLoader] = React.useState(false);
+
+  const [openShare, setOpenShare] = React.useState(false);
+  const [fileForShare, setFileForShare] = React.useState<File | null>(null);
 
   const dispatch = useAppDispatch();
   const currentDir = useAppSelector((state) => state.file.currentDir);
@@ -207,6 +215,8 @@ export default function EnhancedTable() {
   };
   const handleConfigureAccess = async (e: React.MouseEvent, file: File) => {
     e.stopPropagation();
+    setFileForShare(file);
+    setOpenShare(true);
   };
 
   const handleDeleteClick = async (e: React.MouseEvent, file: File) => {
@@ -382,7 +392,7 @@ export default function EnhancedTable() {
                           size="large"
                           onClick={(e) => handleConfigureAccess(e, row)}
                         >
-                          <LockOpen />
+                          <LockOpen color="warning" />
                         </IconButton>
                       </Tooltip>
 
@@ -393,7 +403,7 @@ export default function EnhancedTable() {
                             size="large"
                             onClick={(e) => handleDownloadClick(e, row)}
                           >
-                            <Download />
+                            <Download color="primary" />
                           </IconButton>
                         </Tooltip>
                       ) : (
@@ -405,7 +415,7 @@ export default function EnhancedTable() {
                           size="large"
                           onClick={(e) => handleDeleteClick(e, row)}
                         >
-                          <Delete />
+                          <Delete color="error" />
                         </IconButton>
                       </Tooltip>
                     </TableCell>
@@ -457,6 +467,11 @@ export default function EnhancedTable() {
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", overflow: "hidden", mb: 2 }}>
+        <ShareModal
+          file={fileForShare}
+          open={openShare}
+          setOpen={setOpenShare}
+        />
         <EnhancedTableToolbar
           numSelected={selected.length}
           currentDir={currentDir ?? currentUser.files[0]}

@@ -11,8 +11,8 @@ export type File = {
   user: User;
   parent: File;
   uploaded: Date;
-  // childs: File[];
-  // shared: File[];
+  childs: File[];
+  shared: User[];
 };
 
 export enum FileType {

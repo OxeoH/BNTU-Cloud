@@ -102,7 +102,9 @@ export default function EnhancedTable() {
 
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector((state) => state.user.currentUser);
-  const rows = useAppSelector((state) => state.user.users);
+
+  const [rows, setRows] = React.useState<User[]>([]);
+
   const { userFilter, userFilterApplied } = useAppSelector(
     (state) => state.filter
   );
@@ -153,7 +155,7 @@ export default function EnhancedTable() {
             return true;
           });
 
-        dispatch(setUsers(filteredUsers ?? []));
+        setRows(filteredUsers ?? []);
       } catch (e: any) {
         console.log(e);
       } finally {

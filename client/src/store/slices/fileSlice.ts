@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { File, FileType } from "../../api/File/types";
+import { Share } from "../../api/Share/types";
 
 export interface UploaderItem {
   id: number;

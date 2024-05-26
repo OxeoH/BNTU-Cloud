@@ -30,7 +30,6 @@ export const getUserContacts = async () => {
     const { data } = await $host.get<Contact[]>("api/contact/all", {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
-    console.log(data);
 
     return data ?? [];
   } catch (e: any) {

@@ -47,5 +47,6 @@ export class File {
   childs: File[];
 
   @ManyToMany(() => User, (user) => user.shared)
+  @JoinTable()
   shared: User[];
 }

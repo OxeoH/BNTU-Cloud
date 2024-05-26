@@ -4,6 +4,7 @@ import { File } from "../File/types";
 export type AuthResponse = {
   token: string;
   user: User;
+  users: User[];
 };
 
 export interface AuthProps {
@@ -47,7 +48,7 @@ export type User = {
   diskSpace: string;
   usedSpace: string;
   files: File[];
-  // shared: File[];
+  shared: File[];
   contacts: Contact[];
 };
 
