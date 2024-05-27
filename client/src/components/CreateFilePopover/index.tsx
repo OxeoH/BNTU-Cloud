@@ -37,15 +37,18 @@ const CreateFilePopover = (props: PopoverProps) => {
     e.preventDefault();
     try {
       const data = new FormData(e.currentTarget);
-      const createData = {
-        name: `${data.get("name")}`,
-        type: Object.entries(FileType)[selectedType][1],
-        parentId: currentDir?.id ?? currentUser.files[0].id,
-      };
 
-      const newFile = await createFile(createData);
+      if (`${data.get("name")}`.length > 0) {
+        const createData = {
+          name: `${data.get("name")}`,
+          type: Object.entries(FileType)[selectedType][1],
+          parentId: currentDir?.id ?? currentUser.files[0].id,
+        };
 
-      dispatch(addFiles([newFile]));
+        const newFile = await createFile(createData);
+
+        dispatch(addFiles([newFile]));
+      }
       setOpen(false);
     } catch (e: any) {
       //TODO: Error type

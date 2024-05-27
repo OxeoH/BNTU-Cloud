@@ -385,7 +385,15 @@ export default function EnhancedTable() {
                       </Stack>
                     </TableCell>
 
-                    <TableCell align="right">
+                    <TableCell
+                      align="right"
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "right",
+                        alignItems: "center",
+                      }}
+                    >
                       <Tooltip title="Настроить доступ" sx={{ mr: 5 }}>
                         <IconButton
                           aria-label="delete"
