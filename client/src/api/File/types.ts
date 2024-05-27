@@ -31,6 +31,7 @@ export enum FileType {
   XLSX = "xlsx",
   PPTX = "pptx",
   EXE = "exe",
+  MSI = "msi",
 }
 
 export interface CreateFileProps {
