@@ -129,7 +129,9 @@ export default function EnhancedTable() {
           .filter((user) => {
             if (!userFilterApplied) return true;
             if (userFilter.email != null) {
-              return user.email === userFilter.email;
+              return user.email
+                .toLocaleLowerCase()
+                .includes(userFilter.email.toLocaleLowerCase());
             }
             return true;
           })

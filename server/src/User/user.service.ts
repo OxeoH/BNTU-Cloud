@@ -116,6 +116,7 @@ class UserService {
       if (!validPassword) {
         return null;
       }
+
       user.contacts = [];
 
       const token = generateAccessToken(user.id, user.login);
@@ -129,7 +130,7 @@ class UserService {
           .reduce((res, key) => {
             res[key] = user[key];
             return res;
-          }, {}),
+          }, {}) as User,
         users: users ? users.filter((u) => u.id === user.id) : [],
       };
     } catch (e) {

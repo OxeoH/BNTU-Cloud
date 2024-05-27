@@ -6,6 +6,7 @@ import { verifyTokenMiddleware } from "../middlewares/verifyTokenMiddleware";
 import checkEmail from "./utils/checkEmail";
 import fileService from "../File/file.service";
 import customJSONStringifier from "../File/utils/customJSONStringifier";
+import contactService from "../Contact/contact.service";
 
 class UserController {
   hashSalt: number;
@@ -32,6 +33,12 @@ class UserController {
       if (!userData || !userData.token.length) {
         return res.status(404).json({ message: "User not found" });
       }
+
+      const userContacts = await contactService.getUserContacts(userData.user);
+
+      console.log(userContacts);
+
+      userData.user.contacts = userContacts ?? [];
 
       res.status(200).send(customJSONStringifier(userData));
     } catch (e) {

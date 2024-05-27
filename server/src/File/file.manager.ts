@@ -34,26 +34,6 @@ class FileManager {
   }
 
   public async recursiveDelete(pathToDelete: string): Promise<void> {
-    // const files = await fs.promises.readdir(pathToDelete);
-
-    // for (const file of files) {
-    //   console.log(file);
-
-    //   const filePath = path.join(pathToDelete, file);
-    //   console.log(filePath);
-
-    //   const stat = await fs.promises.stat(filePath);
-    //   console.log(stat);
-
-    //   if (stat.isDirectory()) {
-    //     await this.recursiveDelete(filePath);
-    //   } else {
-    //     await fs.promises.unlink(filePath);
-    //   }
-    // }
-
-    //await fs.promises.rmdir(pathToDelete);
-
     const stat = await fs.promises.stat(pathToDelete);
 
     if (stat.isDirectory()) {
