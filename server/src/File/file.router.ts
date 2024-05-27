@@ -20,10 +20,6 @@ fileRouter.delete("/avatar", async (req: Request, res: Response) => {
   await fileController.deleteAvatar(req, res);
 });
 
-fileRouter.delete("/test", async (req: Request, res: Response) => {
-  await fileController.testRec(req, res);
-});
-
 fileRouter.get("/download", async (req: Request, res: Response) => {
   await fileController.downloadFile(req, res);
 });

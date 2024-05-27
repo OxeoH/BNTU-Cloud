@@ -29,7 +29,7 @@ export default function LoginPage() {
         login: `${data.get("login")}`,
         password: `${data.get("password")}`,
       };
-
+      //TODO: подтянуть контакты
       const response = await authorization(authData);
       console.log(response.users);
 

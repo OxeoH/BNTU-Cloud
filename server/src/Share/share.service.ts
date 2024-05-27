@@ -118,6 +118,24 @@ class ShareService {
     return null;
   }
 
+  public async removeShareByFile(file: string): Promise<DeleteResult | null> {
+    const deleteQuery = this.shareRepository
+      .createQueryBuilder()
+      .delete()
+      .where("file.id = :file", {
+        file,
+      });
+
+    const deleteResult = await deleteQuery.execute();
+    console.log("Share delete result", deleteResult);
+
+    if (deleteResult) {
+      return deleteResult;
+    }
+
+    return null;
+  }
+
   public async getUserShares(user: User) {
     console.log("china");
 

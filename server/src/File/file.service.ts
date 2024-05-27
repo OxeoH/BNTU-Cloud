@@ -10,6 +10,8 @@ import fs from "fs";
 import { File } from "./file.entity";
 import { CreateProps, FetchProps, FileType } from "./file.types";
 import { User } from "../User/user.entity";
+import userService from "../User/user.service";
+import shareService from "../Share/share.service";
 
 class FileService {
   fileRepository: Repository<File>;
@@ -172,15 +174,15 @@ class FileService {
       }
     }
 
-    // await this.fileRepository.remove(file);
     const queryDeleteBuilder: DeleteQueryBuilder<File> = this.fileRepository
       .createQueryBuilder("file")
       .delete()
       .where("file.id = :id", {
         id: file.id,
       });
+    const deletedShares = await shareService.removeShareByFile(file.id);
+
     const fileToDelete = await queryDeleteBuilder.execute();
-    console.log(fileToDelete);
 
     if (fileToDelete) {
       return file;

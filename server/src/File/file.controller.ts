@@ -63,48 +63,82 @@ class FileController {
       res.status(400).json({ message: `Error: ${e}` });
     }
   }
-  //Вот код функции для удаления файла, она вызывает внутри вторую функцию, ее я отправлю следующей
+
+  // public async deleteFile(req: Request, res: Response) {
+  //   try {
+  //     const token = req.headers.authorization?.split(" ")[1];
+  //     const { id }: { id: string } = req.body;
+
+  //     const userData = verifyTokenMiddleware(token ?? "");
+
+  //     if (!userData)
+  //       return res.status(403).json({ message: "Error: Token was expired" });
+
+  //     const candidate = await userService.getUserById(userData.id);
+
+  //     if (!candidate)
+  //       return res.status(403).json({ message: "Error: User not found" });
+
+  //     const fileToDelete = await fileService.getFileById(id);
+
+  //     if (fileToDelete) {
+  //       await fileManager.recursiveDelete(
+  //         process.env.FILES_PATH +
+  //           `\\${fileToDelete.user.id}${fileToDelete.path}`
+  //       );
+  //       await fileService.recursiveDelete(fileToDelete.id); //, candidate);
+
+  //       const deleted = await fileService.deleteFile(fileToDelete);
+  //       await fileManager.deleteFile(fileToDelete);
+
+  //       if (deleted) {
+  //         candidate.usedSpace =
+  //           BigInt(candidate.usedSpace) - BigInt(deleted.size);
+  //         await userService.userRepository.save(candidate);
+  //         return res.status(200).send(customJSONStringifier(deleted));
+  //       }
+  //       return res.status(400).send({ message: "Error: File not found" });
+  //     }
+  //     return res.status(404).json({ message: "Error: File not found" });
+  //   } catch (e) {
+  //     console.log(e);
+  //     res.status(400).json({ message: `Error: ${e}` });
+  //   }
+  // }
   public async deleteFile(req: Request, res: Response) {
-    try {
-      const token = req.headers.authorization?.split(" ")[1];
-      const { id }: { id: string } = req.body;
+    const token = req.headers.authorization?.split(" ")[1];
+    const { id }: { id: string } = req.body;
 
-      const userData = verifyTokenMiddleware(token ?? "");
+    const userData = verifyTokenMiddleware(token ?? "");
 
-      if (!userData)
-        return res.status(403).json({ message: "Error: Token was expired" });
+    if (!userData)
+      return res.status(403).json({ message: "Error: Token was expired" });
 
-      const candidate = await userService.getUserById(userData.id);
+    const candidate = await userService.getUserById(userData.id);
 
-      if (!candidate)
-        return res.status(403).json({ message: "Error: User not found" });
+    if (!candidate)
+      return res.status(403).json({ message: "Error: User not found" });
 
-      const fileToDelete = await fileService.getFileById(id);
+    const fileToDelete = await fileService.getFileById(id);
 
-      if (fileToDelete) {
-        const deleted = await fileService.deleteFile(fileToDelete);
-        await fileManager.deleteFile(fileToDelete);
+    if (!fileToDelete)
+      return res.status(400).json({ message: "Error: File not found" });
 
-        if (deleted) {
-          candidate.usedSpace =
-            BigInt(candidate.usedSpace) - BigInt(deleted.size);
-          await userService.userRepository.save(candidate);
-          return res.status(200).send(customJSONStringifier(deleted));
-        }
-        return res.status(400).send({ message: "Error: File not found" });
-      }
-      return res.status(404).json({ message: "Error: File not found" });
-    } catch (e) {
-      console.log(e);
-      res.status(400).json({ message: `Error: ${e}` });
+    if (fileToDelete.user.id !== candidate.id)
+      return res
+        .status(400)
+        .json({ message: "Error: You have no permissions" });
+
+    await fileManager.recursiveDelete(
+      process.env.FILES_PATH + `\\${fileToDelete.user.id}\\${fileToDelete.path}`
+    );
+    const deleted = await fileService.recursiveDelete(id);
+
+    if (deleted) {
+      candidate.usedSpace = BigInt(candidate.usedSpace) - BigInt(deleted.size);
+      await userService.saveUser(candidate);
+      res.status(200).send(customJSONStringifier(deleted));
     }
-  }
-  public async testRec(req: Request, res: Response) {
-    //const { id }: { id: string } = req.body;
-    // await fileManager.recursiveDelete(
-    //   process.env.FILES_PATH + `\\5cb4bec1-8d2e-4087-a4ad-ac43cac44b62\\test`
-    // );
-    await fileService.recursiveDelete("78ee3bbc-502a-471a-a351-fbbe7837ab5b");
   }
   public async fetchFiles(req: Request, res: Response) {
     try {

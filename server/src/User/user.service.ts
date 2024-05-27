@@ -150,6 +150,20 @@ class UserService {
       return null;
     }
   }
+
+  public async saveUser(user: User) {
+    try {
+      const saved = await this.userRepository.save(user);
+
+      if (!saved) {
+        return null;
+      }
+
+      return saved;
+    } catch (e) {
+      return null;
+    }
+  }
 }
 
 export default new UserService();

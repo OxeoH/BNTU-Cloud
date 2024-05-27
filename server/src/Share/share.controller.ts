@@ -77,6 +77,12 @@ class ShareController {
           .status(400)
           .json({ message: "Error: Cannot find user to share" });
 
+      if (userToShare.id === user.id) {
+        return res
+          .status(400)
+          .json({ message: "Error: Cannot share from owner to owner" });
+      }
+
       const fileToShare = await fileService.getFileById(fileId);
       if (!fileToShare)
         return res
