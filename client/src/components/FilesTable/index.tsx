@@ -16,6 +16,7 @@ import EnhancedTableToolbar from "./EnhancedTableToolbar";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
 import {
   removeFiles,
+  removeSharedFiles,
   setCurrentDir,
   setFiles,
   setSharedFiles,
@@ -276,7 +277,10 @@ export default function EnhancedTable() {
     if (file) {
       try {
         const removed = await removeStrangeShare(file.id, file.user.id);
-        if (removed) dispatch(deleteShare(removed));
+        if (removed) {
+          dispatch(deleteShare(removed));
+          dispatch(removeSharedFiles([file.id]));
+        }
       } catch (e) {
         console.log(e);
       }
