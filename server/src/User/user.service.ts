@@ -131,7 +131,7 @@ class UserService {
             res[key] = user[key];
             return res;
           }, {}) as User,
-        users: users ? users.filter((u) => u.id === user.id) : [],
+        users: users ? users.filter((u) => u.id !== user.id) : [],
       };
     } catch (e) {
       return null;

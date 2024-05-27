@@ -30,7 +30,6 @@ export default function LoginPage() {
         password: `${data.get("password")}`,
       };
       const response = await authorization(authData);
-      console.log(response.users);
 
       dispatch(setUsers(response.users));
       dispatch(setUser(response.user));
