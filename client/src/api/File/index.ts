@@ -10,12 +10,17 @@ import { UserState } from "../../store/slices/userSlice";
 import { FilterSlice } from "../../store/slices/filterSlice";
 
 export const getFiles = async (parentId: string) => {
-  const { data } = await $host.get<MyFile[]>(`api/files`, {
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    params: { parentId },
-  });
+  try {
+    const { data } = await $host.get<MyFile[]>(`api/files`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      params: { parentId },
+    });
 
-  return data;
+    return data;
+  } catch (e) {
+    console.log(e);
+    return [];
+  }
 };
 
 export const createFile = async (props: CreateFileProps) => {
@@ -69,25 +74,37 @@ export const uploadFile = async (
 };
 
 export const uploadAvatar = async (file: File) => {
-  const formdata: any = new FormData();
+  try {
+    const formdata: any = new FormData();
 
-  formdata.append("file", file);
+    formdata.append("file", file);
 
-  const { data } = await $host.post<{ avatar: string }>(
-    "api/files/avatar",
-    formdata,
-    {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    }
-  );
-  return data;
+    const { data } = await $host.post<{ avatar: string }>(
+      "api/files/avatar",
+      formdata,
+      {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      }
+    );
+    return data;
+  } catch (e) {
+    console.log(e);
+    return { avatar: "" };
+  }
 };
 
 export const deleteAvatar = async () => {
-  const { data } = await $host.delete<{ message: string }>("api/files/avatar", {
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-  });
-  return { data };
+  try {
+    const { data } = await $host.delete<{ message: string }>(
+      "api/files/avatar",
+      {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      }
+    );
+    return { data };
+  } catch (e) {
+    console.log(e);
+  }
 };
 
 export const deleteFile = async (id: string) => {

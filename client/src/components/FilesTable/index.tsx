@@ -32,6 +32,8 @@ import { getAvatar } from "../../shared/getAvatar";
 import { setUser } from "../../store/slices/userSlice";
 import SkeletonLoader from "../SkeletonLoader";
 import ShareModal from "../ShareModal";
+import { FilesPlacing } from "../../store/slices/filterSlice";
+import { getUsersShared } from "../../api/Share";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -112,7 +114,8 @@ export default function EnhancedTable() {
   const dispatch = useAppDispatch();
   const currentDir = useAppSelector((state) => state.file.currentDir);
   const currentUser = useAppSelector((state) => state.user.currentUser);
-  const rows = useAppSelector((state) => state.file.files);
+  const [rows, setRows] = React.useState([] as File[]);
+
   const rootDir = useAppSelector((state) => state.file.rootDir);
   const { fileFilter, fileFilterApplied } = useAppSelector(
     (state) => state.filter
@@ -127,7 +130,9 @@ export default function EnhancedTable() {
       try {
         setLoader(true);
         const filtered = (
-          await getFiles(currentDir?.id ?? currentUser.files[0].id)
+          fileFilter.place === FilesPlacing.SHARED.toLocaleLowerCase()
+            ? await getUsersShared()
+            : await getFiles(currentDir?.id ?? currentUser.files[0].id)
         )
           .filter((file) => {
             if (!fileFilterApplied) return true;
@@ -156,7 +161,7 @@ export default function EnhancedTable() {
             }
             return true;
           });
-
+        setRows(filtered);
         dispatch(setFiles(filtered));
       } catch (e: any) {
         console.log(e);

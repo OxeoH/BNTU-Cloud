@@ -137,8 +137,6 @@ class ShareService {
   }
 
   public async getUserShares(user: User) {
-    console.log("china");
-
     const queryBuilder: SelectQueryBuilder<Share> = this.shareRepository
       .createQueryBuilder("share")
       .leftJoinAndSelect("share.fromUser", "fromUser")
@@ -150,6 +148,28 @@ class ShareService {
     const userShares = await queryBuilder.getMany();
 
     return userShares ?? null;
+  }
+
+  public async getSharedWithUser(user: User) {
+    const queryBuilder: SelectQueryBuilder<Share> = this.shareRepository
+      .createQueryBuilder("share")
+      .leftJoinAndSelect("share.fromUser", "fromUser")
+      .leftJoinAndSelect("share.toUser", "toUser")
+      .leftJoinAndSelect("share.file", "file")
+      .leftJoinAndSelect("file.parent", "parent")
+      .where("toUser.id = :userId", { userId: user.id });
+
+    const userShares = await queryBuilder.getMany();
+
+    let withoutPassword = userShares.map((share) => {
+      return {
+        ...share,
+        toUser: (({ password, ...o }) => o)(share.toUser),
+        fromUser: (({ password, ...o }) => o)(share.fromUser),
+        file: { ...share.file, user: share.fromUser },
+      };
+    });
+    return (withoutPassword ?? []) as Share[];
   }
 
   public async getAll() {

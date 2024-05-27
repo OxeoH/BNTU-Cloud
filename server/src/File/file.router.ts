@@ -10,6 +10,11 @@ fileRouter.post("/create", async (req: Request, res: Response) => {
 fileRouter.get("", async (req: Request, res: Response) => {
   await fileController.fetchFiles(req, res);
 });
+
+// fileRouter.get("/shared", async (req: Request, res: Response) => {
+//   await fileController.fetchShared(req, res);
+// });
+
 fileRouter.post("/upload", async (req: Request, res: Response) => {
   await fileController.uploadFile(req, res);
 });

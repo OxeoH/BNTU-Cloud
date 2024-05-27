@@ -7,7 +7,6 @@ import {
   IUserFilter,
   UserFilter,
 } from "../../store/slices/filterSlice";
-import { UserRole } from "../../api/User/types";
 
 export interface FilterItemProps {
   item: IFileFilter | IUserFilter;

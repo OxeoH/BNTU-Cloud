@@ -27,6 +27,24 @@ export const removeShare = async (fileId: string, toUser: string) => {
   return data;
 };
 
+export const getUsersShared = async () => {
+  try {
+    const { data } = await $host.get<Share[]>("api/shares/shared", {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    });
+    console.log(data);
+
+    return data
+      ? data.map((share) => {
+          return share.file;
+        })
+      : [];
+  } catch (e: any) {
+    console.log(e);
+    return [];
+  }
+};
+
 export const getUserShares = async () => {
   try {
     const { data } = await $host.get<Share[]>("api/shares/all", {

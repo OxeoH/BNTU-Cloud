@@ -142,6 +142,31 @@ class ShareController {
     }
   }
 
+  public async fetchShared(req: Request, res: Response) {
+    try {
+      const token = req.headers.authorization?.split(" ")[1];
+
+      const userData = verifyTokenMiddleware(token ?? "");
+
+      if (!userData)
+        return res.status(403).json({ message: "Error: Token was expired" });
+
+      const user = await userService.getUserById(userData.id);
+
+      if (!user)
+        return res.status(403).json({ message: "Error: User not found" });
+
+      const shared = await shareService.getSharedWithUser(user);
+
+      console.log("My shared: ", shared);
+
+      return res.status(200).send(customJSONStringifier(shared ?? []));
+    } catch (e) {
+      console.log(e);
+      res.status(400).json({ message: `Error: ${e}` });
+    }
+  }
+
   public async removeShare(req: Request, res: Response) {
     try {
       const token = req.headers.authorization?.split(" ")[1];

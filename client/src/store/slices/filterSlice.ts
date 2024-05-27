@@ -4,11 +4,21 @@ import { FileType } from "../../api/File/types";
 import { User, UserRole } from "../../api/User/types";
 import { groupsList } from "../../shared/groupsList";
 
+export enum FilesPlacing {
+  MY = "Моё хранилище",
+  SHARED = "Доступные мне",
+}
+
+export enum UsersPlacing {
+  MY = "Только мои",
+  STRANGE = "Все, кроме моих",
+}
+
 export interface FileFilter {
   filetype: FileType | null;
   user: User | null;
   name: string | null;
-  place: string | null;
+  place: FilesPlacing;
 }
 
 export interface UserFilter {
@@ -17,7 +27,7 @@ export interface UserFilter {
   login: string | null;
   email: string | null;
   role: UserRole | null;
-  place: string | null;
+  place: UsersPlacing;
 }
 
 export interface FilterOption {
@@ -29,17 +39,6 @@ export interface IFileFilter {
   name: string;
   type: keyof FileFilter;
   options: FilterOption[];
-}
-export enum FilesPlacing {
-  ALL = "В любом месте",
-  MY = "Моё хранилище",
-  SHARED = "Доступные мне",
-}
-
-export enum UsersPlacing {
-  ALL = "Все",
-  MY = "Только мои",
-  STRANGE = "Все, кроме моих",
 }
 
 export interface IUserFilter {
@@ -136,10 +135,10 @@ const initialState: FilterSlice = {
     login: null,
     email: null,
     role: null,
-    place: null,
+    place: UsersPlacing.MY,
   },
   fileFilter: {
-    place: null,
+    place: FilesPlacing.MY,
     filetype: null,
     user: null,
     name: null,

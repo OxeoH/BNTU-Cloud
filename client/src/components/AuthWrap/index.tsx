@@ -6,7 +6,7 @@ import { setCurrentDir, setRootDir } from "../../store/slices/fileSlice";
 import { useAppSelector } from "../../shared/hooks";
 import { getUserContacts } from "../../api/Contact";
 import { Contact } from "../../api/Contact/types";
-import { getUserShares } from "../../api/Share";
+import { getUserShares, getUsersShared } from "../../api/Share";
 
 export const AuthWrap = ({ children }: { children: any }) => {
   const dispatch = useDispatch();
