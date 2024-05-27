@@ -20,7 +20,12 @@ import {
   setFiles,
   setSharedFiles,
 } from "../../store/slices/fileSlice";
-import { deleteFile, downloadFile, getFiles } from "../../api/File";
+import {
+  deleteFile,
+  downloadFile,
+  downloadSharedFile,
+  getFiles,
+} from "../../api/File";
 import { User } from "../../api/User/types";
 import { convertFromBytes } from "../../shared/convertFromBytes";
 import {
@@ -224,6 +229,16 @@ export default function EnhancedTable() {
 
     try {
       await downloadFile(file);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const handleDownloadSharedClick = async (e: React.MouseEvent, file: File) => {
+    e.stopPropagation();
+
+    try {
+      await downloadSharedFile(file);
     } catch (e) {
       console.log(e);
     }
@@ -440,7 +455,11 @@ export default function EnhancedTable() {
                           <IconButton
                             aria-label="download"
                             size="large"
-                            onClick={(e) => handleDownloadClick(e, row)}
+                            onClick={(e) =>
+                              sharedFlag
+                                ? handleDownloadSharedClick(e, row)
+                                : handleDownloadClick(e, row)
+                            }
                           >
                             <Download color="primary" />
                           </IconButton>

@@ -29,6 +29,10 @@ fileRouter.get("/download", async (req: Request, res: Response) => {
   await fileController.downloadFile(req, res);
 });
 
+fileRouter.get("/download/shared", async (req: Request, res: Response) => {
+  await fileController.downloadSharedFile(req, res);
+});
+
 fileRouter.post("/delete", async (req: Request, res: Response) => {
   await fileController.deleteFile(req, res);
 });

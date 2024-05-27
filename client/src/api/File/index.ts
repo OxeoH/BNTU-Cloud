@@ -148,3 +148,25 @@ export const downloadFile = async (file: MyFile) => {
     link.remove();
   }
 };
+
+export const downloadSharedFile = async (file: MyFile) => {
+  const response = await fetch(
+    `http://localhost:5000/api/files/download/shared?id=${file.id}`,
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }
+  );
+
+  if (response.status === 200) {
+    const blob = await response.blob();
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = downloadUrl;
+    link.download = file.name;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }
+};

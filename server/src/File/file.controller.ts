@@ -8,6 +8,7 @@ import fileManager from "./file.manager";
 import fileUpload from "express-fileupload";
 import customJSONStringifier from "./utils/customJSONStringifier";
 import userController from "../User/user.controller";
+import shareService from "../Share/share.service";
 const uuidv4 = require("uuid").v4;
 
 class FileController {
@@ -64,47 +65,6 @@ class FileController {
     }
   }
 
-  // public async deleteFile(req: Request, res: Response) {
-  //   try {
-  //     const token = req.headers.authorization?.split(" ")[1];
-  //     const { id }: { id: string } = req.body;
-
-  //     const userData = verifyTokenMiddleware(token ?? "");
-
-  //     if (!userData)
-  //       return res.status(403).json({ message: "Error: Token was expired" });
-
-  //     const candidate = await userService.getUserById(userData.id);
-
-  //     if (!candidate)
-  //       return res.status(403).json({ message: "Error: User not found" });
-
-  //     const fileToDelete = await fileService.getFileById(id);
-
-  //     if (fileToDelete) {
-  //       await fileManager.recursiveDelete(
-  //         process.env.FILES_PATH +
-  //           `\\${fileToDelete.user.id}${fileToDelete.path}`
-  //       );
-  //       await fileService.recursiveDelete(fileToDelete.id); //, candidate);
-
-  //       const deleted = await fileService.deleteFile(fileToDelete);
-  //       await fileManager.deleteFile(fileToDelete);
-
-  //       if (deleted) {
-  //         candidate.usedSpace =
-  //           BigInt(candidate.usedSpace) - BigInt(deleted.size);
-  //         await userService.userRepository.save(candidate);
-  //         return res.status(200).send(customJSONStringifier(deleted));
-  //       }
-  //       return res.status(400).send({ message: "Error: File not found" });
-  //     }
-  //     return res.status(404).json({ message: "Error: File not found" });
-  //   } catch (e) {
-  //     console.log(e);
-  //     res.status(400).json({ message: `Error: ${e}` });
-  //   }
-  // }
   public async deleteFile(req: Request, res: Response) {
     const token = req.headers.authorization?.split(" ")[1];
     const { id }: { id: string } = req.body;
@@ -292,6 +252,63 @@ class FileController {
 
       const filePath =
         process.env.FILES_PATH + "\\" + candidate.id + downloadingFile.path;
+
+      if (fileManager.checkIsExists(filePath)) {
+        console.log(filePath);
+
+        const name = `${downloadingFile.name}.${downloadingFile.type}`;
+        console.log(name);
+        return res.status(200).download(filePath, name);
+      }
+      return res.status(400).json({ message: "Error: File not found" });
+    } catch (e) {
+      console.log(e);
+      res.status(500).json({ message: e });
+    }
+  }
+
+  public async downloadSharedFile(req: Request, res: Response) {
+    try {
+      const downloadId = req.query.id ?? "";
+
+      if (!downloadId)
+        return res.status(400).json({ message: "Error: Incorrect files id" });
+
+      const downloadingFile = await fileService.getFileById(`${downloadId}`);
+
+      if (!downloadingFile) {
+        return res.status(400).json({ message: "Error: File not found" });
+      }
+
+      const token = req.headers.authorization?.split(" ")[1];
+
+      const userData = verifyTokenMiddleware(token ?? "");
+
+      if (!userData)
+        return res.status(403).json({ message: "Error: Token was expired" });
+
+      const candidate = await userService.getUserById(userData.id);
+
+      if (!candidate)
+        return res.status(403).json({ message: "Error: User not found" });
+
+      console.log("Downloading: ", downloadingFile);
+      const isKnownShare = await shareService.checkIsNewShare(
+        downloadingFile.user.id,
+        candidate.id,
+        downloadingFile.id
+      );
+      console.log("isKnownShare: ", isKnownShare);
+      if (!isKnownShare)
+        return res
+          .status(400)
+          .json({ message: "Error: You don't have permissions" });
+
+      const filePath =
+        process.env.FILES_PATH +
+        "\\" +
+        downloadingFile.user.id +
+        downloadingFile.path;
 
       if (fileManager.checkIsExists(filePath)) {
         console.log(filePath);
