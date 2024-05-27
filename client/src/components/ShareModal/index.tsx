@@ -20,6 +20,7 @@ import { useAppDispatch, useAppSelector } from "../../shared/hooks";
 import { getAvatar } from "../../shared/getAvatar";
 import { User } from "../../api/User/types";
 import { addShare, removeShare } from "../../api/Share";
+import { addNewShare, deleteShare } from "../../store/slices/userSlice";
 
 export interface ShareModalProps {
   open: boolean;
@@ -27,24 +28,11 @@ export interface ShareModalProps {
   file: File | null;
 }
 
-//   const handleToggle = (value: number) => () => {
-//     const currentIndex = checked.indexOf(value);
-//     const newChecked = [...checked];
-
-//     if (currentIndex === -1) {
-//       newChecked.push(value);
-//     } else {
-//       newChecked.splice(currentIndex, 1);
-//     }
-
-//     setChecked(newChecked);
-//   };
-
 const ShareModal = (props: ShareModalProps) => {
   const { open, setOpen, file } = props;
   const users = useAppSelector((state) => state.user.users);
-  const currentUser = useAppSelector((state) => state.user.currentUser);
   const userShares = useAppSelector((state) => state.user.userShares);
+  const dispatch = useAppDispatch();
 
   const [value, setValue] = useState("");
   const [filtered, setFiltered] = useState<User[]>(users);
@@ -67,10 +55,11 @@ const ShareModal = (props: ShareModalProps) => {
       try {
         if (!getIsChecked(u)) {
           const newShare = await addShare(file.id, u.id);
-          console.log(newShare);
+
+          if (newShare) dispatch(addNewShare(newShare));
         } else {
           const removed = await removeShare(file.id, u.id);
-          console.log(removed);
+          if (removed) dispatch(deleteShare(removed));
         }
       } catch (e) {
         console.log(e);

@@ -6,7 +6,7 @@ import TableFilters from "../../components/TableFilters";
 import { setUserFilter } from "../../store/slices/filterSlice";
 import { useAppSelector } from "../../shared/hooks";
 
-export default function StoragePage() {
+export default function UsersPage() {
   const anchorRef = useRef<HTMLDivElement>(null);
 
   const currentUser = useAppSelector((state) => state.user.currentUser);

@@ -12,6 +12,10 @@ shareRouter.post("/remove", async (req: Request, res: Response) => {
   await shareController.removeShare(req, res);
 });
 
+shareRouter.post("/remove/strange", async (req: Request, res: Response) => {
+  await shareController.removeStrangeShare(req, res);
+});
+
 shareRouter.get("/shared", async (req: Request, res: Response) => {
   await shareController.fetchShared(req, res);
 });

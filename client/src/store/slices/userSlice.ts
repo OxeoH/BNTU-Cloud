@@ -67,10 +67,10 @@ export const counterSlice = createSlice({
     setShares: (state, action: PayloadAction<Share[]>) => {
       state.userShares = action.payload;
     },
-    addShare: (state, action: PayloadAction<Share>) => {
+    addNewShare: (state, action: PayloadAction<Share>) => {
       state.userShares = [...state.userShares, action.payload];
     },
-    removeShare: (state, action: PayloadAction<Share>) => {
+    deleteShare: (state, action: PayloadAction<Share>) => {
       state.userShares = state.userShares.filter(
         (share) => share.id !== action.payload.id
       );
@@ -84,8 +84,8 @@ export const {
   setAvatar,
   addContact,
   removeContact,
-  addShare,
-  removeShare,
+  addNewShare,
+  deleteShare,
   setShares,
 } = counterSlice.actions;
 

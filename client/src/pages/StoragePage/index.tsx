@@ -22,6 +22,7 @@ import { setUser } from "../../store/slices/userSlice";
 import Uploader from "../../components/Uploader";
 import TableFilters from "../../components/TableFilters";
 import {
+  FilesPlacing,
   setFileFilter,
   toggleFileFilterApplied,
 } from "../../store/slices/filterSlice";
@@ -49,7 +50,15 @@ export default function StoragePage() {
   const currentUser = useAppSelector((state) => state.user.currentUser);
   const currentDir = useAppSelector((state) => state.file.currentDir);
   const isRoot = currentUser.files[0].id === currentDir?.id;
-  const { fileFilter, filtersList } = useAppSelector((state) => state.filter);
+  const { fileFilter, filtersList, fileFilterApplied } = useAppSelector(
+    (state) => state.filter
+  );
+
+  const sharedFlag =
+    fileFilterApplied && fileFilter.place
+      ? fileFilter.place.toLocaleLowerCase() ===
+        FilesPlacing.SHARED.toLocaleLowerCase()
+      : false;
 
   const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     try {
@@ -65,6 +74,7 @@ export default function StoragePage() {
           addUploadingFiles,
           setUploadingProgress
         );
+        console.log("Uploaded: ", uploaded);
 
         dispatch(addFiles([uploaded]));
         setOpenUploader(false);
@@ -160,35 +170,41 @@ export default function StoragePage() {
               Загрузки
             </Typography>
           </Button>
-          <Button
-            component="label"
-            role={undefined}
-            variant="contained"
-            tabIndex={-1}
-            sx={{ borderRadius: 20, px: 20, mr: 12 }}
-            color="secondary"
-            startIcon={<CloudUpload />}
-          >
-            <Typography variant="h4" textAlign="center">
-              Загрузить файл
-            </Typography>
-            <VisuallyHiddenInput
-              type="file"
-              onChange={(e) => handleUpload(e)}
-              multiple
-            />
-          </Button>
-          <Button
-            variant="contained"
-            startIcon={<CreateNewFolder />}
-            sx={{ borderRadius: 20, px: 20 }}
-            color="secondary"
-            onClick={() => setOpenCreatePopover(!openCreatePopover)}
-          >
-            <Typography variant="h4" textAlign="center">
-              Создать файл / папку
-            </Typography>
-          </Button>
+          {!sharedFlag ? (
+            <>
+              <Button
+                component="label"
+                role={undefined}
+                variant="contained"
+                tabIndex={-1}
+                sx={{ borderRadius: 20, px: 20, mr: 12 }}
+                color="secondary"
+                startIcon={<CloudUpload />}
+              >
+                <Typography variant="h4" textAlign="center">
+                  Загрузить файл
+                </Typography>
+                <VisuallyHiddenInput
+                  type="file"
+                  onChange={(e) => handleUpload(e)}
+                  multiple
+                />
+              </Button>
+              <Button
+                variant="contained"
+                startIcon={<CreateNewFolder />}
+                sx={{ borderRadius: 20, px: 20 }}
+                color="secondary"
+                onClick={() => setOpenCreatePopover(!openCreatePopover)}
+              >
+                <Typography variant="h4" textAlign="center">
+                  Создать файл / папку
+                </Typography>
+              </Button>
+            </>
+          ) : (
+            <></>
+          )}
         </Stack>
       </Stack>
       <TableFilters

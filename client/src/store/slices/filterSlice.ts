@@ -16,7 +16,7 @@ export enum UsersPlacing {
 
 export interface FileFilter {
   filetype: FileType | null;
-  user: User | null;
+  user: string | null;
   name: string | null;
   place: FilesPlacing;
 }

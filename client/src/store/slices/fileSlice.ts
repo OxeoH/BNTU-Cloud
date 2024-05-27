@@ -1,7 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { File, FileType } from "../../api/File/types";
-import { Share } from "../../api/Share/types";
 
 export interface UploaderItem {
   id: number;
@@ -10,6 +9,7 @@ export interface UploaderItem {
   progress: number;
 }
 export interface FilesState {
+  sharedFiles: File[];
   files: File[];
   currentDir: File | null;
   rootDir: File | null;
@@ -17,6 +17,7 @@ export interface FilesState {
 }
 
 const initialState: FilesState = {
+  sharedFiles: [],
   files: [],
   currentDir: null,
   rootDir: null,
@@ -46,6 +47,17 @@ export const fileSlice = createSlice({
     },
     clearFiles: (state) => {
       state = initialState;
+    },
+    setSharedFiles: (state, action: PayloadAction<File[]>) => {
+      state.sharedFiles = action.payload;
+    },
+    addSharedFiles: (state, action: PayloadAction<File[]>) => {
+      state.sharedFiles = [...state.sharedFiles, ...action.payload];
+    },
+    removeSharedFiles: (state, action: PayloadAction<string[]>) => {
+      state.sharedFiles = state.sharedFiles.filter(
+        (file) => !action.payload.includes(file.id)
+      );
     },
     //Uploader
     setUploadingFiles: (state, action: PayloadAction<UploaderItem[]>) => {
@@ -77,9 +89,12 @@ export const {
   removeFiles,
   clearFiles,
   setUploadingFiles,
+  setSharedFiles,
   addUploadingFiles,
   clearUploadingFiles,
+  addSharedFiles,
   setUploadingProgress,
+  removeSharedFiles,
 } = fileSlice.actions;
 
 export default fileSlice.reducer;

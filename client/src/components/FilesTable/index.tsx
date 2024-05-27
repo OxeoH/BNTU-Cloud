@@ -18,6 +18,7 @@ import {
   removeFiles,
   setCurrentDir,
   setFiles,
+  setSharedFiles,
 } from "../../store/slices/fileSlice";
 import { deleteFile, downloadFile, getFiles } from "../../api/File";
 import { User } from "../../api/User/types";
@@ -29,11 +30,11 @@ import {
   LockOpen,
 } from "@mui/icons-material";
 import { getAvatar } from "../../shared/getAvatar";
-import { setUser } from "../../store/slices/userSlice";
+import { deleteShare, setUser } from "../../store/slices/userSlice";
 import SkeletonLoader from "../SkeletonLoader";
 import ShareModal from "../ShareModal";
 import { FilesPlacing } from "../../store/slices/filterSlice";
-import { getUsersShared } from "../../api/Share";
+import { getUsersShared, removeStrangeShare } from "../../api/Share";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -114,12 +115,21 @@ export default function EnhancedTable() {
   const dispatch = useAppDispatch();
   const currentDir = useAppSelector((state) => state.file.currentDir);
   const currentUser = useAppSelector((state) => state.user.currentUser);
-  const [rows, setRows] = React.useState([] as File[]);
-
   const rootDir = useAppSelector((state) => state.file.rootDir);
   const { fileFilter, fileFilterApplied } = useAppSelector(
     (state) => state.filter
   );
+
+  const sharedFlag =
+    fileFilterApplied && fileFilter.place
+      ? fileFilter.place.toLocaleLowerCase() ===
+        FilesPlacing.SHARED.toLocaleLowerCase()
+      : false;
+
+  const files = useAppSelector((state) => state.file.files);
+  const sharedFiles = useAppSelector((state) => state.file.sharedFiles);
+
+  const rows = sharedFlag ? sharedFiles : files;
 
   React.useEffect(() => {
     dispatch(setCurrentDir(rootDir ?? currentUser.files[0]));
@@ -130,7 +140,7 @@ export default function EnhancedTable() {
       try {
         setLoader(true);
         const filtered = (
-          fileFilter.place === FilesPlacing.SHARED.toLocaleLowerCase()
+          sharedFlag
             ? await getUsersShared()
             : await getFiles(currentDir?.id ?? currentUser.files[0].id)
         )
@@ -145,9 +155,8 @@ export default function EnhancedTable() {
             if (!fileFilterApplied) return true;
             if (fileFilter.user != null) {
               return (
-                file.user.login === fileFilter.user.login &&
-                file.user.email === fileFilter.user.email &&
-                file.user.id === fileFilter.user.id
+                file.user.email.toLocaleLowerCase() ===
+                fileFilter.user.toLocaleLowerCase()
               );
             }
             return true;
@@ -161,8 +170,9 @@ export default function EnhancedTable() {
             }
             return true;
           });
-        setRows(filtered);
-        dispatch(setFiles(filtered));
+        sharedFlag
+          ? dispatch(setSharedFiles(filtered))
+          : dispatch(setFiles(filtered));
       } catch (e: any) {
         console.log(e);
       } finally {
@@ -243,6 +253,18 @@ export default function EnhancedTable() {
       }
     } catch (e) {
       console.log(e);
+    }
+  };
+
+  const handleDeleteShareClick = async (e: React.MouseEvent, file: File) => {
+    e.stopPropagation();
+    if (file) {
+      try {
+        const removed = await removeStrangeShare(file.id, file.user.id);
+        if (removed) dispatch(deleteShare(removed));
+      } catch (e) {
+        console.log(e);
+      }
     }
   };
 
@@ -399,15 +421,19 @@ export default function EnhancedTable() {
                         alignItems: "center",
                       }}
                     >
-                      <Tooltip title="Настроить доступ" sx={{ mr: 5 }}>
-                        <IconButton
-                          aria-label="delete"
-                          size="large"
-                          onClick={(e) => handleConfigureAccess(e, row)}
-                        >
-                          <LockOpen color="warning" />
-                        </IconButton>
-                      </Tooltip>
+                      {!sharedFlag ? (
+                        <Tooltip title="Настроить доступ" sx={{ mr: 5 }}>
+                          <IconButton
+                            aria-label="delete"
+                            size="large"
+                            onClick={(e) => handleConfigureAccess(e, row)}
+                          >
+                            <LockOpen color="warning" />
+                          </IconButton>
+                        </Tooltip>
+                      ) : (
+                        <></>
+                      )}
 
                       {row.type !== FileType.DIR ? (
                         <Tooltip title="Скачать" sx={{ mr: 5 }}>
@@ -422,11 +448,18 @@ export default function EnhancedTable() {
                       ) : (
                         <TableBody></TableBody>
                       )}
-                      <Tooltip title="Удалить" sx={{ mr: 5 }}>
+                      <Tooltip
+                        title={sharedFlag ? `Удалить из доступных` : `Удалить`}
+                        sx={{ mr: 5 }}
+                      >
                         <IconButton
                           aria-label="delete"
                           size="large"
-                          onClick={(e) => handleDeleteClick(e, row)}
+                          onClick={(e) =>
+                            sharedFlag
+                              ? handleDeleteShareClick(e, row)
+                              : handleDeleteClick(e, row)
+                          }
                         >
                           <Delete color="error" />
                         </IconButton>

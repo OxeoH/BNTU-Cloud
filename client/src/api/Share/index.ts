@@ -11,6 +11,7 @@ export const addShare = async (fileId: string, toUser: string) => {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     }
   );
+  console.log("datadata: ", data);
 
   return data;
 };
@@ -19,6 +20,18 @@ export const removeShare = async (fileId: string, toUser: string) => {
   const { data } = await $host.post<Share>(
     "api/shares/remove",
     { fileId, toUser },
+    {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    }
+  );
+
+  return data;
+};
+
+export const removeStrangeShare = async (fileId: string, ownerId: string) => {
+  const { data } = await $host.post<Share>(
+    "api/shares/remove/strange",
+    { fileId, ownerId },
     {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     }

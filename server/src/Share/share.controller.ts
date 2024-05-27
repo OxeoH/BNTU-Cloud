@@ -89,13 +89,13 @@ class ShareController {
           .status(400)
           .json({ message: "Error: Cannot find file to share" });
 
-      const isNewShare = await shareService.checkIsNewShare(
+      const isKnownShare = await shareService.checkIsNewShare(
         user.id,
         userToShare.id,
         fileId
       );
 
-      if (isNewShare) {
+      if (isKnownShare) {
         return res
           .status(400)
           .json({ message: "Error: Sharing is already exists" });
@@ -118,7 +118,13 @@ class ShareController {
           if (file.type === FileType.DIR) {
             await shareDirectory(owner, file, toUser);
           } else {
-            await shareService.createNewShare(owner, toUser, file);
+            const isKnownShare = await shareService.checkIsNewShare(
+              owner.id,
+              toUser.id,
+              file.id
+            );
+            if (!isKnownShare)
+              await shareService.createNewShare(owner, toUser, file);
           }
         }
         console.log("SHared Shared: ", dirShare);
@@ -136,7 +142,7 @@ class ShareController {
         res.status(400).json({ message: "Error: Cannot share this file" });
       }
 
-      res.status(200).send(customJSONStringifier(shareDirectory));
+      res.status(200).send(customJSONStringifier(sharedDirectory));
     } catch (e) {
       res.status(500).json({ message: `Error: ${e}` });
     }
@@ -195,7 +201,7 @@ class ShareController {
       if (!fileToShare)
         return res
           .status(400)
-          .json({ message: "Error: Cannot find file to share" });
+          .json({ message: "Error: Cannot find shared file" });
 
       const response = await shareService.checkIsNewShare(
         user.id,
@@ -210,6 +216,61 @@ class ShareController {
       const removed = await shareService.removeShare(
         user.id,
         userToShare.id,
+        fileId
+      );
+
+      if (!removed)
+        return res
+          .status(400)
+          .json({ message: "Error: Cannot remove sharing" });
+
+      return res.status(200).send(customJSONStringifier(response));
+    } catch (e) {
+      res.status(500).json({ message: `Error: ${e}` });
+    }
+  }
+
+  public async removeStrangeShare(req: Request, res: Response) {
+    try {
+      const token = req.headers.authorization?.split(" ")[1];
+      if (!token)
+        return res.status(401).json({ message: "Error: Wrong token" });
+
+      const { fileId, ownerId }: { fileId: string; ownerId: string } = req.body;
+      if (!fileId || !ownerId)
+        return res.status(400).json({ message: "Error: Bad params" });
+
+      const userData = verifyTokenMiddleware(token);
+      if (!userData)
+        return res.status(403).json({ message: "Error: Token was expired" });
+
+      const user = await userService.getUserById(userData.id);
+      if (!user)
+        return res.status(400).json({ message: "Error: Cannot find user" });
+
+      const userShared = await userService.getUserById(ownerId);
+      if (!userShared)
+        return res.status(400).json({ message: "Error: Cannot find owner" });
+
+      const sharedFile = await fileService.getFileById(fileId);
+      if (!sharedFile)
+        return res
+          .status(400)
+          .json({ message: "Error: Cannot find shared file" });
+
+      const response = await shareService.checkIsNewShare(
+        userShared.id,
+        user.id,
+        fileId
+      );
+
+      if (!response) {
+        return res.status(400).json({ message: "Error: Cannot find sharing" });
+      }
+
+      const removed = await shareService.removeShare(
+        userShared.id,
+        user.id,
         fileId
       );
 
