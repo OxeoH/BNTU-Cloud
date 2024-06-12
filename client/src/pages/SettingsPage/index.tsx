@@ -22,8 +22,10 @@ import { groupsList } from "../../shared/groupsList";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
 import { getAvatar } from "../../shared/getAvatar";
-import { setAvatar } from "../../store/slices/userSlice";
+import { logout, setAvatar, setUser } from "../../store/slices/userSlice";
 import { uploadAvatar } from "../../api/File";
+import { changePassword, changeProfileInfo } from "../../api/User";
+import { LOGIN_ROUTE, SETTINGS_ROUTE } from "../../routes/utils/consts";
 
 export default function SettingsPage() {
   const { currentUser } = useAppSelector((state) => state.user);
@@ -47,7 +49,56 @@ export default function SettingsPage() {
     setSelectedRole(e.target.checked ? UserRole.TEACHER : UserRole.STUDENT);
   };
 
-  const handleSubmit = () => {};
+  const handleChangeInfoSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+    try {
+      const data = new FormData(event.currentTarget);
+      const newUserData = {
+        surname: `${data.get("surname")}`,
+        name: `${data.get("name")}`,
+        patronymic: `${data.get("patronymic")}`,
+        login: `${data.get("login")}`,
+        group: selectedRole === UserRole.TEACHER ? "" : `${data.get("group")}`,
+        email: `${data.get("email")}`,
+        role: selectedRole,
+      };
+
+      const updated = await changeProfileInfo(newUserData);
+
+      if (updated) {
+        dispatch(setUser(updated));
+        navigate(SETTINGS_ROUTE);
+      }
+    } catch (e: any) {
+      //TODO: Error type
+      alert(e.message);
+    }
+  };
+
+  const handleChangePasswordSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+    try {
+      const data = new FormData(event.currentTarget);
+      const newPasswordData = {
+        oldPassword: `${data.get("oldPassword")}`,
+        newPassword: `${data.get("newPassword")}`,
+      };
+
+      const newToken = await changePassword(newPasswordData);
+
+      if (!newToken) {
+        dispatch(logout());
+        navigate(LOGIN_ROUTE);
+      }
+    } catch (e: any) {
+      //TODO: Error type
+      alert(e.message);
+    }
+  };
 
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     //e.stopPropagation();
@@ -143,7 +194,7 @@ export default function SettingsPage() {
             <Box
               component="form"
               noValidate
-              onSubmit={handleSubmit}
+              onSubmit={handleChangeInfoSubmit}
               sx={{ mt: 3 }}
             >
               <Grid container>
@@ -264,7 +315,7 @@ export default function SettingsPage() {
             direction="column"
             width="100%"
             px={20}
-            justifyContent="space-between"
+            justifyContent="flex-start"
             alignItems="center"
           >
             <Typography
@@ -279,8 +330,16 @@ export default function SettingsPage() {
             <Box
               component="form"
               noValidate
-              onSubmit={handleSubmit}
-              sx={{ mt: 3 }}
+              onSubmit={handleChangePasswordSubmit}
+              sx={{
+                mt: 3,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                alignItems: "center",
+                width: "100%",
+                height: "100%",
+              }}
             >
               <Grid container>
                 <Grid container spacing={0} mb={12}>
@@ -317,11 +376,15 @@ export default function SettingsPage() {
                   />
                 </Grid>
               </Grid>
+              <Button
+                type="submit"
+                fullWidth
+                variant="outlined"
+                sx={{ mt: 3, mb: 2, px: 30 }}
+              >
+                Сохранить новый пароль
+              </Button>
             </Box>
-
-            <Button fullWidth variant="outlined" sx={{ mt: 3, mb: 2, px: 30 }}>
-              Сохранить новый пароль
-            </Button>
           </Stack>
         </Stack>
       </Stack>

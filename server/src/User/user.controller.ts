@@ -136,9 +136,9 @@ class UserController {
 
       const { oldPassword, newPassword }: ChangePasswordProps = req.body;
 
-      const oldHashed = bcrypt.hashSync(oldPassword, this.hashSalt);
+      const validPassword = bcrypt.compareSync(oldPassword, candidate.password);
 
-      if (candidate.password !== oldHashed ?? "")
+      if (!validPassword)
         return res
           .status(403)
           .json({ message: "Error: The old password isn't correct" });
@@ -192,6 +192,18 @@ class UserController {
       if (!candidate)
         return res.status(404).json({ message: "Error: User not found" });
 
+      const checkCandidate = await userService.checkIsNewUser(
+        login,
+        email,
+        candidate.id
+      );
+
+      if (!checkCandidate) {
+        return res.status(400).json({
+          message: `User with login ${login} or email ${email} is already exists`,
+        });
+      }
+
       candidate.name = name;
       candidate.surname = surname;
       candidate.patronymic = patronymic;
@@ -210,7 +222,9 @@ class UserController {
         });
       }
 
-      return res.status(200).send(customJSONStringifier(savedUser));
+      return res
+        .status(200)
+        .send(customJSONStringifier((({ password, ...o }) => o)(savedUser)));
     } catch (e) {
       res.status(500).json({ message: `Error: ${e}` });
     }

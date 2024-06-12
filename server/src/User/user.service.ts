@@ -16,8 +16,8 @@ class UserService {
     this.userRepository = AppDataSource.getRepository<User>(User);
   }
 
-  public async checkIsNewUser(login: string, email: string) {
-    const candidates = [
+  public async checkIsNewUser(login: string, email: string, exclude?: string) {
+    let candidates = [
       await this.userRepository.find({
         where: { login },
         relations: { shared: false, contacts: false },
@@ -27,7 +27,13 @@ class UserService {
         relations: { shared: false, contacts: false },
       }),
     ];
-    console.log(candidates);
+
+    if (exclude) {
+      candidates = [
+        candidates[0].filter((user) => user.id !== exclude),
+        candidates[1].filter((user) => user.id !== exclude),
+      ];
+    }
 
     if (!candidates[0].length && !candidates[1].length) return true;
 
