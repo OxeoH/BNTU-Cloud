@@ -161,6 +161,36 @@ class UserService {
       return null;
     }
   }
+
+  public async createRootAdmin(registerParams: RegisterProps) {
+    try {
+      const { name, surname, patronymic, login, email, password, role } =
+        registerParams;
+      const isRootAdminExists = await this.userRepository.findOne({
+        where: { login: login },
+      });
+      console.log(isRootAdminExists);
+
+      if (!isRootAdminExists) {
+        const rootAdmin = await this.createNewUser({
+          name,
+          surname,
+          patronymic,
+          login,
+          email,
+          password,
+          role,
+        });
+        console.log(
+          rootAdmin
+            ? "Root admin was created successfully"
+            : "Error: Root admin was not created"
+        );
+      }
+    } catch (e) {
+      return null;
+    }
+  }
 }
 
 export default new UserService();

@@ -10,6 +10,8 @@ import userRouter from "./src/User/user.router";
 import fileRouter from "./src/File/file.router";
 import contactRouter from "./src/Contact/contact.router";
 import shareRouter from "./src/Share/share.router";
+import userService from "./src/User/user.service";
+import userController from "./src/User/user.controller";
 
 const app = express();
 app.use(cors());
@@ -31,7 +33,10 @@ const port = process.env.PORT || 5000;
 const startTodoServer = async () => {
   try {
     await AppDataSource.initialize();
-    app.listen(port, () => console.log("SERVER WAS STARTED ON PORT: ", port));
+    app.listen(port, () => {
+      userController.registerRootAdmin();
+      console.log("SERVER WAS STARTED ON PORT: ", port);
+    });
   } catch (e) {
     console.log(e);
   }

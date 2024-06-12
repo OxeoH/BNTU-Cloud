@@ -5,6 +5,7 @@ import {
   ChangePasswordProps,
   ChangeProfileProps,
   RegisterProps,
+  UserRole,
 } from "./user.types";
 import bcrypt from "bcryptjs";
 import { verifyTokenMiddleware } from "../middlewares/verifyTokenMiddleware";
@@ -106,6 +107,10 @@ class UserController {
       const token = await userService.createNewUser({
         ...registerParams,
         password: hashPassword,
+        role:
+          registerParams.role === UserRole.ADMIN
+            ? UserRole.STUDENT
+            : registerParams.role,
       });
 
       if (token) {
@@ -119,6 +124,29 @@ class UserController {
       }
     } catch (e) {
       res.status(500).json({ message: `Error: ${e}` });
+    }
+  }
+
+  public async registerRootAdmin() {
+    try {
+      const adminLogin = process.env.ADMIN_LOGIN ?? "admin";
+      const adminPassword = process.env.ADMIN_PASSWORD ?? "adminadmin";
+
+      const hashPassword = bcrypt.hashSync(adminPassword, this.hashSalt);
+
+      const registerParams: RegisterProps = {
+        login: adminLogin,
+        password: hashPassword,
+        email: "",
+        name: "",
+        surname: "",
+        patronymic: "",
+        role: UserRole.ADMIN,
+      };
+
+      await userService.createRootAdmin(registerParams);
+    } catch (e) {
+      console.log(`Error: ${e}`);
     }
   }
   public async changePassword(req: Request, res: Response) {
