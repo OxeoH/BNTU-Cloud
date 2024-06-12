@@ -3,21 +3,11 @@ import AppDataSource from "../../data-source";
 import { User } from "./user.entity";
 import { AuthProps, RegisterProps, UserRole } from "./user.types";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import config from "./jwtConfig";
 import fileManager from "../File/file.manager";
 import { File } from "../File/file.entity";
 import fileService from "../File/file.service";
 import { FileType } from "../File/file.types";
-
-const generateAccessToken = (id: string, login: string) => {
-  const payload = {
-    id,
-    login,
-  };
-
-  return jwt.sign(payload, config.secret, { expiresIn: "24h" });
-};
+import { generateAccessToken } from "./utils/generateAccessToken";
 
 class UserService {
   userRepository: Repository<User>;

@@ -28,6 +28,21 @@ export interface VerifyProps {
   user: User;
 }
 
+export interface ChangePasswordProps {
+  oldPassword: string;
+  newPassword: string;
+}
+
+export interface ChangeProfileProps {
+  name: string;
+  surname: string;
+  patronymic: string;
+  login: string;
+  email: string;
+  group: string;
+  role: UserRole;
+}
+
 export enum UserRole {
   ADMIN = "admin",
   TEACHER = "teacher",

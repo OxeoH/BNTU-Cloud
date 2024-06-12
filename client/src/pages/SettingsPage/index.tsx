@@ -89,7 +89,7 @@ export default function SettingsPage() {
               variant="h3"
               color="text"
               textAlign="center"
-              mb={20}
+              mb={30}
             >
               Сменить аватар
             </Typography>

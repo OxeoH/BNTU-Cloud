@@ -28,7 +28,7 @@ userRouter.post(
 userRouter.post(
   "/login",
   checkSchema({
-    pasword: { isLength: { options: { min: 8 } } },
+    password: { isLength: { options: { min: 8 } } },
     login: { isLength: { options: { min: 4 } } },
   }),
   async (req: Request, res: Response) => {
@@ -43,4 +43,31 @@ userRouter.get("/verify-auth", async (req: Request, res: Response) => {
 userRouter.get("/all", async (req: Request, res: Response) => {
   await userController.getAllUsers(req, res);
 });
+
+userRouter.post(
+  "/change/info",
+  checkSchema({
+    email: { isEmail: true },
+    login: { isLength: { options: { min: 4 } } },
+    name: { notEmpty: true },
+    surname: { notEmpty: true },
+    patronymic: { notEmpty: true },
+    role: { notEmpty: true },
+  }),
+  async (req: Request, res: Response) => {
+    await userController.changeUserInfo(req, res);
+  }
+);
+
+userRouter.post(
+  "/change/password",
+  checkSchema({
+    newPassword: { isLength: { options: { min: 8 } } },
+    oldPassword: { isLength: { options: { min: 8 } } },
+  }),
+  async (req: Request, res: Response) => {
+    await userController.changePassword(req, res);
+  }
+);
+
 export default userRouter;

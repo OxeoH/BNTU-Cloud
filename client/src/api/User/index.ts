@@ -2,6 +2,8 @@ import { $authHost, $host } from "../index";
 import {
   AuthProps,
   AuthResponse,
+  ChangePasswordProps,
+  ChangeProfileProps,
   RegisterProps,
   RegisterResponse,
   User,
@@ -55,7 +57,35 @@ export const verifyAuth = async () => {
     localStorage.setItem("token", "");
   }
 };
-// };
+
+export const changePassword = async (props: ChangePasswordProps) => {
+  try {
+    const { data } = await $host.post<{ token: string }>(
+      "api/user/change/password",
+      props,
+      {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      }
+    );
+
+    localStorage.setItem("token", `${data.token}`);
+
+    return data.token;
+  } catch (e: any) {
+    console.log(e);
+  }
+};
+export const changeProfileInfo = async (props: ChangeProfileProps) => {
+  try {
+    const { data } = await $host.post<User>("api/user/change/info", props, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    });
+
+    return data;
+  } catch (e: any) {
+    console.log(e);
+  }
+};
 
 export const checkIsAdmin = async () => {
   const { data } = await $authHost.post<boolean>("api/user/admin/check", {

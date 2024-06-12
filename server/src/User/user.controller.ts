@@ -1,12 +1,18 @@
 import { Request, Response } from "express";
 import userService from "./user.service";
-import { AuthProps, RegisterProps } from "./user.types";
+import {
+  AuthProps,
+  ChangePasswordProps,
+  ChangeProfileProps,
+  RegisterProps,
+} from "./user.types";
 import bcrypt from "bcryptjs";
 import { verifyTokenMiddleware } from "../middlewares/verifyTokenMiddleware";
 import checkEmail from "./utils/checkEmail";
 import fileService from "../File/file.service";
 import customJSONStringifier from "../File/utils/customJSONStringifier";
 import contactService from "../Contact/contact.service";
+import { generateAccessToken } from "./utils/generateAccessToken";
 
 class UserController {
   hashSalt: number;
@@ -111,6 +117,100 @@ class UserController {
           message: `User with login ${registerParams.login} is already exists`,
         });
       }
+    } catch (e) {
+      res.status(500).json({ message: `Error: ${e}` });
+    }
+  }
+  public async changePassword(req: Request, res: Response) {
+    try {
+      const token = req.headers.authorization?.split(" ")[1];
+      const userData = verifyTokenMiddleware(token ?? "");
+
+      if (!userData)
+        return res.status(403).json({ message: "Error: Token was expired" });
+
+      const candidate = await userService.getUserById(userData.id);
+
+      if (!candidate)
+        return res.status(404).json({ message: "Error: User not found" });
+
+      const { oldPassword, newPassword }: ChangePasswordProps = req.body;
+
+      const oldHashed = bcrypt.hashSync(oldPassword, this.hashSalt);
+
+      if (candidate.password !== oldHashed ?? "")
+        return res
+          .status(403)
+          .json({ message: "Error: The old password isn't correct" });
+
+      const newHashed = bcrypt.hashSync(newPassword, this.hashSalt);
+
+      candidate.password = newHashed;
+
+      const savedUser = await userService.saveUser(candidate);
+      console.log("Saved User: ", savedUser);
+
+      if (!savedUser) {
+        return res.status(400).json({
+          message: `Error: Cannot save user info`,
+        });
+      }
+
+      const newToken = generateAccessToken(savedUser.id, savedUser.login);
+
+      if (!newToken)
+        return res.status(400).json({
+          message: `Error: Cannot generate access token`,
+        });
+
+      res.status(200).send(customJSONStringifier({ token: newToken }));
+    } catch (e) {
+      res.status(500).json({ message: `Error: ${e}` });
+    }
+  }
+
+  public async changeUserInfo(req: Request, res: Response) {
+    try {
+      const {
+        name,
+        surname,
+        patronymic,
+        login,
+        email,
+        group,
+        role,
+      }: ChangeProfileProps = req.body;
+
+      const token = req.headers.authorization?.split(" ")[1];
+      const userData = verifyTokenMiddleware(token ?? "");
+
+      if (!userData)
+        return res.status(403).json({ message: "Error: Token was expired" });
+
+      const candidate = await userService.getUserById(userData.id);
+
+      if (!candidate)
+        return res.status(404).json({ message: "Error: User not found" });
+
+      candidate.name = name;
+      candidate.surname = surname;
+      candidate.patronymic = patronymic;
+      candidate.login = login;
+      candidate.email = email;
+      candidate.group = group;
+      candidate.role = role;
+      candidate.confirmed = false;
+
+      const savedUser = await userService.saveUser(candidate);
+      console.log("Saved User: ", savedUser);
+
+      if (!savedUser) {
+        return res.status(400).json({
+          message: `Error: Cannot save user info`,
+        });
+      }
+
+      return res.status(200).send(customJSONStringifier(savedUser));
     } catch (e) {
       res.status(500).json({ message: `Error: ${e}` });
     }

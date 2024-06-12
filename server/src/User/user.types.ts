@@ -4,6 +4,21 @@ export enum UserRole {
   STUDENT = "student",
 }
 
+export interface ChangePasswordProps {
+  oldPassword: string;
+  newPassword: string;
+}
+
+export interface ChangeProfileProps {
+  name: string;
+  surname: string;
+  patronymic: string;
+  login: string;
+  email: string;
+  group: string;
+  role: UserRole;
+}
+
 export type RegisterProps = {
   login: string;
   password: string;
