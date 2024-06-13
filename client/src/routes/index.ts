@@ -5,7 +5,7 @@ import RegisterPage from "../pages/RegisterPage";
 import SettingsPage from "../pages/SettingsPage";
 import StoragePage from "../pages/StoragePage";
 import UsersPage from "../pages/UsersPage";
-import WelcomePage from "../pages/WelcomePage";
+import { WelcomePage } from "../pages/WelcomePage";
 
 import {
   HELP_ROUTE,

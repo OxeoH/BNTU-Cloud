@@ -32,6 +32,7 @@ import { getAllUsers } from "../../api/User";
 import { File } from "../../api/File/types";
 import { Contact } from "../../api/Contact/types";
 import { addNewContact, deleteContact } from "../../api/Contact";
+import AdminMenu from "../AdminMenu";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -401,31 +402,45 @@ export default function EnhancedTable() {
                     </TableCell>
 
                     <TableCell align="right">
-                      {currentUser.contacts.filter(
-                        (contact) => contact.contactUser.id === row.id
-                      ).length ? (
-                        <Tooltip title="Удалить контакт" sx={{ mr: 5 }}>
-                          <IconButton
-                            color="error"
-                            aria-label="delete"
-                            size="large"
-                            onClick={(e) => handleRemoveContact(e, row)}
-                          >
-                            <PersonRemove />
-                          </IconButton>
-                        </Tooltip>
-                      ) : (
-                        <Tooltip title="Добавить в контакты" sx={{ mr: 5 }}>
-                          <IconButton
-                            color="primary"
-                            aria-label="delete"
-                            size="large"
-                            onClick={(e) => handleAddContact(e, row)}
-                          >
-                            <PersonAdd />
-                          </IconButton>
-                        </Tooltip>
-                      )}
+                      <Stack
+                        direction="row"
+                        justifyContent="flex-end"
+                        alignItems="center"
+                      >
+                        {row.role === UserRole.ADMIN &&
+                        currentUser.role !== UserRole.ADMIN ? (
+                          <></>
+                        ) : currentUser.contacts.filter(
+                            (contact) => contact.contactUser.id === row.id
+                          ).length ? (
+                          <Tooltip title="Удалить контакт" sx={{ mr: 5 }}>
+                            <IconButton
+                              color="error"
+                              aria-label="delete"
+                              size="large"
+                              onClick={(e) => handleRemoveContact(e, row)}
+                            >
+                              <PersonRemove />
+                            </IconButton>
+                          </Tooltip>
+                        ) : (
+                          <Tooltip title="Добавить в контакты" sx={{ mr: 5 }}>
+                            <IconButton
+                              color="primary"
+                              aria-label="delete"
+                              size="large"
+                              onClick={(e) => handleAddContact(e, row)}
+                            >
+                              <PersonAdd />
+                            </IconButton>
+                          </Tooltip>
+                        )}
+                        {currentUser.role === UserRole.ADMIN ? (
+                          <AdminMenu contact={row} />
+                        ) : (
+                          <></>
+                        )}
+                      </Stack>
                     </TableCell>
                   </TableRow>
                 );

@@ -43,6 +43,15 @@ export interface ChangeProfileProps {
   role: UserRole;
 }
 
+export interface ChangeContactPasswordProps {
+  id: string;
+  newPassword: string;
+}
+
+export interface ChangeContactProfileProps extends ChangeProfileProps {
+  id: string;
+}
+
 export enum UserRole {
   ADMIN = "admin",
   TEACHER = "teacher",
