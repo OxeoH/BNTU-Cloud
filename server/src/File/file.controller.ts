@@ -9,6 +9,7 @@ import fileUpload from "express-fileupload";
 import customJSONStringifier from "./utils/customJSONStringifier";
 import userController from "../User/user.controller";
 import shareService from "../Share/share.service";
+import { UserRole } from "../User/user.types";
 const uuidv4 = require("uuid").v4;
 
 class FileController {
@@ -341,7 +342,7 @@ class FileController {
       const candidate = await userService.getUserById(userData.id);
 
       if (!candidate)
-        return res.status(403).json({ message: "Error: User not found" });
+        return res.status(404).json({ message: "Error: User not found" });
 
       if (candidate.avatar.length)
         await fileManager.deleteAvatar(candidate.avatar);
@@ -370,7 +371,7 @@ class FileController {
       const candidate = await userService.getUserById(userData.id);
 
       if (!candidate)
-        return res.status(403).json({ message: "Error: User not found" });
+        return res.status(404).json({ message: "Error: User not found" });
 
       await fileManager.deleteAvatar(candidate.avatar);
       candidate.avatar = "";
@@ -380,6 +381,51 @@ class FileController {
       return res
         .status(200)
         .send({ message: "Avatar was deleted successfully" });
+    } catch (e) {
+      console.log(e);
+      res.status(400).json({ message: `Error: ${e}` });
+    }
+  }
+
+  public async uploadContactAvatar(req: Request, res: Response) {
+    try {
+      const uploadedAvatar = req.files?.file as fileUpload.UploadedFile;
+      const contactId: string = req.body.id;
+
+      if (!uploadedAvatar || !contactId)
+        return res.status(400).json({ message: "Error: Bad Request" });
+
+      const token = req.headers.authorization?.split(" ")[1];
+
+      const userData = verifyTokenMiddleware(token ?? "");
+
+      if (!userData)
+        return res.status(403).json({ message: "Error: Token was expired" });
+
+      const adminCandidate = await userService.getUserById(userData.id);
+
+      if (!adminCandidate)
+        return res.status(404).json({ message: "Error: User not found" });
+
+      if (adminCandidate.role !== UserRole.ADMIN)
+        return res
+          .status(403)
+          .json({ message: "Error: You do not have permissions" });
+
+      const candidate = await userService.getUserById(contactId);
+
+      if (!candidate)
+        return res.status(404).json({ message: "Error: Contact not found" });
+
+      if (candidate.avatar.length)
+        await fileManager.deleteAvatar(candidate.avatar);
+
+      const avatarName = uuidv4() + ".jpg";
+      uploadedAvatar.mv(process.env.STATIC_PATH + `\\${avatarName}`);
+      candidate.avatar = avatarName;
+      await userService.userRepository.save(candidate);
+
+      return res.status(200).send({ avatar: avatarName });
     } catch (e) {
       console.log(e);
       res.status(400).json({ message: `Error: ${e}` });

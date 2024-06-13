@@ -37,4 +37,8 @@ fileRouter.post("/delete", async (req: Request, res: Response) => {
   await fileController.deleteFile(req, res);
 });
 
+fileRouter.post("/admin/change/avatar", async (req: Request, res: Response) => {
+  await fileController.uploadContactAvatar(req, res);
+});
+
 export default fileRouter;

@@ -157,6 +157,7 @@ const EditUserForm = ({
               )
             )
           );
+          currentContact.avatar = avatar;
         } else {
           const { avatar } = await uploadAvatar(avatarFile);
           dispatch(setAvatar(avatar ?? ""));
@@ -382,17 +383,19 @@ const EditUserForm = ({
           }}
         >
           <Grid container>
-            <Grid container spacing={0} mb={12}>
-              <TextField
-                required
-                fullWidth
-                name="oldPassword"
-                label="Старый пароль"
-                type="password"
-                id="oldPassword"
-                autoComplete="new-password"
-              />
-            </Grid>
+            {adminPreset ?? (
+              <Grid container spacing={0} mb={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="oldPassword"
+                  label="Старый пароль"
+                  type="password"
+                  id="oldPassword"
+                  autoComplete="new-password"
+                />
+              </Grid>
+            )}
             <Grid container spacing={0} mb={12}>
               <TextField
                 required

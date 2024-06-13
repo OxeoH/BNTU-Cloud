@@ -169,7 +169,7 @@ class UserService {
       const isRootAdminExists = await this.userRepository.findOne({
         where: { login: login },
       });
-      console.log(isRootAdminExists);
+      //console.log(isRootAdminExists);
 
       if (!isRootAdminExists) {
         const rootAdmin = await this.createNewUser({

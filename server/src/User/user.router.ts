@@ -91,7 +91,7 @@ userRouter.get("/all", async (req: Request, res: Response) => {
 });
 
 userRouter.post(
-  "admin/change/info",
+  "/admin/change/info",
   checkSchema({
     id: { notEmpty: true },
     email: { isEmail: true },
@@ -107,7 +107,7 @@ userRouter.post(
 );
 
 userRouter.post(
-  "admin/change/password",
+  "/admin/change/password",
   checkSchema({
     id: { notEmpty: true },
     newPassword: { isLength: { options: { min: 8 } } },
