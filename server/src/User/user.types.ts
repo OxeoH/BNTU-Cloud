@@ -19,6 +19,15 @@ export interface ChangeProfileProps {
   role: UserRole;
 }
 
+export interface ChangeContactPasswordProps {
+  id: string;
+  newPassword: string;
+}
+
+export interface ChangeContactProfileProps extends ChangeProfileProps {
+  id: string;
+}
+
 export type RegisterProps = {
   login: string;
   password: string;
