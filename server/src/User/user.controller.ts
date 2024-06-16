@@ -38,7 +38,7 @@ class UserController {
       });
 
       if (!userData || !userData.token.length) {
-        return res.status(404).json({ message: "User not found" });
+        return res.status(404).json({ message: "Error: User not found" });
       }
 
       const userContacts = await contactService.getUserContacts(userData.user);
@@ -119,7 +119,7 @@ class UserController {
         });
       } else {
         return res.status(400).json({
-          message: `User with login ${registerParams.login} is already exists`,
+          message: `Error: User with login ${registerParams.login} is already exists`,
         });
       }
     } catch (e) {

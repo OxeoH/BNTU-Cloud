@@ -101,7 +101,7 @@ const EditUserForm = ({
       }
     } catch (e: any) {
       //TODO: Error type
-      alert(e.message);
+      alert(e.response.data.message);
     }
   };
 
@@ -135,7 +135,7 @@ const EditUserForm = ({
       }
     } catch (e: any) {
       //TODO: Error type
-      alert(e.message);
+      alert(e.response.data.message);
     }
   };
 
@@ -165,7 +165,7 @@ const EditUserForm = ({
       }
     } catch (e: any) {
       console.log(e);
-      alert(e.message);
+      alert(e.response.data.message);
     }
   };
   return (

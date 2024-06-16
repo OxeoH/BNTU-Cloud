@@ -55,7 +55,9 @@ export default function RegisterPage() {
       navigate(LOGIN_ROUTE);
     } catch (e: any) {
       //TODO: Error type
-      alert(e.message);
+      alert(
+        e.response.data.message + "\n" + JSON.stringify(e.response.data.errors)
+      );
     }
   };
 

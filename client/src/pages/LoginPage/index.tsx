@@ -38,7 +38,7 @@ export default function LoginPage() {
       navigate(MAIN_ROUTE);
     } catch (e: any) {
       //TODO: Error type
-      alert(e.message);
+      alert(e.response.data.message);
     }
   };
 

@@ -52,7 +52,7 @@ const CreateFilePopover = (props: PopoverProps) => {
       setOpen(false);
     } catch (e: any) {
       //TODO: Error type
-      alert(e.message);
+      alert(e.response.data.message);
     }
   };
   return (

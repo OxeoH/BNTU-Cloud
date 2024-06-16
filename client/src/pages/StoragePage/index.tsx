@@ -88,7 +88,7 @@ export default function StoragePage() {
       });
     } catch (e: any) {
       console.log(e);
-      alert(e.message);
+      alert(e.response.data.message);
     }
   };
 

@@ -35,7 +35,7 @@ export const AuthWrap = ({ children }: { children: any }) => {
           }
         }
       } catch (e: any) {
-        alert(e.message);
+        alert(e.response.data.message);
       }
     };
     checkToken();

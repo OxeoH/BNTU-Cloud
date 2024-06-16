@@ -160,7 +160,7 @@ export default function EnhancedTable() {
 
         setRows(filteredUsers ?? []);
       } catch (e: any) {
-        alert(e.message);
+        alert(e.response.data.message);
         console.log(e);
       } finally {
         setLoader(false);
@@ -200,7 +200,7 @@ export default function EnhancedTable() {
       }
     } catch (e: any) {
       console.log(e);
-      alert(e.message);
+      alert(e.response.data.message);
     }
   };
   const handleAddContact = async (e: React.MouseEvent, contact: User) => {
@@ -212,7 +212,7 @@ export default function EnhancedTable() {
       }
     } catch (e: any) {
       console.log(e);
-      alert(e.message);
+      alert(e.response.data.message);
     }
   };
 

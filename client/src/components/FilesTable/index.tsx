@@ -181,7 +181,7 @@ export default function EnhancedTable() {
           : dispatch(setFiles(filtered));
       } catch (e: any) {
         console.log(e);
-        alert(e.message);
+        alert(e.response.data.message);
       } finally {
         setLoader(false);
       }
@@ -233,7 +233,7 @@ export default function EnhancedTable() {
       await downloadFile(file);
     } catch (e: any) {
       console.log(e);
-      alert(e.message);
+      alert(e.response.data.message);
     }
   };
 
@@ -244,7 +244,7 @@ export default function EnhancedTable() {
       await downloadSharedFile(file);
     } catch (e: any) {
       console.log(e);
-      alert(e.message);
+      alert(e.response.data.message);
     }
   };
   const handleConfigureAccess = async (e: React.MouseEvent, file: File) => {
@@ -272,7 +272,7 @@ export default function EnhancedTable() {
       }
     } catch (e: any) {
       console.log(e);
-      alert(e.message);
+      alert(e.response.data.message);
     }
   };
 
@@ -287,7 +287,7 @@ export default function EnhancedTable() {
         }
       } catch (e: any) {
         console.log(e);
-        alert(e.message);
+        alert(e.response.data.message);
       }
     }
   };

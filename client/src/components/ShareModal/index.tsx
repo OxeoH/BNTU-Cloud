@@ -63,7 +63,7 @@ const ShareModal = (props: ShareModalProps) => {
         }
       } catch (e: any) {
         console.log(e);
-        alert(e.message);
+        alert(e.response.data.message);
       }
     }
   };
