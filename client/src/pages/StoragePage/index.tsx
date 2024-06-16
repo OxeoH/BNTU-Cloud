@@ -74,7 +74,6 @@ export default function StoragePage() {
           addUploadingFiles,
           setUploadingProgress
         );
-        console.log("Uploaded: ", uploaded);
 
         dispatch(addFiles([uploaded]));
         setOpenUploader(false);
@@ -87,8 +86,9 @@ export default function StoragePage() {
           })
         );
       });
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
+      alert(e.message);
     }
   };
 

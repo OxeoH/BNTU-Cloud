@@ -160,6 +160,7 @@ export default function EnhancedTable() {
 
         setRows(filteredUsers ?? []);
       } catch (e: any) {
+        alert(e.message);
         console.log(e);
       } finally {
         setLoader(false);
@@ -197,8 +198,9 @@ export default function EnhancedTable() {
       if (removed) {
         dispatch(removeContact(removed));
       }
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
+      alert(e.message);
     }
   };
   const handleAddContact = async (e: React.MouseEvent, contact: User) => {
@@ -208,8 +210,9 @@ export default function EnhancedTable() {
       if (newContact) {
         dispatch(addContact(newContact));
       }
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
+      alert(e.message);
     }
   };
 

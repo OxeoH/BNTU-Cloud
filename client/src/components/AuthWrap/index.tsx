@@ -15,23 +15,27 @@ export const AuthWrap = ({ children }: { children: any }) => {
 
   useEffect(() => {
     const checkToken = async () => {
-      if (localStorage.getItem("token")) {
-        const user = await verifyAuth();
-        const allUsers = await getAllUsers();
-        const contacts = await getUserContacts();
-        const userShares = await getUserShares();
+      try {
+        if (localStorage.getItem("token")) {
+          const user = await verifyAuth();
+          const allUsers = await getAllUsers();
+          const contacts = await getUserContacts();
+          const userShares = await getUserShares();
 
-        if (user) {
-          if (allUsers) {
-            dispatch(setUsers(allUsers));
-            dispatch(updateUserOptions(allUsers));
+          if (user) {
+            if (allUsers) {
+              dispatch(setUsers(allUsers));
+              dispatch(updateUserOptions(allUsers));
+            }
+            if (userShares) dispatch(setShares(userShares));
+            user.contacts = contacts ?? ([] as Contact[]);
+            dispatch(setUser(user));
+            dispatch(setCurrentDir(currentDir ?? user.files[0]));
+            dispatch(setRootDir(user.files[0]));
           }
-          if (userShares) dispatch(setShares(userShares));
-          user.contacts = contacts ?? ([] as Contact[]);
-          dispatch(setUser(user));
-          dispatch(setCurrentDir(currentDir ?? user.files[0]));
-          dispatch(setRootDir(user.files[0]));
         }
+      } catch (e: any) {
+        alert(e.message);
       }
     };
     checkToken();

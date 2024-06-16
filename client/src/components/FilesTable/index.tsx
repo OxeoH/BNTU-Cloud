@@ -181,6 +181,7 @@ export default function EnhancedTable() {
           : dispatch(setFiles(filtered));
       } catch (e: any) {
         console.log(e);
+        alert(e.message);
       } finally {
         setLoader(false);
       }
@@ -230,8 +231,9 @@ export default function EnhancedTable() {
 
     try {
       await downloadFile(file);
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
+      alert(e.message);
     }
   };
 
@@ -240,8 +242,9 @@ export default function EnhancedTable() {
 
     try {
       await downloadSharedFile(file);
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
+      alert(e.message);
     }
   };
   const handleConfigureAccess = async (e: React.MouseEvent, file: File) => {
@@ -267,8 +270,9 @@ export default function EnhancedTable() {
         );
         dispatch(removeFiles([file.id]));
       }
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
+      alert(e.message);
     }
   };
 
@@ -281,8 +285,9 @@ export default function EnhancedTable() {
           dispatch(deleteShare(removed));
           dispatch(removeSharedFiles([file.id]));
         }
-      } catch (e) {
+      } catch (e: any) {
         console.log(e);
+        alert(e.message);
       }
     }
   };

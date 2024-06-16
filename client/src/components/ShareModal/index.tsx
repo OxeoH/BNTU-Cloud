@@ -61,8 +61,9 @@ const ShareModal = (props: ShareModalProps) => {
           const removed = await removeShare(file.id, u.id);
           if (removed) dispatch(deleteShare(removed));
         }
-      } catch (e) {
+      } catch (e: any) {
         console.log(e);
+        alert(e.message);
       }
     }
   };

@@ -20,7 +20,9 @@ userRouter.post(
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-      return res.status(400).json({ message: "Incorrect request", errors });
+      return res
+        .status(400)
+        .json({ message: "Error: Incorrect request", errors });
     }
     await userController.registerUser(req, res);
   }

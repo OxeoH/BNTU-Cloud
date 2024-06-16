@@ -58,8 +58,9 @@ export default function Profile() {
         const { avatar } = await uploadAvatar(avatarFile);
         dispatch(setAvatar(avatar ?? ""));
       }
-    } catch (e) {
+    } catch (e: any) {
       console.log(e);
+      alert(e.message);
     }
   };
   const handleClose = () => {
